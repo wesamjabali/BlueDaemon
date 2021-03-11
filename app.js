@@ -5,8 +5,6 @@ const bcrypt = require("bcryptjs");
 const salt = bcrypt.genSaltSync(10);
 
 const client = new Discord.Client();
-const wesamID = "539910274698969088";
-const botlogChannel = "780910494692802610";
 const modRoleName = "Moderator";
 const currentQuarter = "spring21";
 const prefix = ".";
@@ -78,14 +76,12 @@ client.on("message", (msg) => {
         );
         if (!role) {
           msg.channel.send("That role doesn't exist.");
-          return;
         }
-        if (role && !protected) {
+        else if (role && !protected) {
           msg.member.roles.add(role);
           msg.channel.send("Course added, " + msg.author.toString());
-          return;
         }
-        if (role && protected) {
+        else if (role && protected) {
           verifyPassword(roleName, command[2]).then((verified) => {
             if (!verified) {
               msg.channel.send("Wrong password!");
@@ -102,13 +98,14 @@ client.on("message", (msg) => {
       });
     }
 
+    // Check if a role requires a password
     async function requiresPassword(roleName) {
       const [protectedRole] = await knex("cdm_role_password")
         .where({ role_name: roleName })
         .select("*");
       return !!protectedRole;
     }
-
+    // Verify a password is correct
     async function verifyPassword(roleName, password) {
       const [protectedRole] = await knex("cdm_role_password")
         .where({ role_name: roleName })
@@ -116,6 +113,7 @@ client.on("message", (msg) => {
       return bcrypt.compareSync(password, protectedRole.password);
     }
 
+    // Leave a role
     if (msg.content.startsWith("leave")) {
       let command = msg.content.split(" ");
       let roleName = currentQuarter + "-" + command[1];
@@ -201,6 +199,7 @@ client.on("message", (msg) => {
       }
     }
 
+    // Add a role and password to the DB.
     async function protectRole(roleName, password) {
       let bcryptPass = bcrypt.hashSync(password, salt);
       await knex("cdm_role_password").insert({
@@ -209,9 +208,11 @@ client.on("message", (msg) => {
       });
     }
 
+    // Remove a role and password from the DB.
     async function deleteRole(roleName) {
       await knex("cdm_role_password").where({ role_name: roleName }).delete();
     }
+
     // Delete role/channel
     if (msg.content.startsWith("delete")) {
       let command = msg.content.split(" ");
