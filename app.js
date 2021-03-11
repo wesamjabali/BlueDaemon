@@ -19,18 +19,21 @@ client.on("guildMemberAdd", (mem) => {
   mem.createDM().then((dm) => {
     dm.send(
       `
-**Welcome to CDM Discussions!**
-_The central hub for all CDM classes and discussion_
-I'm BlueDaemon, your course-management assistant!
+> **Welcome to CDM Discussions!**
+> __The central hub for all CDM classes and discussions__
+> _I'm **BlueDaemon**, your course-management assistant!_
 
-**All commands should be used in #bot-usage ONLY***
-See all classes/commands: \`\`\`.help\`\`\`
-Join a class: \`\`\`.join <classname>\ni.e ".join CSC300"\`\`\`
-Join a protected class: \`\`\`.join <classname> <password>\ni.e ".join CSC300 password123"\`\`\`
-Get notified of daily leetcoding sessions: \`\`\`.role join leetcoder\`\`\`
+**Use the commands below to join your courses!**
+\`\`\`
+.help                    > See all courses/commands
+.join classname          > Join a course
+.join classname password > Join a protected course
+.role join leetcoder     > Get notified of daily leetcoding sessions
+\`\`\`
+\`Having trouble? DM @wesam\`
 
-
-_Have a great quarter!_`
+_Have a great quarter!_
+`
     );
   });
 });
