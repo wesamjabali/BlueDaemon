@@ -7,6 +7,7 @@ const salt = bcrypt.genSaltSync(10);
 const client = new Discord.Client();
 const modRoleName = "Moderator";
 const currentQuarter = "spring21";
+const selfRolePrefix = "dpu";
 const prefix = ".";
 
 client.on("ready", () => {
@@ -21,13 +22,16 @@ client.on("message", (msg) => {
     msg.reply("I'd love to help, but I don't support DMs yet!");
     return;
   }
+
+  // Prefix commands
   if (msg.content.startsWith(prefix)) {
     msg.content = msg.content.substring(1);
     let classes = [];
+    let selfRoles = [];
 
     // Responds with help message
     if (msg.content === "help" && !msg.author.bot) {
-      const roles = msg.guild.roles.cache.filter((role) =>
+      var roles = msg.guild.roles.cache.filter((role) =>
         role.name.startsWith(currentQuarter + "-")
       );
       roles.forEach((s) => {
@@ -35,18 +39,104 @@ client.on("message", (msg) => {
       });
       classes.sort();
 
+      const selfRolesR = msg.guild.roles.cache.filter((r) =>
+        r.name.startsWith(selfRolePrefix)
+      );
+      selfRolesR.forEach((s) => {
+        selfRoles.push(s.name.split("-").splice(1).join("-"));
+      });
+      selfRoles.sort();
+
       msg.channel.send(
-        "```" +
-          `.join <classname> <password?>
-.leave <classname>` +
+        "Commands:```" +
+          `.join <course> <password?>
+.leave <course>
+.role <join/leave> <role>` +
           "```\n" +
           "Available courses:```" +
           classes +
-          "```"
+          " ```\nAvailable roles:```" +
+          selfRoles +
+          " ```"
       );
     }
 
-    if (msg.content.startsWith("join")) {
+    if (msg.content.startsWith("role ")) {
+      let command = msg.content.split(" ");
+      if (command.length != 3) {
+        msg.channel.send(
+          "Usage: ```.role <join/leave/create/delete> <role>```"
+        );
+        return;
+      }
+      const roleName = selfRolePrefix + "-" + command[2];
+
+      if (command[1] === "create") {
+        if (msg.member.roles.cache.find((r) => r.name === modRoleName)) {
+          msg.guild.roles
+            .create({
+              data: {
+                name: roleName,
+              },
+            })
+            .then(() => {
+              msg.channel.send(roleName + " created!");
+            });
+        } else {
+          msg.channel.send(
+            "Only people with " + modRoleName + " role can create roles."
+          );
+        }
+        return;
+      }
+      const role = msg.guild.roles.cache.find(
+        (r) => r.name.toLowerCase() === roleName.toLowerCase()
+      );
+      if (!role) {
+        msg.channel.send("That role doesn't exist.");
+        return;
+      }
+
+      if (command[1] === "delete") {
+        if (msg.member.roles.cache.find((r) => r.name === modRoleName)) {
+          const role = msg.guild.roles.cache.find(
+            (r) => r.name.toLowerCase() === roleName.toLowerCase()
+          );
+          role.delete();
+          msg.channel.send(roleName + " deleted!");
+        } else {
+          msg.channel.send(
+            "Only people with " + modRoleName + " role can create roles."
+          );
+        }
+      }
+      if (command[1] === "join") {
+        if (
+          msg.member.roles.cache.find(
+            (r) => r.name.toLowerCase() === roleName.toLowerCase()
+          )
+        ) {
+          msg.channel.send(
+            "You are already in that role, " + msg.author.toString()
+          );
+          return;
+        }
+        msg.member.roles.add(role);
+        msg.channel.send("Role added!");
+      } else if (command[1] === "leave") {
+        const role = msg.member.roles.cache.find(
+          (r) => r.name.toLowerCase() === roleName.toLowerCase()
+        );
+        msg.member.roles.remove(role);
+        msg.channel.send(
+          "Removed from " + roleName + ", " + msg.author.toString()
+        );
+        return;
+      }
+    }
+
+    // Joins course role
+    if (msg.content.startsWith("join ")) {
       let command = msg.content.split(" ");
       if (command.length < 2 || command.length > 3) {
         msg.channel.send("Usage: ```.join <classname> <password?>```");
@@ -97,7 +187,7 @@ client.on("message", (msg) => {
     }
 
     // Leave a role
-    if (msg.content.startsWith("leave")) {
+    if (msg.content.startsWith("leave ")) {
       let command = msg.content.split(" ");
       let roleName = currentQuarter + "-" + command[1];
       let role = msg.member.roles.cache.find(
@@ -124,7 +214,7 @@ client.on("message", (msg) => {
       );
 
       // Create new role/channel
-      if (msg.content.startsWith("create")) {
+      if (msg.content.startsWith("create ")) {
         let command = msg.content.split(" ");
         if (command.length < 2 || command.length > 3) {
           msg.channel.send("Usage: ```.create <classname> <password>```");
@@ -187,7 +277,7 @@ client.on("message", (msg) => {
     }
 
     // Delete role/channel
-    if (msg.content.startsWith("delete")) {
+    if (msg.content.startsWith("delete ")) {
       let command = msg.content.split(" ");
       let roleName = currentQuarter + "-" + command[1];
 
