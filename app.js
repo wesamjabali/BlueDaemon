@@ -76,12 +76,10 @@ client.on("message", (msg) => {
         );
         if (!role) {
           msg.channel.send("That role doesn't exist.");
-        }
-        else if (role && !protected) {
+        } else if (role && !protected) {
           msg.member.roles.add(role);
           msg.channel.send("Course added, " + msg.author.toString());
-        }
-        else if (role && protected) {
+        } else if (role && protected) {
           verifyPassword(roleName, command[2]).then((verified) => {
             if (!verified) {
               msg.channel.send("Wrong password!");
@@ -96,21 +94,6 @@ client.on("message", (msg) => {
           });
         }
       });
-    }
-
-    // Check if a role requires a password
-    async function requiresPassword(roleName) {
-      const [protectedRole] = await knex("cdm_role_password")
-        .where({ role_name: roleName })
-        .select("*");
-      return !!protectedRole;
-    }
-    // Verify a password is correct
-    async function verifyPassword(roleName, password) {
-      const [protectedRole] = await knex("cdm_role_password")
-        .where({ role_name: roleName })
-        .select("password");
-      return bcrypt.compareSync(password, protectedRole.password);
     }
 
     // Leave a role
@@ -176,6 +159,10 @@ client.on("message", (msg) => {
             });
             if (command.length == 3) {
               msg.delete();
+              /* Store passwords in author's DM in case of forgotten password.
+              TODO:
+              Consider whether this is necessary -- the passwords are hashed in the DB and
+              this may defeat the purpose and you can always delete/recreate if a password was forgotten. */
               msg.author.createDM().then((dm) => {
                 dm.send(
                   "Password created: " +
@@ -197,20 +184,6 @@ client.on("message", (msg) => {
             msg.channel.send("Error creating role.");
           });
       }
-    }
-
-    // Add a role and password to the DB.
-    async function protectRole(roleName, password) {
-      let bcryptPass = bcrypt.hashSync(password, salt);
-      await knex("cdm_role_password").insert({
-        role_name: currentQuarter + "-" + roleName,
-        password: bcryptPass,
-      });
-    }
-
-    // Remove a role and password from the DB.
-    async function deleteRole(roleName) {
-      await knex("cdm_role_password").where({ role_name: roleName }).delete();
     }
 
     // Delete role/channel
@@ -244,5 +217,36 @@ client.on("message", (msg) => {
     }
   }
 });
+
+/* Helper functions */
+
+// Check if a role requires a password
+async function requiresPassword(roleName) {
+  const [protectedRole] = await knex("cdm_role_password")
+    .where({ role_name: roleName })
+    .select("*");
+  return !!protectedRole;
+}
+// Verify a password is correct
+async function verifyPassword(roleName, password) {
+  const [protectedRole] = await knex("cdm_role_password")
+    .where({ role_name: roleName })
+    .select("password");
+  return bcrypt.compareSync(password, protectedRole.password);
+}
+
+// Add a role and password to the DB.
+async function protectRole(roleName, password) {
+  let bcryptPass = bcrypt.hashSync(password, salt);
+  await knex("cdm_role_password").insert({
+    role_name: currentQuarter + "-" + roleName,
+    password: bcryptPass,
+  });
+}
+
+// Remove a role and password from the DB.
+async function deleteRole(roleName) {
+  await knex("cdm_role_password").where({ role_name: roleName }).delete();
+}
 
 client.login(process.env.CLIENT_TOKEN);
