@@ -15,11 +15,29 @@ client.on("ready", () => {
   client.user.setActivity(currentQuarter + " | .help");
   console.log(`Logged in as ${client.user.tag}!`);
 });
+client.on("guildMemberAdd", (mem) => {
+  mem.createDM().then((dm) => {
+    dm.send(
+      `
+**Welcome to CDM Discussions!**
+_The central hub for all CDM classes and discussion_
+I'm BlueDaemon, your course-management assistant!
 
+**All commands should be used in #bot-usage ONLY***
+See all classes/commands: \`\`\`.help\`\`\`
+Join a class: \`\`\`.join <classname>\ni.e ".join CSC300"\`\`\`
+Join a protected class: \`\`\`.join <classname> <password>\ni.e ".join CSC300 password123"\`\`\`
+Get notified of daily leetcoding sessions: \`\`\`.role join leetcoder\`\`\`
+
+
+_Have a great quarter!_`
+    );
+  });
+});
 // Bot user commands
 client.on("message", (msg) => {
   if (msg.channel.type === "dm" && !msg.author.bot) {
-    msg.reply("I'd love to help, but I don't support DMs yet!");
+    msg.reply("I can't help here! Use #bot-usage instead.");
     return;
   }
 
@@ -48,16 +66,20 @@ client.on("message", (msg) => {
       selfRoles.sort();
 
       msg.channel.send(
-        "Commands:```" +
-          `.join <course> <password?>
-.leave <course>
-.role <join/leave> <role>` +
-          "```\n" +
-          "Available courses:```" +
+        `Commands:
+\`\`\`
+.join <course> <password?> - joins a course
+.leave <course> - leaves a course
+.role <join/leave> <role>  - joins/leaves a special role
+\`\`\`
+Available courses:
+\`\`\`` +
           classes +
-          " ```\nAvailable roles:```" +
+          ` \`\`\`
+Available roles:
+\`\`\` ` +
           selfRoles +
-          " ```"
+          `\`\`\``
       );
     }
 
