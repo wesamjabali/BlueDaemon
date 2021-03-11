@@ -1,23 +1,28 @@
 require("dotenv").config();
-const knex = require("./knex");
-
 const Discord = require("discord.js");
+const knex = require("./knex");
+const bcrypt = require("bcryptjs");
+const salt = bcrypt.genSaltSync(10);
+
 const client = new Discord.Client();
 const wesamID = "539910274698969088";
 const botlogChannel = "780910494692802610";
 const modRoleName = "Moderator";
 const currentQuarter = "spring21";
-
 const prefix = ".";
 
 client.on("ready", () => {
-  console.log(`Logged in as ${client.user.tag}!`);
   knex.migrate.latest();
   client.user.setActivity(currentQuarter + " | .help");
+  console.log(`Logged in as ${client.user.tag}!`);
 });
 
 // Bot user commands
 client.on("message", (msg) => {
+  if (msg.channel.type === "dm" && !msg.author.bot) {
+    msg.reply("I'd love to help, but I don't support DMs yet!");
+    return;
+  }
   if (msg.content.startsWith(prefix)) {
     msg.content = msg.content.substring(1);
     let classes = [];
@@ -34,7 +39,7 @@ client.on("message", (msg) => {
 
       msg.channel.send(
         "```" +
-          `.join <classname/password>
+          `.join <classname> <password?>
 .leave <classname>` +
           "```\n" +
           "Available courses:```" +
@@ -45,28 +50,70 @@ client.on("message", (msg) => {
 
     if (msg.content.startsWith("join")) {
       let command = msg.content.split(" ");
-      if (command.length != 2) {
-        msg.channel.send("Usage: ```.join <classname/password>```");
+      if (command.length < 2 || command.length > 3) {
+        msg.channel.send("Usage: ```.join <classname> <password?>```");
         return;
       }
 
       let roleName = currentQuarter + "-" + command[1];
-      let role = msg.guild.roles.cache.find(
-        (r) => r.name.toUpperCase() === roleName.toUpperCase()
-      );
-      if (role) {
-        msg.member.roles.add(role);
+      if (msg.member.roles.cache.find((r) => r.name === roleName)) {
         msg.channel.send(
-          "Welcome to " +
-            command[1].toUpperCase() +
-            ", " +
-            msg.author.toString() +
-            "!"
+          "You are already in that course, " + msg.author.toString()
         );
-      } else {
-        msg.channel.send("Role " + roleName + " not found!");
-        // Do password join here
+        return;
       }
+
+      requiresPassword(roleName).then((protected) => {
+        if (protected && command.length == 2) {
+          msg.channel.send(
+            "Ask your professor to join " +
+              command[1] +
+              ", " +
+              msg.author.toString()
+          );
+          return;
+        }
+        let role = msg.guild.roles.cache.find(
+          (r) => r.name.toUpperCase() === roleName.toUpperCase()
+        );
+        if (!role) {
+          msg.channel.send("That role doesn't exist.");
+          return;
+        }
+        if (role && !protected) {
+          msg.member.roles.add(role);
+          msg.channel.send("Course added, " + msg.author.toString());
+          return;
+        }
+        if (role && protected) {
+          verifyPassword(roleName, command[2]).then((verified) => {
+            if (!verified) {
+              msg.channel.send("Wrong password!");
+            } else {
+              let role = msg.guild.roles.cache.find(
+                (r) => r.name.toUpperCase() === roleName.toUpperCase()
+              );
+              msg.member.roles.add(role);
+              msg.delete();
+              msg.channel.send("Course added, " + msg.author.toString());
+            }
+          });
+        }
+      });
+    }
+
+    async function requiresPassword(roleName) {
+      const [protectedRole] = await knex("cdm_role_password")
+        .where({ role_name: roleName })
+        .select("*");
+      return !!protectedRole;
+    }
+
+    async function verifyPassword(roleName, password) {
+      const [protectedRole] = await knex("cdm_role_password")
+        .where({ role_name: roleName })
+        .select("password");
+      return bcrypt.compareSync(password, protectedRole.password);
     }
 
     if (msg.content.startsWith("leave")) {
@@ -102,6 +149,7 @@ client.on("message", (msg) => {
           msg.channel.send("Usage: ```.create <classname> <password>```");
           return;
         }
+        const roleName = currentQuarter + "-" + command[1];
         const modRole = msg.guild.roles.cache.find(
           (r) => r.name === modRoleName
         );
@@ -109,7 +157,7 @@ client.on("message", (msg) => {
         msg.guild.roles
           .create({
             data: {
-              name: currentQuarter + "-" + command[1],
+              name: roleName,
             },
           })
           .then((r) => {
@@ -128,19 +176,42 @@ client.on("message", (msg) => {
                 { id: modRole.id, allow: ["VIEW_CHANNEL"] },
               ],
             });
-            msg.channel.send(
-              "Role and private channel for " + command[1] + " created!"
-            );
+            if (command.length == 3) {
+              msg.delete();
+              msg.author.createDM().then((dm) => {
+                dm.send(
+                  "Password created: " +
+                    "```" +
+                    roleName +
+                    ": " +
+                    command[2] +
+                    "```"
+                );
+              });
+
+              protectRole(command[1], command[2]);
+              msg.channel.send(command[1] + " created with password!");
+            } else {
+              msg.channel.send(command[1] + " created!");
+            }
           })
           .catch(() => {
             msg.channel.send("Error creating role.");
           });
-
-        if (command.length == 3) {
-        }
       }
     }
 
+    async function protectRole(roleName, password) {
+      let bcryptPass = bcrypt.hashSync(password, salt);
+      await knex("cdm_role_password").insert({
+        role_name: currentQuarter + "-" + roleName,
+        password: bcryptPass,
+      });
+    }
+
+    async function deleteRole(roleName) {
+      await knex("cdm_role_password").where({ role_name: roleName }).delete();
+    }
     // Delete role/channel
     if (msg.content.startsWith("delete")) {
       let command = msg.content.split(" ");
@@ -163,6 +234,7 @@ client.on("message", (msg) => {
       );
       if (foundChannel) {
         foundChannel.delete();
+        deleteRole(roleName);
         msg.channel.send(command[1] + " deleted successfully!");
         return;
       }

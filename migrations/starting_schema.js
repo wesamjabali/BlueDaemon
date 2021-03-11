@@ -6,7 +6,6 @@ const downSQLpath = path.join(__dirname, "sql/starting_schema_down.pgsql");
 
 exports.up = function (knex) {
   const raw = fs.readFileSync(upSQLpath).toString();
-  console.log("asdfds");
   return knex.schema.raw(raw);
 };
 
