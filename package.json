@@ -2,7 +2,7 @@
   "name": "cdmbot",
   "version": "1.0.0",
   "description": "Bot for CDM Discussions",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js"
@@ -13,6 +13,7 @@
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
     "knex": "^0.95.1",
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "pg": "^8.5.1"
   }
 }

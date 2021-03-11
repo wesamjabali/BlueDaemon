@@ -1,5 +1,5 @@
 require("dotenv").config();
-// const knex = require("./knex");
+const knex = require("./knex");
 
 const Discord = require("discord.js");
 const client = new Discord.Client();
@@ -12,6 +12,7 @@ const prefix = ".";
 
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
+  knex.migrate.latest();
   client.user.setActivity(currentQuarter + " | .help");
 });
 

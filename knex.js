@@ -1,7 +1,9 @@
-const config = require({
-    client: "pg",
-    connection: process.env.DATABASE_URL + "?sslmode=require",
-  },)
-const knex = require('knex')(config)
+const knex = require("knex")({
+  client: "pg",
+  connection: process.env.DATABASE_URL,
+  migrations: {
+    directory: __dirname + "/migrations",
+  },
+});
 
-module.exports = knex
+module.exports = knex;
