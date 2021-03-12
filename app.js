@@ -77,10 +77,11 @@ client.on("message", (msg) => {
 
   /* Commands */
   if (msg.content.startsWith(config.prefix)) {
+
     /* Prepare arguments, attach to message. */
-    msg.content = msg.content.replace(/ +(?= )/g, ""); // Normalize spaces with a regex
-    msg.content = msg.content.substring(1).toLowerCase(); // Remove the .
-    msg.args = msg.content.split(" "); // Split into a command array
+    msg.content = msg.content.replace(/ +(?= )/g, "");    // Remove duplicate spaces
+    msg.content = msg.content.substring(1).toLowerCase(); // Remove prefix
+    msg.args = msg.content.split(" ");                    // Split into an arg array
 
     if (msg.content === "help") {
       client.commands.get("help").execute(msg, isModerator);
