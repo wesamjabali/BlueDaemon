@@ -56,11 +56,10 @@ Usage: \`\`\`${command.usage}\`\`\``);
         .setTimestamp()
         .setFooter("Need something else? Ask wesam");
       if (msg.channel.type !== "dm") {
-        msg.channel
-          .send(`Response sent to your DM, ${msg.author.toString()}`)
-          .then((sentMessage) => setTimeout(() => sentMessage.delete(), 3000))
-          // Delete message after 4 seconds
-          .catch(console.error);
+        msg.channel.send(`Response sent to your DM, ${msg.author.toString()}`);
+        // .then((sentMessage) => setTimeout(() => sentMessage.delete(), 3000))
+        // Delete message after 4 seconds
+        // .catch(console.error);
       }
       msg.author.send(helpEmbed);
     }
