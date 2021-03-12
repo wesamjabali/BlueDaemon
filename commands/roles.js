@@ -14,6 +14,6 @@ module.exports = {
     });
     selfRoles.sort();
 
-    msg.channel.send("Use `.role join`:```" + selfRoles + " ```");
+    msg.channel.send(`Use \`.role join\`:\`\`\` ${selfRoles} \`\`\``);
   },
 };

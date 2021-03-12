@@ -5,23 +5,6 @@ module.exports = {
   description: "Display this message",
   privileged: false,
   execute(msg, isModerator, client) {
-    let courses = [];
-    let selfRoles = [];
-    let roles = msg.guild.roles.cache.filter((role) =>
-      role.name.startsWith(config.currentQuarter + "-")
-    );
-    roles.forEach((s) => {
-      courses.push(s.name.split("-").splice(config.prefix.length).join("-").toUpperCase());
-    });
-    courses.sort();
-
-    const rolesList = msg.guild.roles.cache.filter((r) =>
-      r.name.startsWith(config.selfRolePrefix + "-")
-    );
-    rolesList.forEach((s) => {
-      selfRoles.push(s.name.split("-").splice(config.prefix.length).join("-"));
-    });
-    selfRoles.sort();
     allCommands = [];
 
     client.commands.forEach((command) => {
@@ -56,7 +39,11 @@ Do a command to see usage.`
       .attachFiles(logo)
       .setTimestamp()
       .setFooter("Need something else? Ask wesam");
-
-    msg.channel.send(helpEmbed);
+    msg.channel
+      .send(`Response sent to your DM, ${msg.author.toString()}`)
+      .then((sentMessage) => setTimeout(() => sentMessage.delete(), 4000))
+      // Delete message after 4 seconds
+      .catch(console.error);
+    msg.author.send(helpEmbed);
   },
 };
