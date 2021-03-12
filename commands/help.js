@@ -39,11 +39,13 @@ Do a command to see usage.`
       .attachFiles(logo)
       .setTimestamp()
       .setFooter("Need something else? Ask wesam");
-    msg.channel
-      .send(`Response sent to your DM, ${msg.author.toString()}`)
-      .then((sentMessage) => setTimeout(() => sentMessage.delete(), 4000))
-      // Delete message after 4 seconds
-      .catch(console.error);
+    if (msg.channel.type !== "dm") {
+      msg.channel
+        .send(`Response sent to your DM, ${msg.author.toString()}`)
+        .then((sentMessage) => setTimeout(() => sentMessage.delete(), 4000))
+        // Delete message after 4 seconds
+        .catch(console.error);
+    }
     msg.author.send(helpEmbed);
   },
 };
