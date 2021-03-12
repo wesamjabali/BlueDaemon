@@ -33,12 +33,14 @@ Moderator Commands:
 .leave <course>              > Leave a course
 .create <course> <password?> > Create a course
 .delete <course>             > Delete a course
+.lock <course> <password>    > Lock a course
+.unlock <course>             > Unlock a course
 
 .roles                       > See list of roles
 .role <join/leave> <role>    > Join/leave a role
 .role <create/delete> <role> > Create/delete a role
 
-.source                      > Show my source code
+.source                      > Show source
 \`\`\`Available courses:\`\`\`` +
           courses +
           ` \`\`\`Available roles: \`\`\`` +
