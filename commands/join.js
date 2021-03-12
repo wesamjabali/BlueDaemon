@@ -8,7 +8,7 @@ module.exports = {
   usage: config.prefix + "join <coursename> <password?>",
   execute(msg, isModerator, client) {
     if (msg.args.length < 2 || msg.args.length > 3) {
-      msg.channel.send(`Usage: \`\`\`${module.exports.usage}\`\`\``);
+      msg.channel.send(`Usage: \`\`\`${this.usage}\`\`\``);
       return;
     }
 

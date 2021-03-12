@@ -8,7 +8,7 @@ module.exports = {
   execute(msg, isModerator, client) {
     allCommands = [];
     if (msg.args.length > 2) {
-      msg.channel.send(`Usage: \`\`\`${module.exports.usage}\`\`\``);
+      msg.channel.send(`Usage: \`\`\`${this.usage}\`\`\``);
       return;
     }
     if (msg.args.length == 2) {

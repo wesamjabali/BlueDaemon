@@ -14,7 +14,7 @@ module.exports = {
     let roleName = config.currentQuarter + "-" + msg.args[1];
 
     if (msg.args.length != 2) {
-      msg.channel.send(`Usage: \`\`\`${module.exports.usage}\`\`\``);
+      msg.channel.send(`Usage: \`\`\`${this.usage}\`\`\``);
       return;
     }
 

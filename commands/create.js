@@ -12,7 +12,7 @@ module.exports = {
     }
 
     if (msg.args.length < 2 || msg.args.length > 3) {
-      msg.channel.send(`Usage: \`\`\`${module.exports.usage}\`\`\``);
+      msg.channel.send(`Usage: \`\`\`${this.usage}\`\`\``);
       return;
     }
     let category = client.channels.cache.find(

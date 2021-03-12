@@ -7,7 +7,7 @@ module.exports = {
   usage: config.prefix + "role <join/leave> <role>",
   execute(msg, isModerator, client) {
     if (msg.args.length != 3) {
-      msg.channel.send(`Usage: \`\`\`${module.exports.usage}\`\`\``);
+      msg.channel.send(`Usage: \`\`\`${this.usage}\`\`\``);
       return;
     }
     const roleName = config.selfRolePrefix + "-" + msg.args[2];
