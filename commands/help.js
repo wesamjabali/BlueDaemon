@@ -63,6 +63,7 @@ Commands:
 
 .roles                     > See list of roles
 .role <join/leave> <role>  > Join/leave a role
+
 .source                    > Show my source code
 \`\`\`Available courses:\`\`\`` +
           courses +
