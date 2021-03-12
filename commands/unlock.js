@@ -4,6 +4,7 @@ const deleteRole = require("./helpers/deleteRole");
 module.exports = {
   name: "unlock",
   description: "Unlock a course",
+  privileged: true,
   execute(msg, isModerator, client) {
     if(!isModerator) { return; }
 

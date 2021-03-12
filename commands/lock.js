@@ -4,6 +4,7 @@ const config = require("../config.json");
 module.exports = {
   name: "lock",
   description: "Lock a course",
+  privileged: true,
   execute(msg, isModerator, client) {
     if(!isModerator) { return; }
 

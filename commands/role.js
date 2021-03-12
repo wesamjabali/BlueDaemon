@@ -3,6 +3,7 @@ const config = require("../config.json");
 module.exports = {
   name: "role",
   description: "Manage roles",
+  privileged: false,
   execute(msg, isModerator, client) {
     if (msg.args.length != 3) {
       msg.channel.send("Usage: ```.role <join/leave> <role>```");

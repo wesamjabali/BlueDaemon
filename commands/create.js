@@ -4,6 +4,7 @@ const protectRole = require("./helpers/protectRole");
 module.exports = {
   name: "create",
   description: "Create a course",
+  privileged: true,
   execute(msg, isModerator, client) {
     if (!isModerator) {
       return;

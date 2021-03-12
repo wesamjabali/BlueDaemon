@@ -1,7 +1,9 @@
+const Discord = require("discord.js");
 const config = require("../config.json");
 module.exports = {
   name: "help",
-  description: "Display help message",
+  description: "Display this message",
+  privileged: false,
   execute(msg, isModerator, client) {
     let courses = [];
     let selfRoles = [];
@@ -20,58 +22,41 @@ module.exports = {
       selfRoles.push(s.name.split("-").splice(1).join("-"));
     });
     selfRoles.sort();
-    // Moderator help
+    allCommands = [];
+
+    client.commands.forEach((command) => {
+      if (!command.privileged) {
+        allCommands.push({
+          name: command.name,
+          value: `\`\`\`${command.description}\`\`\``,
+        });
+      }
+    });
+
     if (isModerator) {
-      msg.channel.send(
-        `
-Moderator Commands:
-\`\`\`
-.help                        > View this message
-
-.courses                     > See list of courses
-.join <course> <password?>   > Join a course
-.leave <course>              > Leave a course
-.create <course> <password?> > Create a course
-.delete <course>             > Delete a course
-.lock <course> <password>    > Lock a course
-.unlock <course>             > Unlock a course
-
-.roles                       > See list of roles
-.role <join/leave> <role>    > Join/leave a role
-.role <create/delete> <role> > Create/delete a role
-
-.source                      > Show source
-\`\`\`Available courses:\`\`\`` +
-          courses +
-          ` \`\`\`Available roles: \`\`\`` +
-          selfRoles +
-          ` \`\`\`
-\`Need something else? DM @wesam\``
-      );
+      client.commands.forEach((command) => {
+        if (command.privileged) {
+          allCommands.push({
+            name: command.name,
+            value: `\`\`\`${command.description}\`\`\``,
+          });
+        }
+      });
     }
-    // User help
-    if (!isModerator) {
-      msg.channel.send(
-        `
-Commands:
-\`\`\`
-.help                      > View this message
+    const logo = new Discord.MessageAttachment("./logo.png", "logo.png");
+    const helpEmbed = new Discord.MessageEmbed()
+      .setTitle(".help")
+      .setDescription(
+        `All commands start with \`\`\`${config.prefix}\`\`\`
+Do a command to see usage.`
+      )
+      .setAuthor("Course management")
+      .addFields(allCommands)
+      .setThumbnail("attachment://logo.png")
+      .attachFiles(logo)
+      .setTimestamp()
+      .setFooter("Need something else? Ask wesam");
 
-.courses                   > See list of courses
-.join <course> <password?> > Join a course
-.leave <course>            > Leave a course
-
-.roles                     > See list of roles
-.role <join/leave> <role>  > Join/leave a role
-
-.source                    > Show my source code
-\`\`\`Available courses:\`\`\`` +
-          courses +
-          ` \`\`\`Available roles: \`\`\`` +
-          selfRoles +
-          ` \`\`\`
-\`Need something else? DM @wesam\``
-      );
-    }
+    msg.channel.send(helpEmbed);
   },
 };

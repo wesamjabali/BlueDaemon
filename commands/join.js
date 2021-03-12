@@ -4,6 +4,7 @@ const verifyPassword = require("./helpers/verifyPassword");
 module.exports = {
   name: "join",
   description: "Join a course",
+  privileged: false,
   execute(msg, isModerator, client) {
     if (msg.args.length < 2 || msg.args.length > 3) {
       msg.channel.send("Usage: ```.join <coursename> <password?>```");

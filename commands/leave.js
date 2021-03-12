@@ -2,6 +2,7 @@ const config = require("../config.json");
 module.exports = {
   name: "leave",
   description: "Leave a course",
+  privileged: false,
   execute(msg, isModerator, client) {
     if (msg.args.length != 2) {
       msg.channel.send("Usage: ```.leave <coursename>```");
