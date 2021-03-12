@@ -3,7 +3,7 @@ const config = require("../config.json");
 module.exports = {
   name: "role",
   description: "Manage roles",
-  execute(msg, isModerator) {
+  execute(msg, isModerator, client) {
     if (msg.args.length != 3) {
       msg.channel.send("Usage: ```.role <join/leave> <role>```");
       return;
@@ -30,7 +30,7 @@ module.exports = {
           })
           .catch(() => {
             msg.channel.send("Error creating role.");
-            admin.send(
+            client.admin.send(
               "There was an error creating a role for " + msg.author.toString()
             );
           });

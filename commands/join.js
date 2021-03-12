@@ -4,7 +4,7 @@ const verifyPassword = require("./helpers/verifyPassword");
 module.exports = {
   name: "join",
   description: "Join a course",
-  execute(msg) {
+  execute(msg, client) {
     if (msg.args.length < 2 || msg.args.length > 3) {
       msg.channel.send("Usage: ```.join <classname> <password?>```");
       return;
@@ -54,7 +54,7 @@ module.exports = {
             })
             .catch(() => {
               msg.channel.send("Error verifying password.");
-              admin.send(
+              client.admin.send(
                 "There was an error verifying the password for " +
                   msg.author.toString()
               );
@@ -63,7 +63,7 @@ module.exports = {
       })
       .catch(() => {
         msg.channel.send("Error checking password lock.");
-        admin.send(
+        client.admin.send(
           "There was an error checking password lock for " +
             msg.author.toString()
         );

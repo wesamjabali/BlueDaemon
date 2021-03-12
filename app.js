@@ -3,7 +3,6 @@ const fs = require("fs");
 const knex = require("./knex");
 const config = require("./config.json");
 
-
 const Discord = require("discord.js");
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -33,11 +32,10 @@ client.users
     );
   });
 
-
 /* Uncomment for debugging */
 // client.on("debug", console.log).on("warn", console.log);
 
-  client.on("ready", () => {
+client.on("ready", () => {
   knex.migrate.latest();
   client.user.setActivity(config.currentQuarter + " | .help");
   console.log(`Logged in as ${client.user.tag}!`);
@@ -57,10 +55,12 @@ client.on("message", (msg) => {
 
   /* Deny DMs */
   if (msg.channel.type === "dm") {
-    admin.send(
+    client.admin.send(
       "I got a message! \n" + msg.author.toString() + ": " + msg.content
     );
-    msg.reply("I can't help here! Use #bot-usage instead.");
+    msg.reply(
+      "I can't help here! Use #bot-usage instead.\n\nhttps://discord.gg/r4PUkXeWhf"
+    );
     return;
   }
 
@@ -71,11 +71,13 @@ client.on("message", (msg) => {
     }
   }
 
+  let isModerator = !!msg.member.roles.cache.find(
+    (r) => r.name === config.modRoleName
+  );
+
   /* Commands */
   if (msg.content.startsWith(config.prefix)) {
-    let isModerator = !!msg.member.roles.cache.find(
-      (r) => r.name === config.modRoleName
-    );
+    /* Prepare arguments, attach to message. */
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Normalize spaces with a regex
     msg.content = msg.content.substring(1).toLowerCase(); // Remove the .
     msg.args = msg.content.split(" "); // Split into a command array
@@ -89,9 +91,9 @@ client.on("message", (msg) => {
     } else if (msg.args[0] === "roles") {
       client.commands.get("roles").execute(msg);
     } else if (msg.args[0] === "role") {
-      client.commands.get("role").execute(msg, isModerator);
+      client.commands.get("role").execute(msg, isModerator, client);
     } else if (msg.args[0] === "join") {
-      client.commands.get("join").execute(msg);
+      client.commands.get("join").execute(msg, client);
     } else if (msg.args[0] === "leave") {
       client.commands.get("leave").execute(msg);
     }
