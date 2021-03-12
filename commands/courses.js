@@ -13,11 +13,11 @@ module.exports = {
     );
     roles.forEach((s) => {
       courses.push({
-        name: s.name
+        name: `\`\`\`${s.name
           .split("-")
           .splice(config.prefix.length)
           .join("-")
-          .toUpperCase(),
+          .toUpperCase()}\`\`\``,
         value: "\u200B",
         inline: true,
       });
@@ -26,7 +26,7 @@ module.exports = {
 
     const coursesEmbed = new Discord.MessageEmbed()
       .setTitle("Courses")
-      .setFooter(`Use ${config.prefix}join <coursename>`)
+      .setFooter(`${config.prefix}join <coursename>`)
       .addFields(courses);
 
     msg.channel.send(coursesEmbed);

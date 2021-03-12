@@ -12,15 +12,17 @@ module.exports = {
     );
     rolesList.forEach((s) => {
       selfRoles.push({
-        name: s.name.split("-").splice(config.prefix.length).join("-"),
+        name: `\`\`\`${s.name
+          .split("-")
+          .splice(config.prefix.length)
+          .join("-")}\`\`\``,
         value: "\u200B",
-        inline: true,
       });
     });
     selfRoles.sort();
     const rolesEmbed = new Discord.MessageEmbed()
-      .setTitle("Roles")
-      .setFooter(`Use ${config.prefix}role join <rolename>`)
+      .setTitle("Roles:")
+      .setFooter(`${config.prefix}role join <rolename>`)
       .addFields(selfRoles);
 
     msg.channel.send(rolesEmbed);
