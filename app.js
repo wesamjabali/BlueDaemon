@@ -6,9 +6,22 @@ const salt = bcrypt.genSaltSync(10);
 
 const client = new Discord.Client();
 const modRoleName = "Moderator";
+const adminID = "539910274698969088";
 const currentQuarter = "spring21";
 const selfRolePrefix = "dpu";
 const prefix = ".";
+let admin;
+
+client.users
+  .fetch(adminID)
+  .then((u) => {
+    admin = u;
+  })
+  .catch((err) => {
+    console.log(
+      "Error getting Admin user. This may cause instability.\n" + err
+    );
+  });
 
 client.on("ready", () => {
   knex.migrate.latest();
@@ -16,9 +29,8 @@ client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 client.on("guildMemberAdd", (mem) => {
-  mem.createDM().then((dm) => {
-    dm.send(
-      `
+  mem.send(
+    `
 > **Welcome to CDM Discussions!**
 > __The central hub for all CDM classes and discussions__
 > _I'm **BlueDaemon**, your course-management assistant!_
@@ -32,25 +44,32 @@ client.on("guildMemberAdd", (mem) => {
 \`\`\`
 \`Having trouble? DM @wesam\`
 
-> _Have a great quarter!_
+_Have a great quarter!_
 `
-    );
-  });
+  );
 });
 // Bot user commands
 client.on("message", (msg) => {
   if (msg.channel.type === "dm" && !msg.author.bot) {
+    admin.send(
+      "I got a message! \n" + msg.author.toString() + ": " + msg.content
+    );
     msg.reply("I can't help here! Use #bot-usage instead.");
     return;
   }
-  if (msg.mentions.members.size > 0) {
+  if (msg.mentions.members && msg.mentions.members.size > 0) {
     if (msg.mentions.members.first().id == client.user.id) {
       msg.react("👀");
     }
   }
   // Prefix commands
   if (msg.content.startsWith(prefix)) {
+    let isModerator = !!msg.member.roles.cache.find(
+      (r) => r.name === modRoleName
+    );
     msg.content = msg.content.substring(1);
+    let command = msg.content.split(" ");
+
     let classes = [];
     let selfRoles = [];
 
@@ -71,22 +90,46 @@ client.on("message", (msg) => {
         selfRoles.push(s.name.split("-").splice(1).join("-"));
       });
       selfRoles.sort();
-
-      msg.channel.send(
-        `
+      msg.channel.send("I've DM'd your request, " + msg.author.toString());
+      // Moderator help
+      if (isModerator) {
+        msg.author.send(
+          `
+Moderator Commands:
+\`\`\`
+.join <course> <password?>   > Join a course
+.leave <course>              > Leave a course
+.create <course> <password?> > Create a course
+.delete <course>             > Delete a course
+.role <join/leave> <role>    > Join/leave a role
+.role <create/delete> <role> > Create/delete a role
+.source                      > Show my source code
+\`\`\`Available courses:\`\`\`` +
+            classes +
+            ` \`\`\`Available roles: \`\`\`` +
+            selfRoles +
+            ` \`\`\`
+\`Need something else? DM @wesam\``
+        );
+      }
+      // User help
+      if (!isModerator) {
+        msg.author.send(
+          `
 Commands:
 \`\`\`
-.join <course> <password?> > Joins a course
-.leave <course>            > Leaves a course
-.role <join/leave> <role>  > Joins/leaves a role
+.join <course> <password?> > Join a course
+.leave <course>            > Leave a course
+.role <join/leave> <role>  > Join/leave a role
 .source                    > Show my source code
 \`\`\`Available courses:\`\`\`` +
-          classes +
-          ` \`\`\`Available roles: \`\`\`` +
-          selfRoles +
-          ` \`\`\`
+            classes +
+            ` \`\`\`Available roles: \`\`\`` +
+            selfRoles +
+            ` \`\`\`
 \`Need something else? DM @wesam\``
-      );
+        );
+      }
     }
 
     if (msg.content === "source") {
@@ -96,19 +139,16 @@ Source: https://github.com/wesamjabali/BlueDaemon
       `);
     }
 
-    if (msg.content.startsWith("role ")) {
-      let command = msg.content.split(" ");
+    if (command[0] === "role") {
       if (command.length != 3) {
-        msg.channel.send(
-          "Usage: ```.role <join/leave/create/delete> <role>```"
-        );
+        msg.channel.send("Usage: ```.role <join/leave> <role>```");
         return;
       }
       const roleName = selfRolePrefix + "-" + command[2];
 
       if (command[1] === "create") {
         // Check if mod
-        if (msg.member.roles.cache.find((r) => r.name === modRoleName)) {
+        if (isModerator) {
           msg.guild.roles
             .create({
               data: {
@@ -117,6 +157,13 @@ Source: https://github.com/wesamjabali/BlueDaemon
             })
             .then(() => {
               msg.channel.send(roleName + " created, " + msg.author.toString());
+            })
+            .catch(() => {
+              msg.channel.send("Error creating role.");
+              admin.send(
+                "There was an error creating a role for " +
+                  msg.author.toString()
+              );
             });
         } else {
           msg.channel.send(
@@ -134,7 +181,7 @@ Source: https://github.com/wesamjabali/BlueDaemon
 
       if (command[1] === "delete") {
         // Check if mod
-        if (msg.member.roles.cache.find((r) => r.name === modRoleName)) {
+        if (isModerator) {
           const role = msg.guild.roles.cache.find(
             (r) => r.name.toLowerCase() === roleName.toLowerCase()
           );
@@ -145,7 +192,7 @@ Source: https://github.com/wesamjabali/BlueDaemon
             return;
           }
           role.delete();
-          msg.channel.send(roleName + " deleted!");
+          msg.channel.send(roleName + " deleted, " + msg.author.toString());
         } else {
           msg.channel.send(
             "Only people with " +
@@ -186,8 +233,7 @@ Source: https://github.com/wesamjabali/BlueDaemon
     }
 
     // Joins course role
-    if (msg.content.startsWith("join ")) {
-      let command = msg.content.split(" ");
+    if (command[0] === "join") {
       if (command.length < 2 || command.length > 3) {
         msg.channel.send("Usage: ```.join <classname> <password?>```");
         return;
@@ -201,45 +247,64 @@ Source: https://github.com/wesamjabali/BlueDaemon
         return;
       }
 
-      requiresPassword(roleName).then((protected) => {
-        if (protected && command.length == 2) {
-          msg.channel.send(
-            "Ask your professor to join " +
-              command[1] +
-              ", " +
+      requiresPassword(roleName)
+        .then((protected) => {
+          if (protected && command.length == 2) {
+            msg.channel.send(
+              "Ask your professor to join " +
+                command[1] +
+                ", " +
+                msg.author.toString()
+            );
+            return;
+          }
+          let role = msg.guild.roles.cache.find(
+            (r) => r.name.toUpperCase() === roleName.toUpperCase()
+          );
+          if (!role) {
+            msg.channel.send("That role doesn't exist.");
+          } else if (role && !protected) {
+            msg.member.roles.add(role);
+            msg.channel.send("Course added, " + msg.author.toString());
+          } else if (role && protected) {
+            verifyPassword(roleName, command[2])
+              .then((verified) => {
+                if (!verified) {
+                  msg.delete();
+                  msg.channel.send("Wrong password, " + msg.author.toString());
+                } else {
+                  let role = msg.guild.roles.cache.find(
+                    (r) => r.name.toUpperCase() === roleName.toUpperCase()
+                  );
+                  msg.member.roles.add(role);
+                  msg.delete();
+                  msg.channel.send("Course added, " + msg.author.toString());
+                }
+              })
+              .catch(() => {
+                msg.channel.send("Error verifying password.");
+                admin.send(
+                  "There was an error verifying the password for " +
+                    msg.author.toString()
+                );
+              });
+          }
+        })
+        .catch(() => {
+          msg.channel.send("Error checking password lock.");
+          admin.send(
+            "There was an error checking password lock for " +
               msg.author.toString()
           );
-          return;
-        }
-        let role = msg.guild.roles.cache.find(
-          (r) => r.name.toUpperCase() === roleName.toUpperCase()
-        );
-        if (!role) {
-          msg.channel.send("That role doesn't exist.");
-        } else if (role && !protected) {
-          msg.member.roles.add(role);
-          msg.channel.send("Course added, " + msg.author.toString());
-        } else if (role && protected) {
-          verifyPassword(roleName, command[2]).then((verified) => {
-            if (!verified) {
-              msg.delete();
-              msg.channel.send("Wrong password, " + msg.author.toString());
-            } else {
-              let role = msg.guild.roles.cache.find(
-                (r) => r.name.toUpperCase() === roleName.toUpperCase()
-              );
-              msg.member.roles.add(role);
-              msg.delete();
-              msg.channel.send("Course added, " + msg.author.toString());
-            }
-          });
-        }
-      });
+        });
     }
 
     // Leave a role
-    if (msg.content.startsWith("leave ")) {
-      let command = msg.content.split(" ");
+    if (command[0] === "leave") {
+      if (command.length != 2) {
+        msg.channel.send("Usage: ```.leave <classname>```");
+        return;
+      }
       let roleName = currentQuarter + "-" + command[1];
       let role = msg.member.roles.cache.find(
         (r) => r.name.toUpperCase() === roleName.toUpperCase()
@@ -261,14 +326,13 @@ Source: https://github.com/wesamjabali/BlueDaemon
     }
 
     // Mods only commands
-    if (msg.member.roles.cache.find((r) => r.name === modRoleName)) {
+    if (isModerator) {
       let category = client.channels.cache.find(
         (c) => c.name == currentQuarter && c.type == "category"
       );
 
       // Create new role/channel
-      if (msg.content.startsWith("create ")) {
-        let command = msg.content.split(" ");
+      if (command[0] === "create") {
         if (command.length < 2 || command.length > 3) {
           msg.channel.send("Usage: ```.create <classname> <password>```");
           return;
@@ -306,17 +370,14 @@ Source: https://github.com/wesamjabali/BlueDaemon
               TODO:
               Consider whether this is necessary -- the passwords are hashed in the DB and
               this may defeat the purpose and you can always delete/recreate if a password was forgotten. */
-              msg.author.createDM().then((dm) => {
-                dm.send(
-                  "Password created: " +
-                    "```" +
-                    roleName +
-                    ": " +
-                    command[2] +
-                    "```"
-                );
-              });
-
+              msg.author.send(
+                "Password created: " +
+                  "```" +
+                  roleName +
+                  ": " +
+                  command[2] +
+                  "```"
+              );
               protectRole(command[1], command[2]);
               msg.channel.send(
                 command[1] + " created with password, " + msg.author.toString()
@@ -329,12 +390,14 @@ Source: https://github.com/wesamjabali/BlueDaemon
           })
           .catch(() => {
             msg.channel.send("Error creating role, " + msg.author.toString());
+            admin.send(
+              "There was an error creating role for " + msg.author.toString()
+            );
           });
       }
 
       // Delete role/channel
-      if (msg.content.startsWith("delete ")) {
-        let command = msg.content.split(" ");
+      if (command[0] === "delete") {
         let roleName = currentQuarter + "-" + command[1];
 
         if (command.length != 2) {
