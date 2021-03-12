@@ -9,7 +9,7 @@ module.exports = {
       role.name.startsWith(config.currentQuarter + "-")
     );
     roles.forEach((s) => {
-      courses.push(s.name.split("-").splice(1).join("-").toUpperCase());
+      courses.push(s.name.split("-").splice(config.prefix.length).join("-").toUpperCase());
     });
     courses.sort();
 

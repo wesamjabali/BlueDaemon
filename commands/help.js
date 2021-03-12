@@ -11,7 +11,7 @@ module.exports = {
       role.name.startsWith(config.currentQuarter + "-")
     );
     roles.forEach((s) => {
-      courses.push(s.name.split("-").splice(1).join("-").toUpperCase());
+      courses.push(s.name.split("-").splice(config.prefix.length).join("-").toUpperCase());
     });
     courses.sort();
 
@@ -19,7 +19,7 @@ module.exports = {
       r.name.startsWith(config.selfRolePrefix + "-")
     );
     rolesList.forEach((s) => {
-      selfRoles.push(s.name.split("-").splice(1).join("-"));
+      selfRoles.push(s.name.split("-").splice(config.prefix.length).join("-"));
     });
     selfRoles.sort();
     allCommands = [];
