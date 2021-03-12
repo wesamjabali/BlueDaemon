@@ -28,6 +28,8 @@ client.on("ready", () => {
   client.user.setActivity(currentQuarter + " | .help");
   console.log(`Logged in as ${client.user.tag}!`);
 });
+
+/* Welcome Message */
 client.on("guildMemberAdd", (mem) => {
   mem.send(
     `
@@ -48,45 +50,52 @@ _Have a great quarter!_
 `
   );
 });
-// Bot user commands
+/* Message listener */
 client.on("message", (msg) => {
-  if (msg.channel.type === "dm" && !msg.author.bot) {
+  // Don't respond to bots
+  if (msg.author.bot) {
+    return;
+  }
+  /* Deny DMs */
+  if (msg.channel.type === "dm") {
     admin.send(
       "I got a message! \n" + msg.author.toString() + ": " + msg.content
     );
     msg.reply("I can't help here! Use #bot-usage instead.");
     return;
   }
+
+  /* React to mentions */
   if (msg.mentions.members && msg.mentions.members.size > 0) {
     if (msg.mentions.members.first().id == client.user.id) {
       msg.react("👀");
     }
   }
-  // Prefix commands
+  /* Prefix commands */
   if (msg.content.startsWith(prefix)) {
     let isModerator = !!msg.member.roles.cache.find(
       (r) => r.name === modRoleName
     );
-    msg.content = msg.content.substring(1);
-    let command = msg.content.split(" ");
+    msg.content = msg.content.replace(/ +(?= )/g, ""); // Normalize spaces with a regex
+    msg.content = msg.content.substring(1); // Remove the prefix
+    let command = msg.content.split(" "); // Split into a command array
 
-    let classes = [];
-    let selfRoles = [];
-
-    // Responds with help message
-    if (msg.content === "help" && !msg.author.bot) {
-      var roles = msg.guild.roles.cache.filter((role) =>
+    /* DMs help text, depending on role. */
+    if (msg.content === "help") {
+      let courses = [];
+      let selfRoles = [];
+      let roles = msg.guild.roles.cache.filter((role) =>
         role.name.startsWith(currentQuarter + "-")
       );
       roles.forEach((s) => {
-        classes.push(s.name.split("-").splice(1).join("-").toUpperCase());
+        courses.push(s.name.split("-").splice(1).join("-").toUpperCase());
       });
-      classes.sort();
+      courses.sort();
 
-      const selfRolesR = msg.guild.roles.cache.filter((r) =>
-        r.name.startsWith(selfRolePrefix)
+      const rolesList = msg.guild.roles.cache.filter((r) =>
+        r.name.startsWith(selfRolePrefix + "-")
       );
-      selfRolesR.forEach((s) => {
+      rolesList.forEach((s) => {
         selfRoles.push(s.name.split("-").splice(1).join("-"));
       });
       selfRoles.sort();
@@ -97,15 +106,21 @@ client.on("message", (msg) => {
           `
 Moderator Commands:
 \`\`\`
+.help                        > View this message
+
+.courses                     > See list of courses
 .join <course> <password?>   > Join a course
 .leave <course>              > Leave a course
 .create <course> <password?> > Create a course
 .delete <course>             > Delete a course
+
+.roles                       > See list of roles
 .role <join/leave> <role>    > Join/leave a role
 .role <create/delete> <role> > Create/delete a role
+
 .source                      > Show my source code
 \`\`\`Available courses:\`\`\`` +
-            classes +
+            courses +
             ` \`\`\`Available roles: \`\`\`` +
             selfRoles +
             ` \`\`\`
@@ -118,12 +133,17 @@ Moderator Commands:
           `
 Commands:
 \`\`\`
+.help                      > View this message
+
+.courses                   > See list of courses
 .join <course> <password?> > Join a course
 .leave <course>            > Leave a course
+
+.roles                     > See list of roles
 .role <join/leave> <role>  > Join/leave a role
 .source                    > Show my source code
 \`\`\`Available courses:\`\`\`` +
-            classes +
+            courses +
             ` \`\`\`Available roles: \`\`\`` +
             selfRoles +
             ` \`\`\`
@@ -139,6 +159,32 @@ Source: https://github.com/wesamjabali/BlueDaemon
       `);
     }
 
+    if (command[0] === "courses") {
+      let courses = [];
+      let roles = msg.guild.roles.cache.filter((role) =>
+        role.name.startsWith(currentQuarter + "-")
+      );
+      roles.forEach((s) => {
+        courses.push(s.name.split("-").splice(1).join("-").toUpperCase());
+      });
+      courses.sort();
+
+      msg.channel.send("Courses:```" + courses + " ```");
+    }
+
+    if (command[0] === "roles") {
+      let selfRoles = [];
+      const rolesList = msg.guild.roles.cache.filter((r) =>
+        r.name.startsWith(selfRolePrefix + "-")
+      );
+      rolesList.forEach((s) => {
+        selfRoles.push(s.name.split("-").splice(1).join("-"));
+      });
+      selfRoles.sort();
+
+      msg.channel.send("Roles:```" + selfRoles + " ```");
+    }
+
     if (command[0] === "role") {
       if (command.length != 3) {
         msg.channel.send("Usage: ```.role <join/leave> <role>```");
@@ -149,6 +195,12 @@ Source: https://github.com/wesamjabali/BlueDaemon
       if (command[1] === "create") {
         // Check if mod
         if (isModerator) {
+          if (msg.guild.roles.cache.find((r) => r.name === roleName)) {
+            msg.channel.send(
+              "That role already exists, " + msg.author.toString()
+            );
+            return;
+          }
           msg.guild.roles
             .create({
               data: {
@@ -219,7 +271,7 @@ Source: https://github.com/wesamjabali/BlueDaemon
           return;
         }
         msg.member.roles.add(role);
-        msg.channel.send("Role added!");
+        msg.channel.send("Role added, " + msg.author.toString());
       } else if (command[1] === "leave") {
         const role = msg.member.roles.cache.find(
           (r) => r.name.toLowerCase() === roleName.toLowerCase()
@@ -327,21 +379,25 @@ Source: https://github.com/wesamjabali/BlueDaemon
 
     // Mods only commands
     if (isModerator) {
-      let category = client.channels.cache.find(
-        (c) => c.name == currentQuarter && c.type == "category"
-      );
-
       // Create new role/channel
       if (command[0] === "create") {
         if (command.length < 2 || command.length > 3) {
           msg.channel.send("Usage: ```.create <classname> <password>```");
           return;
         }
+        let category = client.channels.cache.find(
+          (c) => c.name == currentQuarter && c.type == "category"
+        );
         const roleName = currentQuarter + "-" + command[1];
         const modRole = msg.guild.roles.cache.find(
           (r) => r.name === modRoleName
         );
-
+        if (msg.guild.roles.cache.find((r) => r.name === roleName)) {
+          msg.channel.send(
+            "That course already exists, " + msg.author.toString()
+          );
+          return;
+        }
         msg.guild.roles
           .create({
             data: {
@@ -425,6 +481,9 @@ Source: https://github.com/wesamjabali/BlueDaemon
         }
 
         msg.channel.send(command[1] + " not found, " + msg.author.toString());
+      }
+
+      if (command[1] === "lock") {
       }
       // End mod only commands
     }
