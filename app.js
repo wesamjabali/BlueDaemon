@@ -79,37 +79,14 @@ client.on("message", (msg) => {
   if (msg.content.startsWith(config.prefix)) {
     /* Prepare arguments, attach to message. */
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
-    msg.content = msg.content.substring(1).toLowerCase(); // Remove prefix
+    msg.content = msg.content.substring(config.prefix.length).toLowerCase(); // Remove prefix
     msg.args = msg.content.split(" "); // Split into an arg array
 
-    if (msg.content === "help") {
-      client.commands.get("help").execute(msg, isModerator);
-    } else if (msg.content === "source") {
-      client.commands.get("source").execute(msg);
-    } else if (msg.args[0] === "courses") {
-      client.commands.get("courses").execute(msg);
-    } else if (msg.args[0] === "roles") {
-      client.commands.get("roles").execute(msg);
-    } else if (msg.args[0] === "role") {
-      client.commands.get("role").execute(msg, isModerator, client);
-    } else if (msg.args[0] === "join") {
-      client.commands.get("join").execute(msg, client);
-    } else if (msg.args[0] === "leave") {
-      client.commands.get("leave").execute(msg);
+    const command = client.commands.get(msg.args[0]);
+    if(command) {
+      command.execute(msg, isModerator, client)
     }
 
-    /* Mods only commands */
-    if (isModerator) {
-      if (msg.args[0] === "create") {
-        client.commands.get("create").execute(msg, client);
-      } else if (msg.args[0] === "delete") {
-        client.commands.get("delete").execute(msg);
-      } else if (msg.args[0] === "lock") {
-        client.commands.get("lock").execute(msg);
-      } else if (msg.args[0] === "unlock") {
-        client.commands.get("unlock").execute(msg);
-      }
-    }
   }
 });
 client.login(process.env.CLIENT_TOKEN);

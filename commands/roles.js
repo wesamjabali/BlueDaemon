@@ -3,7 +3,7 @@ const config = require("../config.json");
 module.exports = {
   name: "roles",
   description: "Display available roles",
-  execute(msg) {
+  execute(msg, isModerator, client) {
     let selfRoles = [];
     const rolesList = msg.guild.roles.cache.filter((r) =>
       r.name.startsWith(config.selfRolePrefix + "-")

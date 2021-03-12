@@ -2,7 +2,7 @@ const config = require("../config.json");
 module.exports = {
   name: "courses",
   description: "Display available courses",
-  execute(msg) {
+  execute(msg, isModerator, client) {
     let courses = [];
     let roles = msg.guild.roles.cache.filter((role) =>
       role.name.startsWith(config.currentQuarter + "-")

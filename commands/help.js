@@ -2,7 +2,7 @@ const config = require("../config.json");
 module.exports = {
   name: "help",
   description: "Display help message",
-  execute(msg, isModerator) {
+  execute(msg, isModerator, client) {
     let courses = [];
     let selfRoles = [];
     let roles = msg.guild.roles.cache.filter((role) =>

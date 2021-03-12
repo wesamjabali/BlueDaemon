@@ -4,7 +4,9 @@ const deleteRole = require("./helpers/deleteRole");
 module.exports = {
   name: "delete",
   description: "Delete a course",
-  execute(msg) {
+  execute(msg, isModerator, client) {
+    if(!isModerator) { return; }
+
     let roleName = config.currentQuarter + "-" + msg.args[1];
 
     if (msg.args.length != 2) {

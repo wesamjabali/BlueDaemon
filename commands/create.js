@@ -4,7 +4,11 @@ const protectRole = require("./helpers/protectRole");
 module.exports = {
   name: "create",
   description: "Create a course",
-  execute(msg, client) {
+  execute(msg, isModerator, client) {
+    if (!isModerator) {
+      return;
+    }
+
     if (msg.args.length < 2 || msg.args.length > 3) {
       msg.channel.send("Usage: ```.create <coursename> <password>```");
       return;

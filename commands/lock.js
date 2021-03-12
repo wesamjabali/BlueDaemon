@@ -4,7 +4,9 @@ const config = require("../config.json");
 module.exports = {
   name: "lock",
   description: "Lock a course",
-  execute(msg) {
+  execute(msg, isModerator, client) {
+    if(!isModerator) { return; }
+
     if (msg.args.length != 3) {
       msg.channel.send("Usage: ```.lock <coursename> <password>```");
       return;
