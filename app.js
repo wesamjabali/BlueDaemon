@@ -12,6 +12,10 @@ const selfRolePrefix = "dpu";
 const prefix = ".";
 let admin;
 
+client
+  .on("debug", console.log)
+  .on("warn", console.log)
+
 client.users
   .fetch(adminID)
   .then((u) => {
@@ -99,10 +103,10 @@ client.on("message", (msg) => {
         selfRoles.push(s.name.split("-").splice(1).join("-"));
       });
       selfRoles.sort();
-      msg.channel.send("I've DM'd your request, " + msg.author.toString());
+      // msg.channel.send("I've DM'd your request, " + msg.author.toString());
       // Moderator help
       if (isModerator) {
-        msg.author.send(
+        msg.channel.send(
           `
 Moderator Commands:
 \`\`\`
@@ -129,7 +133,7 @@ Moderator Commands:
       }
       // User help
       if (!isModerator) {
-        msg.author.send(
+        msg.channel.send(
           `
 Commands:
 \`\`\`
@@ -169,7 +173,7 @@ Source: https://github.com/wesamjabali/BlueDaemon
       });
       courses.sort();
 
-      msg.channel.send("Courses:```" + courses + " ```");
+      msg.channel.send("Use `.join`:```" + courses + " ```");
     }
 
     if (command[0] === "roles") {
@@ -182,7 +186,7 @@ Source: https://github.com/wesamjabali/BlueDaemon
       });
       selfRoles.sort();
 
-      msg.channel.send("Roles:```" + selfRoles + " ```");
+      msg.channel.send("Use `.role join`:```" + selfRoles + " ```");
     }
 
     if (command[0] === "role") {
@@ -434,10 +438,19 @@ Source: https://github.com/wesamjabali/BlueDaemon
                   command[2] +
                   "```"
               );
-              protectRole(command[1], command[2]);
-              msg.channel.send(
-                command[1] + " created with password, " + msg.author.toString()
-              );
+              protectRole(command[1], command[2])
+                .then(() => {
+                  msg.channel.send(
+                    command[1] +
+                      " created with password, " +
+                      msg.author.toString()
+                  );
+                })
+                .catch(() => {
+                  msg.channel.send(
+                    "Error protecting course, " + msg.author.toString()
+                  );
+                });
             } else {
               msg.channel.send(
                 command[1] + " created, " + msg.author.toString()
@@ -452,7 +465,7 @@ Source: https://github.com/wesamjabali/BlueDaemon
           });
       }
 
-      // Delete role/channel
+      /* Delete course role/channel */
       if (command[0] === "delete") {
         let roleName = currentQuarter + "-" + command[1];
 
@@ -464,26 +477,29 @@ Source: https://github.com/wesamjabali/BlueDaemon
         const foundRole = msg.guild.roles.cache.find(
           (r) => r.name.toUpperCase() === roleName.toUpperCase()
         );
-        if (foundRole) {
-          foundRole.delete();
-        }
-
         const foundChannel = msg.guild.channels.cache.find(
           (c) => c.name.toUpperCase() === command[1].toUpperCase()
         );
-        if (foundChannel) {
-          foundChannel.delete();
-          deleteRole(roleName);
-          msg.channel.send(
-            command[1] + " deleted successfully, " + msg.author.toString()
-          );
+        if (foundRole && foundChannel) {
+          deleteRole(roleName)
+            .then(() => {
+              foundRole.delete();
+              foundChannel.delete();
+              msg.channel.send(
+                command[1] + " deleted successfully, " + msg.author.toString()
+              );
+            })
+            .catch(() => {
+              msg.channel.send("Error deleting from database");
+            });
           return;
         }
 
         msg.channel.send(command[1] + " not found, " + msg.author.toString());
       }
 
-      if (command[1] === "lock") {
+      if (command[0] === "lock") {
+        protectRole(command[1], command[2]);
       }
       // End mod only commands
     }
