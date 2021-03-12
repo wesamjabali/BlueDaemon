@@ -43,7 +43,11 @@ client.on("message", (msg) => {
     msg.reply("I can't help here! Use #bot-usage instead.");
     return;
   }
-
+  if (msg.mentions.members.size > 0) {
+    if (msg.mentions.members.first().id == client.user.id) {
+      msg.react("👀");
+    }
+  }
   // Prefix commands
   if (msg.content.startsWith(prefix)) {
     msg.content = msg.content.substring(1);
