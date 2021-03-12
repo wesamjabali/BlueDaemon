@@ -5,13 +5,14 @@ module.exports = {
   name: "create",
   description: "Create a course",
   privileged: true,
+  usage: config.prefix + "create <coursename> <password>",
   execute(msg, isModerator, client) {
     if (!isModerator) {
       return;
     }
 
     if (msg.args.length < 2 || msg.args.length > 3) {
-      msg.channel.send("Usage: ```.create <coursename> <password>```");
+      msg.channel.send(`Usage: \`\`\`${module.exports.usage}\`\`\``);
       return;
     }
     let category = client.channels.cache.find(

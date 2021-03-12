@@ -4,6 +4,7 @@ module.exports = {
   name: "roles",
   description: "Display available roles",
   privileged: false,
+  usage: config.prefix + "roles",
   execute(msg, isModerator, client) {
     let selfRoles = [];
     const rolesList = msg.guild.roles.cache.filter((r) =>

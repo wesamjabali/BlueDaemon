@@ -5,13 +5,16 @@ module.exports = {
   name: "delete",
   description: "Delete a course",
   privileged: true,
+  usage: config.prefix + "delete <coursename>",
   execute(msg, isModerator, client) {
-    if(!isModerator) { return; }
+    if (!isModerator) {
+      return;
+    }
 
     let roleName = config.currentQuarter + "-" + msg.args[1];
 
     if (msg.args.length != 2) {
-      msg.channel.send("Usage: ```.delete <coursename>```");
+      msg.channel.send(`Usage: \`\`\`${module.exports.usage}\`\`\``);
       return;
     }
 

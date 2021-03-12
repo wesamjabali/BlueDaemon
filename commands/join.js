@@ -5,9 +5,10 @@ module.exports = {
   name: "join",
   description: "Join a course",
   privileged: false,
+  usage: config.prefix + "join <coursename> <password?>",
   execute(msg, isModerator, client) {
     if (msg.args.length < 2 || msg.args.length > 3) {
-      msg.channel.send("Usage: ```.join <coursename> <password?>```");
+      msg.channel.send(`Usage: \`\`\`${module.exports.usage}\`\`\``);
       return;
     }
 

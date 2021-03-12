@@ -53,20 +53,28 @@ client.on("message", (msg) => {
     return;
   }
 
-  /* Deny DMs */
-  if (msg.channel.type === "dm" && msg.content.toLowerCase() != ".help") {
-    client.admin.send(
-      "I got a message! \n" + msg.author.toString() + ": " + msg.content
-    );
-    msg.reply(
-      "I can't help here! Use #bot-usage instead.\n\nhttps://discord.gg/r4PUkXeWhf"
-    );
-    return;
-  }
+  /* Catch DMs */
+  if (msg.channel.type === "dm") {
+    if (!msg.content.startsWith(config.prefix)) {
+      client.admin.send(
+        "I got a message! \n" + msg.author.toString() + ": " + msg.content
+      );
+      return;
+    }
 
-  if (msg.content.toLowerCase() == ".help") {
-    client.commands.get("help").execute(msg, false, client);
-    return;
+    msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
+    msg.content = msg.content.substring(config.prefix.length).toLowerCase(); // Remove prefix
+    msg.args = msg.content.split(" "); // Split into an arg array
+
+    if (msg.args[0] == "help") {
+      client.commands.get("help").execute(msg, false, client);
+      return;
+    } else {
+      msg.channel.send(
+        "Only `.help` can be used here. Other commands need to be done in the server."
+      );
+      return;
+    }
   }
 
   /* React to mentions */

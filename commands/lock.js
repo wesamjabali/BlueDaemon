@@ -5,11 +5,14 @@ module.exports = {
   name: "lock",
   description: "Lock a course",
   privileged: true,
+  usage: config.prefix + "lock <coursename> <password>",
   execute(msg, isModerator, client) {
-    if(!isModerator) { return; }
+    if (!isModerator) {
+      return;
+    }
 
     if (msg.args.length != 3) {
-      msg.channel.send("Usage: ```.lock <coursename> <password>```");
+      msg.channel.send(`Usage: \`\`\`${module.exports.usage}\`\`\``);
       return;
     }
 

@@ -3,9 +3,10 @@ module.exports = {
   name: "leave",
   description: "Leave a course",
   privileged: false,
+  usage: config.prefix + "leave <coursename>",
   execute(msg, isModerator, client) {
     if (msg.args.length != 2) {
-      msg.channel.send("Usage: ```.leave <coursename>```");
+      msg.channel.send(`Usage: \`\`\`${module.exports.usage}\`\`\``);
       return;
     }
     let roleName = config.currentQuarter + "-" + msg.args[1];

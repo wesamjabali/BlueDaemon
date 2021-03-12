@@ -3,5 +3,6 @@ module.exports = {
   name: "",
   description: "",
   privileged: false,
-  execute(msg, isModerator) {},
+  usage: config.prefix + "",
+  execute(msg, isModerator, client) {},
 };
