@@ -11,10 +11,10 @@ module.exports = {
 
 **Use the commands below to join your courses!**
 \`\`\`
-.help                    > See all courses/commands
-.join classname          > Join a course
-.join classname password > Join a protected course
-.role join leetcoder     > Get notified of daily leetcoding sessions
+.help                     > See all courses/commands
+.join coursename          > Join a course
+.join coursename password > Join a protected course
+.role join leetcoder      > Get notified of daily leetcoding sessions
 \`\`\`
 \`Having trouble? DM @wesam\`
 

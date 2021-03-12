@@ -4,7 +4,7 @@ module.exports = {
   description: "Leave a course",
   execute(msg) {
     if (msg.args.length != 2) {
-      msg.channel.send("Usage: ```.leave <classname>```");
+      msg.channel.send("Usage: ```.leave <coursename>```");
       return;
     }
     let roleName = config.currentQuarter + "-" + msg.args[1];

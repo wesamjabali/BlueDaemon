@@ -6,7 +6,7 @@ module.exports = {
   description: "Join a course",
   execute(msg, client) {
     if (msg.args.length < 2 || msg.args.length > 3) {
-      msg.channel.send("Usage: ```.join <classname> <password?>```");
+      msg.channel.send("Usage: ```.join <coursename> <password?>```");
       return;
     }
 

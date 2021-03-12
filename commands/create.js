@@ -6,7 +6,7 @@ module.exports = {
   description: "Create a course",
   execute(msg, client) {
     if (msg.args.length < 2 || msg.args.length > 3) {
-      msg.channel.send("Usage: ```.create <classname> <password>```");
+      msg.channel.send("Usage: ```.create <coursename> <password>```");
       return;
     }
     let category = client.channels.cache.find(

@@ -6,7 +6,7 @@ module.exports = {
   description: "Unlock a course",
   execute(msg) {
     if (msg.args.length != 2) {
-      msg.channel.send("Usage: ```.unlock <classname>```");
+      msg.channel.send("Usage: ```.unlock <coursename>```");
       return;
     }
 

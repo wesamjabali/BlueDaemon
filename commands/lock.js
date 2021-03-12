@@ -6,7 +6,7 @@ module.exports = {
   description: "Lock a course",
   execute(msg) {
     if (msg.args.length != 3) {
-      msg.channel.send("Usage: ```.lock <classname> <password>```");
+      msg.channel.send("Usage: ```.lock <coursename> <password>```");
       return;
     }
 

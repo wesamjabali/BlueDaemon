@@ -8,7 +8,7 @@ module.exports = {
     let roleName = config.currentQuarter + "-" + msg.args[1];
 
     if (msg.args.length != 2) {
-      msg.channel.send("Usage: ```.delete <classname>```");
+      msg.channel.send("Usage: ```.delete <coursename>```");
       return;
     }
 
