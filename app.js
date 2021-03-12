@@ -56,9 +56,7 @@ client.on("message", (msg) => {
   /* Catch DMs */
   if (msg.channel.type === "dm") {
     if (!msg.content.startsWith(config.prefix)) {
-      client.admin.send(
-        "I got a message! \n" + msg.author.toString() + ": " + msg.content
-      );
+      client.admin.send(`${msg.author.toString()}: ${msg.content}\n`);
       return;
     }
 
@@ -70,8 +68,11 @@ client.on("message", (msg) => {
       client.commands.get("help").execute(msg, false, client);
       return;
     } else {
+      client.admin.send(
+        `${msg.author.toString()}: ${config.prefix}${msg.content}\n`
+      );
       msg.channel.send(
-        "Only `.help` can be used here. Other commands need to be done in the server."
+        `Only ${config.prefix}\`help\` can be used here. Other commands need to be done in the server.`
       );
       return;
     }
