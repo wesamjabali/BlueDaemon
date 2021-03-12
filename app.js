@@ -32,7 +32,7 @@ client.on("guildMemberAdd", (mem) => {
 \`\`\`
 \`Having trouble? DM @wesam\`
 
-_Have a great quarter!_
+> _Have a great quarter!_
 `
     );
   });
@@ -69,21 +69,27 @@ client.on("message", (msg) => {
       selfRoles.sort();
 
       msg.channel.send(
-        `Commands:
+        `
+Commands:
 \`\`\`
-.join <course> <password?> - joins a course
-.leave <course> - leaves a course
-.role <join/leave> <role>  - joins/leaves a special role
-\`\`\`
-Available courses:
-\`\`\`` +
+.join <course> <password?> > Joins a course
+.leave <course>            > Leaves a course
+.role <join/leave> <role>  > Joins/leaves a role
+.source                    > Show my source code
+\`\`\`Available courses:\`\`\`` +
           classes +
-          ` \`\`\`
-Available roles:
-\`\`\` ` +
+          ` \`\`\`Available roles: \`\`\`` +
           selfRoles +
-          `\`\`\``
+          ` \`\`\`
+\`Need something else? DM @wesam\``
       );
+    }
+
+    if (msg.content === "source") {
+      msg.channel.send(`
+Author: Wesam Jabali
+Source: https://github.com/wesamjabali/BlueDaemon
+      `);
     }
 
     if (msg.content.startsWith("role ")) {
@@ -97,6 +103,7 @@ Available roles:
       const roleName = selfRolePrefix + "-" + command[2];
 
       if (command[1] === "create") {
+        // Check if mod
         if (msg.member.roles.cache.find((r) => r.name === modRoleName)) {
           msg.guild.roles
             .create({
@@ -105,11 +112,14 @@ Available roles:
               },
             })
             .then(() => {
-              msg.channel.send(roleName + " created!");
+              msg.channel.send(roleName + " created, " + msg.author.toString());
             });
         } else {
           msg.channel.send(
-            "Only people with " + modRoleName + " role can create roles."
+            "Only people with " +
+              modRoleName +
+              " role can create roles, " +
+              msg.author.toString()
           );
         }
         return;
@@ -117,23 +127,34 @@ Available roles:
       const role = msg.guild.roles.cache.find(
         (r) => r.name.toLowerCase() === roleName.toLowerCase()
       );
-      if (!role) {
-        msg.channel.send("That role doesn't exist.");
-        return;
-      }
 
       if (command[1] === "delete") {
+        // Check if mod
         if (msg.member.roles.cache.find((r) => r.name === modRoleName)) {
           const role = msg.guild.roles.cache.find(
             (r) => r.name.toLowerCase() === roleName.toLowerCase()
           );
+          if (!role) {
+            msg.channel.send(
+              "That role doesn't exist, " + msg.author.toString()
+            );
+            return;
+          }
           role.delete();
           msg.channel.send(roleName + " deleted!");
         } else {
           msg.channel.send(
-            "Only people with " + modRoleName + " role can create roles."
+            "Only people with " +
+              modRoleName +
+              " role can delete roles, " +
+              msg.author.toString()
           );
+          return;
         }
+      }
+      if (!role) {
+        msg.channel.send("That role doesn't exist.");
+        return;
       }
       if (command[1] === "join") {
         if (
@@ -197,7 +218,8 @@ Available roles:
         } else if (role && protected) {
           verifyPassword(roleName, command[2]).then((verified) => {
             if (!verified) {
-              msg.channel.send("Wrong password!");
+              msg.delete();
+              msg.channel.send("Wrong password, " + msg.author.toString());
             } else {
               let role = msg.guild.roles.cache.find(
                 (r) => r.name.toUpperCase() === roleName.toUpperCase()
@@ -228,7 +250,9 @@ Available roles:
             "!"
         );
       } else {
-        msg.channel.send("Role " + roleName + " not found!");
+        msg.channel.send(
+          "Role " + roleName + " not found," + msg.author.toString()
+        );
       }
     }
 
@@ -290,45 +314,52 @@ Available roles:
               });
 
               protectRole(command[1], command[2]);
-              msg.channel.send(command[1] + " created with password!");
+              msg.channel.send(
+                command[1] + " created with password, " + msg.author.toString()
+              );
             } else {
-              msg.channel.send(command[1] + " created!");
+              msg.channel.send(
+                command[1] + " created, " + msg.author.toString()
+              );
             }
           })
           .catch(() => {
-            msg.channel.send("Error creating role.");
+            msg.channel.send("Error creating role, " + msg.author.toString());
           });
       }
-    }
 
-    // Delete role/channel
-    if (msg.content.startsWith("delete ")) {
-      let command = msg.content.split(" ");
-      let roleName = currentQuarter + "-" + command[1];
+      // Delete role/channel
+      if (msg.content.startsWith("delete ")) {
+        let command = msg.content.split(" ");
+        let roleName = currentQuarter + "-" + command[1];
 
-      if (command.length != 2) {
-        msg.channel.send("Usage: ```.delete <classname>```");
-        return;
+        if (command.length != 2) {
+          msg.channel.send("Usage: ```.delete <classname>```");
+          return;
+        }
+
+        const foundRole = msg.guild.roles.cache.find(
+          (r) => r.name.toUpperCase() === roleName.toUpperCase()
+        );
+        if (foundRole) {
+          foundRole.delete();
+        }
+
+        const foundChannel = msg.guild.channels.cache.find(
+          (c) => c.name.toUpperCase() === command[1].toUpperCase()
+        );
+        if (foundChannel) {
+          foundChannel.delete();
+          deleteRole(roleName);
+          msg.channel.send(
+            command[1] + " deleted successfully, " + msg.author.toString()
+          );
+          return;
+        }
+
+        msg.channel.send(command[1] + " not found, " + msg.author.toString());
       }
-
-      const foundRole = msg.guild.roles.cache.find(
-        (r) => r.name.toUpperCase() === roleName.toUpperCase()
-      );
-      if (foundRole) {
-        foundRole.delete();
-      }
-
-      const foundChannel = msg.guild.channels.cache.find(
-        (c) => c.name.toUpperCase() === command[1].toUpperCase()
-      );
-      if (foundChannel) {
-        foundChannel.delete();
-        deleteRole(roleName);
-        msg.channel.send(command[1] + " deleted successfully!");
-        return;
-      }
-
-      msg.channel.send(command[1] + " not found!");
+      // End mod only commands
     }
   }
 });
