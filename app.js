@@ -1,13 +1,17 @@
 require("dotenv").config();
 const fs = require("fs");
-const Discord = require("discord.js");
 const knex = require("./knex");
+const config = require("./config.json");
+
+
+const Discord = require("discord.js");
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
-const config = require("./config.json");
+
+/* Listeners */
 const guildMemberAdd = require("./listeners/guildMemberAdd");
 
-// Attach commands to client
+/* Attach commands to client */
 const commandFiles = fs
   .readdirSync("./commands")
   .filter((file) => file.endsWith(".js"));
@@ -17,7 +21,7 @@ for (const file of commandFiles) {
   client.commands.set(command.name, command);
 }
 
-// Attach admin user to client
+/* Attach admin user to client */
 client.users
   .fetch(config.adminID)
   .then((u) => {
@@ -29,8 +33,11 @@ client.users
     );
   });
 
+
+/* Uncomment for debugging */
 // client.on("debug", console.log).on("warn", console.log);
-client.on("ready", () => {
+
+  client.on("ready", () => {
   knex.migrate.latest();
   client.user.setActivity(config.currentQuarter + " | .help");
   console.log(`Logged in as ${client.user.tag}!`);
