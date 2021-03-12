@@ -81,12 +81,12 @@ client.on("message", (msg) => {
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
     msg.content = msg.content.substring(config.prefix.length).toLowerCase(); // Remove prefix
     msg.args = msg.content.split(" "); // Split into an arg array
-
+    
+    /* If command exists, do it. */
     const command = client.commands.get(msg.args[0]);
-    if(command) {
-      command.execute(msg, isModerator, client)
+    if (command) {
+      command.execute(msg, isModerator, client);
     }
-
   }
 });
 client.login(process.env.CLIENT_TOKEN);
