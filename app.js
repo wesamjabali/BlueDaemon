@@ -43,7 +43,7 @@ client.on("ready", () => {
 
 /* New User Listener*/
 client.on("guildMemberAdd", (member) => {
-  guildMemberAdd.execute(member);
+  guildMemberAdd.execute(member, client);
 });
 
 /* Message listener */

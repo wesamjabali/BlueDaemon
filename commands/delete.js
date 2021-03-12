@@ -11,10 +11,12 @@ module.exports = {
       return;
     }
 
-    let roleName = config.currentQuarter + "-" + msg.args[1];
+    let roleName = `${config.currentQuarter}-${msg.args[1]}`;
 
     if (msg.args.length != 2) {
-      msg.channel.send(`Usage: \`\`\`${this.usage}\`\`\``);
+      msg.channel.send(
+        `${config.prefix}${this.name}:\`\`\`${this.description}\`\`\`\nUsage:\`\`\`${this.usage}\`\`\``
+      );
       return;
     }
 
@@ -30,7 +32,7 @@ module.exports = {
           foundRole.delete();
           foundChannel.delete();
           msg.channel.send(
-            msg.args[1] + " deleted successfully, " + msg.author.toString()
+            `${msg.args[1]} deleted successfully, ${msg.author.toString()}`
           );
         })
         .catch(() => {
@@ -39,6 +41,6 @@ module.exports = {
       return;
     }
 
-    msg.channel.send(msg.args[1] + " not found, " + msg.author.toString());
+    msg.channel.send(`${msg.args[1]} not found, ${msg.author.toString()}`);
   },
 };

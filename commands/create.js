@@ -12,18 +12,20 @@ module.exports = {
     }
 
     if (msg.args.length < 2 || msg.args.length > 3) {
-      msg.channel.send(`Usage: \`\`\`${this.usage}\`\`\``);
+      msg.channel.send(
+        `${config.prefix}${this.name}:\`\`\`${this.description}\`\`\`\nUsage:\`\`\`${this.usage}\`\`\``
+      );
       return;
     }
     let category = client.channels.cache.find(
       (c) => c.name == config.currentQuarter && c.type == "category"
     );
-    const roleName = config.currentQuarter + "-" + msg.args[1];
+    const roleName = `${config.currentQuarter}-${msg.args[1]}`;
     const modRole = msg.guild.roles.cache.find(
       (r) => r.name === config.modRoleName
     );
     if (msg.guild.roles.cache.find((r) => r.name === roleName)) {
-      msg.channel.send("That course already exists, " + msg.author.toString());
+      msg.channel.send(`That course already exists, ${msg.author.toString()}`);
       return;
     }
     msg.guild.roles
@@ -55,28 +57,28 @@ module.exports = {
                 Consider whether this is necessary -- the passwords are hashed in the DB and
                 this may defeat the purpose and you can always delete/recreate if a password was forgotten. */
           msg.author.send(
-            "Password created: " + "```" + roleName + ": " + msg.args[2] + "```"
+            `Password created:\`\`\`${roleName}: ${msg.args[2]} \`\`\``
           );
           protectRole(msg.args[1], msg.args[2])
             .then(() => {
               msg.channel.send(
-                msg.args[1] + " created with password, " + msg.author.toString()
+                `${msg.args[1]} created with password, ${msg.author.toString()}`
               );
             })
             .catch((err) => {
               console.log(err);
               msg.channel.send(
-                "Error protecting course, " + msg.author.toString()
+                `Error protecting course, ${msg.author.toString()}`
               );
             });
         } else {
-          msg.channel.send(msg.args[1] + " created, " + msg.author.toString());
+          msg.channel.send(`${msg.args[1]} created, ${msg.author.toString()}`);
         }
       })
       .catch(() => {
-        msg.channel.send("Error creating role, " + msg.author.toString());
+        msg.channel.send(`Error creating role, ${msg.author.toString()}`);
         client.admin.send(
-          "There was an error creating role for " + msg.author.toString()
+          `There was an error creating role for ${msg.author.toString()}`
         );
       });
   },

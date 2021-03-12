@@ -9,7 +9,7 @@ module.exports =
   async function protectRole(roleName, password) {
     let bcryptPass = bcrypt.hashSync(password, salt);
     await knex("cdm_role_password").insert({
-      role_name: config.currentQuarter + "-" + roleName,
+      role_name: `${config.currentQuarter}-${roleName}`,
       password: bcryptPass,
     });
   };

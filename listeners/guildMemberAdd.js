@@ -1,25 +1,27 @@
 const config = require("../config.json");
+const Discord = require("discord.js");
 module.exports = {
-  name: "",
-  description: "",
-  execute(member) {
-    member.send(
-      `
-> **Welcome to CDM Discussions!**
-> __The central hub for all CDM classes and discussions__
-> _I'm **BlueDaemon**, your course-management assistant!_
-
-**Use the commands below to join your courses!**
-\`\`\`
-.help                     > See all courses/commands
-.join coursename          > Join a course
-.join coursename password > Join a protected course
-.role join leetcoder      > Get notified of daily leetcoding sessions
-\`\`\`
-\`Having trouble? DM @wesam\`
-
-Have a great quarter!
-`
-    );
+  name: "guildMemberAdd",
+  execute(member, client) {
+    let allCommands = [];
+    client.commands.forEach((command) => {
+      if (!command.privileged) {
+        allCommands.push({
+          name: config.prefix + command.name,
+          value: `\`\`\`${command.description}\n${command.usage}\`\`\``,
+        });
+      }
+    });
+    const logo = new Discord.MessageAttachment("./logo.png", "logo.png");
+    const welcomeEmbed = new Discord.MessageEmbed()
+      .setTitle("Welcome to CDM Discussions!")
+      .setDescription(`The central hub for all CDM classes and discussions`)
+      .setAuthor("BlueDaemon")
+      .addFields(allCommands)
+      .setThumbnail("attachment://logo.png")
+      .attachFiles(logo)
+      .setTimestamp()
+      .setFooter("Use me in #bot-usage!");
+    member.send(welcomeEmbed);
   },
 };

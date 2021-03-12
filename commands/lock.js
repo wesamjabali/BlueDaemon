@@ -12,12 +12,14 @@ module.exports = {
     }
 
     if (msg.args.length != 3) {
-      msg.channel.send(`Usage: \`\`\`${this.usage}\`\`\``);
+      msg.channel.send(
+        `${config.prefix}${this.name}:\`\`\`${this.description}\`\`\`\nUsage:\`\`\`${this.usage}\`\`\``
+      );
       return;
     }
 
     protectRole(msg.args[1], msg.args[2]);
-    msg.channel.send("Locked " + msg.args[1] + ", " + msg.author.toString());
+    msg.channel.send(`Locked ${msg.args[1]}, ${msg.author.toString()}`);
     msg.delete();
   },
 };
