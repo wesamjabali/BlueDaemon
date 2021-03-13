@@ -39,6 +39,10 @@ module.exports = {
     const modRole = await msg.guild.roles.cache.find(
       (r) => r.name === config.modRoleName
     );
+    const facultyRole = await msg.guild.roles.cache.find(
+      (r) => r.name === config.facultyRoleName
+    );
+
     if (msg.guild.roles.cache.find((r) => r.name === roleName)) {
       msg.channel.send(`That course already exists, ${msg.author}`);
       return;
@@ -59,10 +63,17 @@ module.exports = {
               deny: ["VIEW_CHANNEL"],
             },
             {
-              id: r.id,
+              id: r.id, // Course role
               allow: ["VIEW_CHANNEL"],
             },
-            { id: modRole.id, allow: ["VIEW_CHANNEL"] },
+            {
+              id: modRole.id,
+              allow: ["VIEW_CHANNEL"],
+            },
+            {
+              id: facultyRole.id,
+              allow: ["MANAGE_MESSAGES", "MENTION_EVERYONE"],
+            },
           ],
         });
         if (msg.args.length == 3) {
