@@ -1,14 +1,17 @@
 const config = require("../config.json");
-
+const Discord = require("discord.js");
 module.exports = {
   name: "source",
   description: "Display source",
   privileged: false,
   usage: config.prefix + "source",
   execute(msg, isModerator, client) {
-    msg.channel.send(`
-Author: Wesam Jabali
-Source: https://github.com/wesamjabali/BlueDaemon
-`);
+    const sourceEmbed = new Discord.MessageEmbed()
+      .setTitle("View my source on Github")
+      .setDescription("Author: Wesam Jabali")
+      .setURL("https://github.com/wesamjabali/BlueDaemon")
+      .setImage(config.banner);
+
+    msg.channel.send(sourceEmbed);
   },
 };

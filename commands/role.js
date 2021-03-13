@@ -18,9 +18,7 @@ module.exports = {
       // Check if mod
       if (isModerator) {
         if (msg.guild.roles.cache.find((r) => r.name === roleName)) {
-          msg.channel.send(
-            `That role already exists, ${msg.author.toString()}`
-          );
+          msg.channel.send(`That role already exists, ${msg.author}`);
           return;
         }
         msg.guild.roles
@@ -30,12 +28,12 @@ module.exports = {
             },
           })
           .then(() => {
-            msg.channel.send(`${roleName} created, ${msg.author.toString()}`);
+            msg.channel.send(`${roleName} created, ${msg.author}`);
           })
           .catch(() => {
             msg.channel.send("Error creating role.");
             client.admin.send(
-              `There was an error creating a role for ${msg.author.toString()}`
+              `There was an error creating a role for ${msg.author}`
             );
           });
       }
@@ -52,17 +50,17 @@ module.exports = {
           (r) => r.name.toLowerCase() === roleName.toLowerCase()
         );
         if (!role) {
-          msg.channel.send(`That role doesn't exist, ${msg.author.toString()}`);
+          msg.channel.send(`That role doesn't exist, ${msg.author}`);
           return;
         }
         role.delete();
-        msg.channel.send(`${roleName} deleted, ${msg.author.toString()}`);
+        msg.channel.send(`${roleName} deleted, ${msg.author}`);
       }
     }
 
     // Don't join or leave if role doesn't exist
     if (!role) {
-      msg.channel.send(`That role doesn't exist, ${msg.author.toString()}`);
+      msg.channel.send(`That role doesn't exist, ${msg.author}`);
       return;
     }
 
@@ -72,19 +70,17 @@ module.exports = {
           (r) => r.name.toLowerCase() === roleName.toLowerCase()
         )
       ) {
-        msg.channel.send(
-          `You are already in that role, ${msg.author.toString()}`
-        );
+        msg.channel.send(`You are already in that role, ${msg.author}`);
         return;
       }
       msg.member.roles.add(role);
-      msg.channel.send(`Role added, ${msg.author.toString()}`);
+      msg.channel.send(`Role added, ${msg.author}`);
     } else if (msg.args[1] === "leave") {
       const role = msg.member.roles.cache.find(
         (r) => r.name.toLowerCase() === roleName.toLowerCase()
       );
       msg.member.roles.remove(role);
-      msg.channel.send(`Removed from ${roleName} , ${msg.author.toString()}`);
+      msg.channel.send(`Removed from ${roleName} , ${msg.author}`);
       return;
     }
   },

@@ -12,13 +12,14 @@ module.exports = {
         });
       }
     });
-    const logo = new Discord.MessageAttachment("./logo.png", "logo.png");
+    const logo = new Discord.MessageAttachment("./assets/logo.png", "logo.png");
     const welcomeEmbed = new Discord.MessageEmbed()
       .setTitle("Welcome to CDM Discussions!")
       .setDescription(`The central hub for all CDM classes and discussions`)
       .setAuthor("BlueDaemon")
       .addFields(allCommands)
       .setThumbnail("attachment://logo.png")
+      .setImage(config.banner)
       .attachFiles(logo)
       .setTimestamp()
       .setFooter("Use me in #bot-usage!");

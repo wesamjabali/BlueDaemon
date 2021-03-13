@@ -49,7 +49,10 @@ Usage: \`\`\`${command.usage}\`\`\``);
           }
         });
       }
-      const logo = new Discord.MessageAttachment("./logo.png", "logo.png");
+      const logo = new Discord.MessageAttachment(
+        "./assets/logo.png",
+        "logo.png"
+      );
       const helpEmbed = new Discord.MessageEmbed()
         .setTitle("Help")
         .setDescription(`\`${config.prefix}help command\` to see usage.`)
@@ -57,10 +60,11 @@ Usage: \`\`\`${command.usage}\`\`\``);
         .addFields(allCommands)
         .setThumbnail("attachment://logo.png")
         .attachFiles(logo)
+        .setImage(config.banner)
         .setTimestamp()
         .setFooter("Need something else? Ask wesam");
       if (msg.channel.type !== "dm") {
-        msg.channel.send(`Response sent to your DM, ${msg.author.toString()}`);
+        msg.channel.send(`Response sent to your DM, ${msg.author}`);
         // .then((sentMessage) => setTimeout(() => sentMessage.delete(), 3000))
         // Delete message after 4 seconds
         // .catch(console.error);

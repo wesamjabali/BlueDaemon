@@ -16,9 +16,7 @@ module.exports = {
 
     let roleName = `${config.currentQuarter}-${msg.args[1]}`;
     if (msg.member.roles.cache.find((r) => r.name === roleName)) {
-      msg.channel.send(
-        `You are already in that course, ${msg.author.toString()}`
-      );
+      msg.channel.send(`You are already in that course, ${msg.author}`);
       return;
     }
 
@@ -26,9 +24,7 @@ module.exports = {
       .then((protected) => {
         if (protected && msg.args.length == 2) {
           msg.channel.send(
-            `Ask your professor to join ${
-              msg.args[1]
-            }, ${msg.author.toString()}`
+            `Ask your professor to join ${msg.args[1]}, ${msg.author}`
           );
           return;
         }
@@ -36,29 +32,29 @@ module.exports = {
           (r) => r.name.toUpperCase() === roleName.toUpperCase()
         );
         if (!role) {
-          msg.channel.send("That role doesn't exist.");
+          msg.channel.send(`That role doesn't exist, ${msg.author}`);
         } else if (role && !protected) {
           msg.member.roles.add(role);
-          msg.channel.send(`Course added, ${msg.author.toString()}`);
+          msg.channel.send(`Course added, ${msg.author}`);
         } else if (role && protected) {
           verifyPassword(roleName, msg.args[2])
             .then((verified) => {
               if (!verified) {
                 msg.delete();
-                msg.channel.send(`Wrong password, ${msg.author.toString()}`);
+                msg.channel.send(`Wrong password, ${msg.author}`);
               } else {
                 let role = msg.guild.roles.cache.find(
                   (r) => r.name.toUpperCase() === roleName.toUpperCase()
                 );
                 msg.member.roles.add(role);
                 msg.delete();
-                msg.channel.send(`Course added, ${msg.author.toString()}`);
+                msg.channel.send(`Course added, ${msg.author}`);
               }
             })
             .catch(() => {
               msg.channel.send("Error verifying password.");
               client.admin.send(
-                `There was an error verifying the password for ${msg.author.toString()}`
+                `There was an error verifying the password for ${msg.author}`
               );
             });
         }
@@ -66,7 +62,7 @@ module.exports = {
       .catch(() => {
         msg.channel.send("Error checking password lock.");
         client.admin.send(
-          `There was an error checking password lock for ${msg.author.toString()}`
+          `There was an error checking password lock for ${msg.author}`
         );
       });
   },

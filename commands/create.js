@@ -25,7 +25,7 @@ module.exports = {
       (r) => r.name === config.modRoleName
     );
     if (msg.guild.roles.cache.find((r) => r.name === roleName)) {
-      msg.channel.send(`That course already exists, ${msg.author.toString()}`);
+      msg.channel.send(`That course already exists, ${msg.author}`);
       return;
     }
     msg.guild.roles
@@ -62,24 +62,20 @@ module.exports = {
           protectRole(msg.args[1], msg.args[2])
             .then(() => {
               msg.channel.send(
-                `${msg.args[1]} created with password, ${msg.author.toString()}`
+                `${msg.args[1]} created with password, ${msg.author}`
               );
             })
             .catch((err) => {
               console.log(err);
-              msg.channel.send(
-                `Error protecting course, ${msg.author.toString()}`
-              );
+              msg.channel.send(`Error protecting course, ${msg.author}`);
             });
         } else {
-          msg.channel.send(`${msg.args[1]} created, ${msg.author.toString()}`);
+          msg.channel.send(`${msg.args[1]} created, ${msg.author}`);
         }
       })
       .catch(() => {
-        msg.channel.send(`Error creating role, ${msg.author.toString()}`);
-        client.admin.send(
-          `There was an error creating role for ${msg.author.toString()}`
-        );
+        msg.channel.send(`Error creating role, ${msg.author}`);
+        client.admin.send(`There was an error creating role for ${msg.author}`);
       });
   },
 };

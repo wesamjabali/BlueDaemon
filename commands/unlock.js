@@ -19,7 +19,7 @@ module.exports = {
     }
 
     deleteRole(`${config.currentQuarter}-${msg.args[1]}`).then(() => {
-      msg.channel.send(`${msg.args[1]} unlocked, ${msg.author.toString()}`);
+      msg.channel.send(`${msg.args[1]} unlocked, ${msg.author}`);
     });
   },
 };

@@ -18,10 +18,10 @@ module.exports = {
     if (role) {
       msg.member.roles.remove(role);
       msg.channel.send(
-        `Removed from ${msg.args[1].toUpperCase()}, ${msg.author.toString()}!`
+        `Removed from ${msg.args[1].toUpperCase()}, ${msg.author}!`
       );
     } else {
-      msg.channel.send(`Role ${roleName} not found, ${msg.author.toString()}`);
+      msg.channel.send(`Role ${roleName} not found, ${msg.author}`);
     }
   },
 };

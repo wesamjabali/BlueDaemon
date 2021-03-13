@@ -56,7 +56,7 @@ client.on("message", (msg) => {
   /* Catch DMs */
   if (msg.channel.type === "dm") {
     if (!msg.content.startsWith(config.prefix)) {
-      client.admin.send(`${msg.author.toString()}: ${msg.content}\n`);
+      client.admin.send(`${msg.author}: ${msg.content}\n`);
       return;
     }
 
@@ -68,9 +68,7 @@ client.on("message", (msg) => {
       client.commands.get("help").execute(msg, false, client);
       return;
     } else {
-      client.admin.send(
-        `${msg.author.toString()}: ${config.prefix}${msg.content}\n`
-      );
+      client.admin.send(`${msg.author}: ${config.prefix}${msg.content}\n`);
       msg.channel.send(
         `Only ${config.prefix}\`help\` can be used here. Other commands need to be done in the server.`
       );
@@ -100,6 +98,10 @@ client.on("message", (msg) => {
     const command = client.commands.get(msg.args[0]);
     if (command) {
       command.execute(msg, isModerator, client);
+    } else {
+      msg.channel
+        .send(`Bad command! Do \`.help\` for commands, ${msg.author}`)
+        .then((sentMessage) => setTimeout(() => sentMessage.delete(), 3000));
     }
   }
 });

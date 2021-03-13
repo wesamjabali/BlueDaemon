@@ -32,7 +32,7 @@ module.exports = {
           foundRole.delete();
           foundChannel.delete();
           msg.channel.send(
-            `${msg.args[1]} deleted successfully, ${msg.author.toString()}`
+            `${msg.args[1]} deleted successfully, ${msg.author}`
           );
         })
         .catch(() => {
@@ -41,6 +41,6 @@ module.exports = {
       return;
     }
 
-    msg.channel.send(`${msg.args[1]} not found, ${msg.author.toString()}`);
+    msg.channel.send(`${msg.args[1]} not found, ${msg.author}`);
   },
 };

@@ -10,4 +10,4 @@ Use `.help` in CDM Discussions for details.
 \
 \
 \
-![Logo](logo.png)
+![Banner](./banner.jpg)
