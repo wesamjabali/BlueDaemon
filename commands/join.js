@@ -7,6 +7,10 @@ module.exports = {
   privileged: false,
   usage: config.prefix + "join <coursename> <password?>",
   execute(msg, isModerator, client) {
+    if (msg.args.length == 3) {
+      msg.delete();
+    }
+
     if (msg.args.length < 2 || msg.args.length > 3) {
       msg.channel.send(
         `${config.prefix}${this.name}:\`\`\`${this.description}\`\`\`\nUsage:\`\`\`${this.usage}\`\`\``
@@ -40,30 +44,19 @@ module.exports = {
           verifyPassword(roleName, msg.args[2], msg.guild.id)
             .then((verified) => {
               if (!verified) {
-                msg.delete();
                 msg.channel.send(`Wrong password, ${msg.author}`);
               } else {
                 let role = msg.guild.roles.cache.find(
                   (r) => r.name.toUpperCase() === roleName.toUpperCase()
                 );
                 msg.member.roles.add(role);
-                msg.delete();
                 msg.channel.send(`Course added, ${msg.author}`);
               }
             })
-            .catch(() => {
-              msg.channel.send("Error verifying password.");
-              client.admin.send(
-                `There was an error verifying the password for ${msg.author}`
-              );
-            });
         }
       })
       .catch(() => {
         msg.channel.send("Error checking password lock.");
-        client.admin.send(
-          `There was an error checking password lock for ${msg.author}`
-        );
       });
   },
 };
