@@ -24,7 +24,7 @@ module.exports = {
       (c) => c.name.toUpperCase() === msg.args[1].toUpperCase()
     );
     if (foundRole && foundChannel) {
-      deleteRole(roleName)
+      deleteRole(roleName, msg.guild.id)
         .then(() => {
           foundRole.delete();
           foundChannel.delete();

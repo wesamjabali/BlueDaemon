@@ -14,8 +14,10 @@ module.exports = {
       return;
     }
 
-    deleteRole(`${config.currentQuarter}-${msg.args[1]}`).then(() => {
-      msg.channel.send(`${msg.args[1]} unlocked, ${msg.author}`);
-    });
+    deleteRole(`${config.currentQuarter}-${msg.args[1]}`, msg.guild.id).then(
+      () => {
+        msg.channel.send(`${msg.args[1]} unlocked, ${msg.author}`);
+      }
+    );
   },
 };

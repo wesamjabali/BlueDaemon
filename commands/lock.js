@@ -16,7 +16,7 @@ module.exports = {
       return;
     }
 
-    protectRole(msg.args[1], msg.args[2]);
+    protectRole(msg.args[1], msg.guild.id, msg.args[2]);
     msg.channel.send(`Locked ${msg.args[1]}, ${msg.author}`);
     msg.delete();
   },

@@ -20,7 +20,7 @@ module.exports = {
       return;
     }
 
-    requiresPassword(roleName)
+    requiresPassword(roleName, msg.guild.id)
       .then((protected) => {
         if (protected && msg.args.length == 2) {
           msg.channel.send(
@@ -37,7 +37,7 @@ module.exports = {
           msg.member.roles.add(role);
           msg.channel.send(`Course added, ${msg.author}`);
         } else if (role && protected) {
-          verifyPassword(roleName, msg.args[2])
+          verifyPassword(roleName, msg.args[2], msg.guild.id)
             .then((verified) => {
               if (!verified) {
                 msg.delete();

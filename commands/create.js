@@ -72,7 +72,7 @@ module.exports = {
           msg.author.send(
             `Password created:\`\`\`${roleName}: ${msg.args[2]} \`\`\``
           );
-          protectRole(msg.args[1], msg.args[2])
+          protectRole(msg.args[1], msg.guild.id, msg.args[2])
             .then(() => {
               msg.channel.send(
                 `${msg.args[1]} created with password, ${msg.author}`

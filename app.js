@@ -34,7 +34,7 @@ client.users
 
 /* Uncomment for debugging */
 // client.on("debug", console.log).on("warn", console.log);
-
+knex.migrate.rollback();
 client.on("ready", () => {
   knex.migrate.latest();
   client.user.setActivity(config.currentQuarter + " | .help");
