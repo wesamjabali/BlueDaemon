@@ -7,10 +7,6 @@ module.exports = {
   privileged: true,
   usage: config.prefix + "unlock <coursename>",
   execute(msg, isModerator, client) {
-    if (!isModerator) {
-      return;
-    }
-
     if (msg.args.length != 2) {
       msg.channel.send(
         `${config.prefix}${this.name}:\`\`\`${this.description}\`\`\`\nUsage:\`\`\`${this.usage}\`\`\``

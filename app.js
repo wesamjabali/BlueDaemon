@@ -97,6 +97,9 @@ client.on("message", (msg) => {
     /* If command exists, do it. */
     const command = client.commands.get(msg.args[0]);
     if (command) {
+      if (command.privileged && !isModerator) {
+        return;
+      }
       command.execute(msg, isModerator, client);
     } else {
       msg.channel

@@ -7,9 +7,6 @@ module.exports = {
   privileged: true,
   usage: config.prefix + "delete <coursename>",
   execute(msg, isModerator, client) {
-    if (!isModerator) {
-      return;
-    }
 
     let roleName = `${config.currentQuarter}-${msg.args[1]}`;
 

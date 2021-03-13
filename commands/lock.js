@@ -7,9 +7,7 @@ module.exports = {
   privileged: true,
   usage: config.prefix + "lock <coursename> <password>",
   execute(msg, isModerator, client) {
-    if (!isModerator) {
-      return;
-    }
+
 
     if (msg.args.length != 3) {
       msg.channel.send(
