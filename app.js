@@ -21,21 +21,12 @@ for (const file of commandFiles) {
 }
 
 /* Attach admin user to client */
-client.users
-  .fetch(config.adminID)
-  .then((u) => {
-    client.admin = u;
-  })
-  .catch((err) => {
-    console.log(
-      "Error getting Admin user. This may cause instability.\n" + err
-    );
-  });
 
 /* Uncomment for debugging */
 // client.on("debug", console.log).on("warn", console.log);
 
-client.on("ready", () => {
+client.on("ready", async () => {
+  client.admin = await client.users.fetch(config.adminID);
   knex.migrate.latest();
   client.user.setActivity(config.currentQuarter + " | .help");
   console.log(`Logged in as ${client.user.tag}!`);
@@ -47,7 +38,7 @@ client.on("guildMemberAdd", (member) => {
 });
 
 /* Message listener */
-client.on("message", (msg) => {
+client.on("message", async (msg) => {
   /* Don't listen to bots */
   if (msg.author.bot) {
     return;
@@ -63,7 +54,7 @@ client.on("message", (msg) => {
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
     msg.content = msg.content.substring(config.prefix.length); // Remove prefix
     msg.args = msg.content.split(" "); // Split into an arg array
-    msg.args[0].toLowerCase()
+    msg.args[0].toLowerCase();
 
     if (msg.args[0] == "help") {
       client.commands.get("help").execute(msg, false, client);
@@ -94,7 +85,7 @@ client.on("message", (msg) => {
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
     msg.content = msg.content.substring(config.prefix.length); // Remove prefix
     msg.args = msg.content.split(" "); // Split into an arg array
-    msg.args[0].toLowerCase()
+    msg.args[0].toLowerCase();
 
     /* If command exists, do it. */
     const command = client.commands.get(msg.args[0]);
@@ -104,9 +95,10 @@ client.on("message", (msg) => {
       }
       command.execute(msg, isModerator, client);
     } else {
-      msg.channel
-        .send(`Bad command! Do \`.help\` for commands, ${msg.author}`)
-        .then((sentMessage) => setTimeout(() => sentMessage.delete(), 3000));
+      const sentMessage = await msg.channel.send(
+        `Bad command! Do \`.help\` for commands, ${msg.author}`
+      );
+      setTimeout(() => sentMessage.delete(), 3000);
     }
   }
 });

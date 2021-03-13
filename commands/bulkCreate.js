@@ -4,7 +4,7 @@ module.exports = {
   description: "Bulk create unprotected courses, separated by a space.",
   privileged: true,
   usage: config.prefix + "bulkcreate <courses>+",
-  execute(msg, isModerator, client) {
+  execute: async (msg, isModerator, client) => {
     if (msg.args.length < 2) {
       msg.channel.send(
         `${config.prefix}${this.name}:\`\`\`${this.description}\`\`\`\nUsage:\`\`\`${this.usage}\`\`\``
@@ -36,41 +36,40 @@ module.exports = {
     );
 
     var createdCourses = [];
-    courseNames.forEach((courseName) => {
-      let existingRole = msg.guild.roles.cache.find(
+    await courseNames.forEach(async (courseName) => {
+      const existingRole = await msg.guild.roles.cache.find(
         (r) => r.name === `${config.currentQuarter}-${courseName}`
       );
       if (existingRole) {
         msg.channel.send(`Duplicate role: \`${existingRole.name}\``);
         return;
+      } else {
+        createdCourses.push(courseName);
       }
-      createdCourses.push(courseName);
-      msg.guild.roles
-        .create({
-          data: {
-            name: `${config.currentQuarter}-${courseName}`,
-          },
-        })
-        .then((r) => {
-          msg.guild.channels.create(courseName, {
-            type: "text",
-            parent: category,
-            permissionOverwrites: [
-              {
-                id: msg.guild.id,
-                deny: ["VIEW_CHANNEL"],
-              },
-              {
-                id: r.id,
-                allow: ["VIEW_CHANNEL"],
-              },
-              { id: modRole.id, allow: ["VIEW_CHANNEL"] },
-            ],
-          });
-        });
     });
-    msg.channel.send(
-      `Courses created: \`\`\`${createdCourses.join("\n")} \`\`\``
-    );
+
+    await createdCourses.forEach(async (courseName) => {
+      const newRole = await msg.guild.roles.create({
+        data: {
+          name: `${config.currentQuarter}-${courseName}`,
+        },
+      });
+      msg.guild.channels.create(courseName, {
+        type: "text",
+        parent: category,
+        permissionOverwrites: [
+          {
+            id: msg.guild.id,
+            deny: ["VIEW_CHANNEL"],
+          },
+          {
+            id: newRole.id,
+            allow: ["VIEW_CHANNEL"],
+          },
+          { id: modRole.id, allow: ["VIEW_CHANNEL"] },
+        ],
+      });
+    });
+    msg.channel.send(`Courses created: \`\`\`${createdCourses} \`\`\``);
   },
 };
