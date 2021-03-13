@@ -93,13 +93,16 @@ client.on("message", async (msg) => {
     /* If command exists, do it. */
     const command = client.commands.get(msg.args[0]);
     if (command) {
-      if (
-        (command.privileged && !isModerator) ||
-        (command.facultyOnly && !isFaculty)
-      ) {
-        return;
+      let allowed = false;
+      if (command.privileged || command.facultyOnly) {
+        if (isModerator) allowed = true;
+        if (isFaculty && command.facultyOnly) allowed = true;
+      } else {
+        allowed = true;
       }
-      command.execute(msg, isModerator, client);
+      if (allowed) {
+        command.execute(msg, isModerator, client);
+      }
     } else {
       const sentMessage = await msg.channel.send(
         `Bad command! Do \`.help\` for commands, ${msg.author}`

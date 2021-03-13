@@ -22,14 +22,8 @@ module.exports = {
     const newChannel = await msg.guild.channels.create(msg.args[1], {
       type: "text",
       parent: category,
-      permissionOverwrites: [
-        { id: modRole.id, allow: ["VIEW_CHANNEL"] },
-        {
-          id: facultyRole.id,
-          allow: ["VIEW_CHANNEL", "MANAGE_CHANNELS", "MANAGE_MESSAGES"],
-        },
-      ],
     });
+    await newChannel.lockPermissions();
     msg.channel.send(
       `${newChannel} created in \`${category.name}\`, ${msg.author}`
     );

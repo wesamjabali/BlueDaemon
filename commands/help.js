@@ -55,7 +55,7 @@ Usage: \`\`\`${command.usage}\`\`\``);
           }
         });
       }
-      if (isFaculty) {
+      if (isFaculty || isModerator) {
         allCommands.push({
           name: "\u200B",
           value: "**__Faculty commands:__**",
