@@ -50,6 +50,7 @@ client.on("message", async (msg) => {
       client.admin.send(`${msg.author}: ${msg.content}\n`);
       return;
     }
+    
 
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
     msg.content = msg.content.substring(config.prefix.length); // Remove prefix
