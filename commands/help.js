@@ -30,7 +30,7 @@ Usage: \`\`\`${command.usage}\`\`\``);
         if (!command.privileged) {
           allCommands.push({
             name: `**${config.prefix}${command.name}:**`,
-            value: `\`${command.description}\`\n\`${command.usage}\``,
+            value: `\`\`\`${command.description}\`\`\`\`\`\`${command.usage}\`\`\`\0`,
           });
         }
       });
@@ -38,28 +38,23 @@ Usage: \`\`\`${command.usage}\`\`\``);
         allCommands.push({ name: "\u200B", value: "**__Mod commands:__**" });
         allCommands.push({
           name: `**${config.prefix}role:**`,
-          value: `\`Create or delete a role\`\n\`${config.prefix}role <create/delete> <role>\``,
+          value: `\`\`\`Create or delete a role\`\`\`\`\`\`${config.prefix}role <create/delete> <role>\`\`\`\0`,
         });
         client.commands.forEach((command) => {
           if (command.privileged) {
             allCommands.push({
               name: `**${config.prefix}${command.name}:**`,
-              value: `\`${command.description}\`\n\`${command.usage}\``,
+              value: `\`\`\`${command.description}\`\`\`\`\`\`${command.usage}\`\`\`\0`,
             });
           }
         });
       }
-      const logo = new Discord.MessageAttachment(
-        "./assets/logo.png",
-        "logo.png"
-      );
+
       const helpEmbed = new Discord.MessageEmbed()
-        .setTitle("Help")
-        .setDescription(`\`${config.prefix}help command\` to see usage.`)
+        .setTitle("Here to help!")
+        .setDescription(`~~But only in the server~~`)
         .setAuthor("Course management")
         .addFields(allCommands)
-        .setThumbnail("attachment://logo.png")
-        .attachFiles(logo)
         .setColor(config.primaryColor)
         .setImage(config.banner)
         .setTimestamp()
