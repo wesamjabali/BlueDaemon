@@ -61,8 +61,9 @@ client.on("message", (msg) => {
     }
 
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
-    msg.content = msg.content.substring(config.prefix.length).toLowerCase(); // Remove prefix
+    msg.content = msg.content.substring(config.prefix.length); // Remove prefix
     msg.args = msg.content.split(" "); // Split into an arg array
+    msg.args[0].toLowerCase()
 
     if (msg.args[0] == "help") {
       client.commands.get("help").execute(msg, false, client);
@@ -91,8 +92,9 @@ client.on("message", (msg) => {
   if (msg.content.startsWith(config.prefix)) {
     /* Prepare arguments, attach to message. */
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
-    msg.content = msg.content.substring(config.prefix.length).toLowerCase(); // Remove prefix
+    msg.content = msg.content.substring(config.prefix.length); // Remove prefix
     msg.args = msg.content.split(" "); // Split into an arg array
+    msg.args[0].toLowerCase()
 
     /* If command exists, do it. */
     const command = client.commands.get(msg.args[0]);
