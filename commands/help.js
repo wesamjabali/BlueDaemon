@@ -29,22 +29,22 @@ Usage: \`\`\`${command.usage}\`\`\``);
       client.commands.forEach((command) => {
         if (!command.privileged) {
           allCommands.push({
-            name: config.prefix + command.name,
-            value: `\`\`\`${command.description}\n${command.usage}\`\`\``,
+            name: `**${config.prefix}${command.name}:**`,
+            value: `\`${command.description}\`\n\`${command.usage}\``,
           });
         }
       });
       if (isModerator) {
         allCommands.push({ name: "\u200B", value: "**__Mod commands:__**" });
         allCommands.push({
-          name: config.prefix + "role",
-          value: `\`\`\`Create or delete a role\n${config.prefix}role <create/delete> <role>\`\`\``,
+          name: `**${config.prefix}role:**`,
+          value: `\`Create or delete a role\`\n\`${config.prefix}role <create/delete> <role>\``,
         });
         client.commands.forEach((command) => {
           if (command.privileged) {
             allCommands.push({
-              name: config.prefix + command.name,
-              value: `\`\`\`${command.description}\n${command.usage}\`\`\``,
+              name: `**${config.prefix}${command.name}:**`,
+              value: `\`${command.description}\`\n\`${command.usage}\``,
             });
           }
         });

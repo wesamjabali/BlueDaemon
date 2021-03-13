@@ -2,7 +2,7 @@ const config = require("../config.json");
 
 module.exports = {
   name: "role",
-  description: `Manage your roles.\n${config.prefix}roles to view all roles`,
+  description: `Manage your roles`,
   privileged: false,
   usage: config.prefix + "role <join/leave> <role>",
   execute(msg, isModerator, client) {

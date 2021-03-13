@@ -3,7 +3,7 @@ const requiresPassword = require("./helpers/requiresPassword");
 const verifyPassword = require("./helpers/verifyPassword");
 module.exports = {
   name: "join",
-  description: `Join a course\n${config.prefix}courses to view all courses.`,
+  description: `Join a course`,
   privileged: false,
   usage: config.prefix + "join <coursename> <password?>",
   execute(msg, isModerator, client) {
