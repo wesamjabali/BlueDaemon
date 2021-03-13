@@ -4,6 +4,7 @@ const Discord = require("discord.js");
 module.exports = {
   name: "invitebot",
   description: "Invite me to your server",
+  facultyOnly: false,
   privileged: false,
   usage: config.prefix + "inviteBot",
   execute(msg, isModerator, client) {

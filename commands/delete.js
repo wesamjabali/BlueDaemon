@@ -4,15 +4,15 @@ const deleteRole = require("./helpers/deleteRole");
 module.exports = {
   name: "delete",
   description: "Delete a course",
+  facultyOnly: false,
   privileged: true,
   usage: config.prefix + "delete <coursename>",
   execute(msg, isModerator, client) {
-
     let roleName = `${config.currentQuarter}-${msg.args[1]}`;
 
     if (msg.args.length != 2) {
       msg.channel.send(
-        `${config.prefix}${this.name}:\`\`\`${this.description}\`\`\`\nUsage:\`\`\`${this.usage}\`\`\``
+        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }

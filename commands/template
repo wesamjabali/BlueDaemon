@@ -2,7 +2,8 @@ const config = require("../config.json");
 module.exports = {
   name: "",
   description: "",
+  facultyOnly: false,
   privileged: false,
   usage: config.prefix + "",
-  execute(msg, isModerator, client) {},
+  execute: async (msg, isModerator, client) => {},
 };

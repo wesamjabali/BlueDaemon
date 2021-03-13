@@ -2,12 +2,13 @@ const config = require("../config.json");
 module.exports = {
   name: "leave",
   description: "Leave a course",
+  facultyOnly: false,
   privileged: false,
   usage: config.prefix + "leave <coursename>",
   execute(msg, isModerator, client) {
     if (msg.args.length != 2) {
       msg.channel.send(
-        `${config.prefix}${this.name}:\`\`\`${this.description}\`\`\`\nUsage:\`\`\`${this.usage}\`\`\``
+        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }

@@ -3,6 +3,7 @@ const Discord = require("discord.js");
 module.exports = {
   name: "roles",
   description: "Display available roles",
+  facultyOnly: false,
   privileged: false,
   usage: config.prefix + "roles",
   execute(msg, isModerator, client) {

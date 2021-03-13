@@ -4,15 +4,18 @@ const verifyPassword = require("./helpers/verifyPassword");
 module.exports = {
   name: "join",
   description: `Join a course`,
+  facultyOnly: false,
   privileged: false,
   usage: config.prefix + "join <coursename> <password?>",
   execute(msg, isModerator, client) {
     if (msg.args.length < 2 || msg.args.length > 3) {
       msg.channel.send(
-        `${config.prefix}${this.name}:\`\`\`${this.description}\`\`\`\nUsage:\`\`\`${this.usage}\`\`\``
+        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }
+    const courseName = msg.args[1];
+    const password = msg.args[2];
 
     let roleName = `${config.currentQuarter}-${msg.args[1]}`;
     if (msg.member.roles.cache.find((r) => r.name === roleName)) {

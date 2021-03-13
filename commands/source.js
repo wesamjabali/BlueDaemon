@@ -3,6 +3,7 @@ const Discord = require("discord.js");
 module.exports = {
   name: "source",
   description: "Display source",
+  facultyOnly: false,
   privileged: false,
   usage: config.prefix + "source",
   execute(msg, isModerator, client) {

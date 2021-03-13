@@ -3,16 +3,22 @@ const config = require("../config.json");
 module.exports = {
   name: "help",
   description: "Display help message",
+  facultyOnly: false,
   privileged: false,
   usage: config.prefix + "help <command?>",
   execute(msg, isModerator, client) {
     allCommands = [];
     if (msg.args.length > 2) {
       msg.channel.send(
-        `${config.prefix}${this.name}:\`\`\`${this.description}\`\`\`\nUsage:\`\`\`${this.usage}\`\`\``
+        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }
+
+    const isFaculty = !!msg.member.roles.cache.find(
+      (r) => r.name === config.facultyRoleName
+    );
+
     if (msg.args.length == 2) {
       const command = client.commands.get(msg.args[1]);
       if (command) {
@@ -42,6 +48,20 @@ Usage: \`\`\`${command.usage}\`\`\``);
         });
         client.commands.forEach((command) => {
           if (command.privileged) {
+            allCommands.push({
+              name: `**${config.prefix}${command.name}:**`,
+              value: `\`\`\`${command.description}\`\`\`\`\`\`${command.usage}\`\`\`\0`,
+            });
+          }
+        });
+      }
+      if (isFaculty) {
+        allCommands.push({
+          name: "\u200B",
+          value: "**__Faculty commands:__**",
+        });
+        client.commands.forEach((command) => {
+          if (command.facultyOnly) {
             allCommands.push({
               name: `**${config.prefix}${command.name}:**`,
               value: `\`\`\`${command.description}\`\`\`\`\`\`${command.usage}\`\`\`\0`,

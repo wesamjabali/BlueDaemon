@@ -78,6 +78,9 @@ client.on("message", async (msg) => {
   let isModerator = !!msg.member.roles.cache.find(
     (r) => r.name === config.modRoleName
   );
+  let isFaculty = !!msg.member.roles.cache.find(
+    (r) => r.name === config.facultyRoleName
+  );
 
   /* Commands */
   if (msg.content.startsWith(config.prefix)) {
@@ -90,7 +93,10 @@ client.on("message", async (msg) => {
     /* If command exists, do it. */
     const command = client.commands.get(msg.args[0]);
     if (command) {
-      if (command.privileged && !isModerator) {
+      if (
+        (command.privileged && !isModerator) ||
+        (command.facultyOnly && !isFaculty)
+      ) {
         return;
       }
       command.execute(msg, isModerator, client);

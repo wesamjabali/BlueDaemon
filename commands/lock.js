@@ -4,14 +4,13 @@ const config = require("../config.json");
 module.exports = {
   name: "lock",
   description: "Lock a course",
+  facultyOnly: false,
   privileged: true,
   usage: config.prefix + "lock <coursename> <password>",
   execute(msg, isModerator, client) {
-
-
     if (msg.args.length != 3) {
       msg.channel.send(
-        `${config.prefix}${this.name}:\`\`\`${this.description}\`\`\`\nUsage:\`\`\`${this.usage}\`\`\``
+        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }

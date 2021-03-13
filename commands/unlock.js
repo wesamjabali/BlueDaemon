@@ -4,12 +4,13 @@ const deleteRole = require("./helpers/deleteRole");
 module.exports = {
   name: "unlock",
   description: "Unlock a course",
+  facultyOnly: false,
   privileged: true,
   usage: config.prefix + "unlock <coursename>",
   execute(msg, isModerator, client) {
     if (msg.args.length != 2) {
       msg.channel.send(
-        `${config.prefix}${this.name}:\`\`\`${this.description}\`\`\`\nUsage:\`\`\`${this.usage}\`\`\``
+        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }

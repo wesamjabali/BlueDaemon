@@ -2,6 +2,7 @@ const config = require("../config.json");
 module.exports = {
   name: "invite",
   description: "Create a server invite",
+  facultyOnly: false,
   privileged: false,
   usage: config.prefix + "invite",
   execute(msg, isModerator, client) {
@@ -12,6 +13,7 @@ module.exports = {
       })
       .then((inv) => {
         msg.channel.send(`Request sent to your DM, ${msg.author}`);
-        msg.author.send(`Here's your invite: ${inv}`);      });
+        msg.author.send(`Here's your invite: ${inv}`);
+      });
   },
 };

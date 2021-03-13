@@ -4,6 +4,7 @@ const Discord = require("discord.js");
 module.exports = {
   name: "courses",
   description: "Display available courses",
+  facultyOnly: false,
   privileged: false,
   usage: config.prefix + "courses",
   execute(msg, isModerator, client) {
