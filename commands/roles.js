@@ -23,6 +23,7 @@ module.exports = {
     const rolesEmbed = new Discord.MessageEmbed()
       .setTitle("Roles:")
       .setFooter(`${config.prefix}role join <rolename>`)
+      .setColor(config.primaryColor)
       .addFields(selfRoles);
 
     msg.channel.send(rolesEmbed);

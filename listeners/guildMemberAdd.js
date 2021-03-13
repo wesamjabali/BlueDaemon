@@ -21,6 +21,7 @@ module.exports = {
       .setThumbnail("attachment://logo.png")
       .setImage(config.banner)
       .attachFiles(logo)
+      .setColor(config.primaryColor)
       .setTimestamp()
       .setFooter("Use me in #bot-usage!");
     member.send(welcomeEmbed);

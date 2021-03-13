@@ -27,6 +27,7 @@ module.exports = {
     const coursesEmbed = new Discord.MessageEmbed()
       .setTitle("Courses")
       .setFooter(`${config.prefix}join <coursename>`)
+      .setColor(config.primaryColor)
       .addFields(courses);
 
     msg.channel.send(coursesEmbed);

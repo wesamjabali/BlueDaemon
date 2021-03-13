@@ -10,6 +10,7 @@ module.exports = {
       .setTitle("View my source on Github")
       .setDescription("Author: Wesam Jabali")
       .setURL("https://github.com/wesamjabali/BlueDaemon")
+      .setColor(config.primaryColor)
       .setImage(config.banner);
 
     msg.channel.send(sourceEmbed);

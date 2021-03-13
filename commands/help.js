@@ -60,6 +60,7 @@ Usage: \`\`\`${command.usage}\`\`\``);
         .addFields(allCommands)
         .setThumbnail("attachment://logo.png")
         .attachFiles(logo)
+        .setColor(config.primaryColor)
         .setImage(config.banner)
         .setTimestamp()
         .setFooter("Need something else? Ask wesam");
