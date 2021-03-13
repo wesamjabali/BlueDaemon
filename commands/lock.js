@@ -7,7 +7,7 @@ module.exports = {
   facultyOnly: false,
   privileged: true,
   usage: config.prefix + "lock <coursename> <password>",
-  execute(msg, isModerator, client) {
+  execute(msg, isModerator, isFaculty, client) {
     if (msg.args.length != 3) {
       msg.channel.send(
         `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``

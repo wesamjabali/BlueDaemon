@@ -5,5 +5,5 @@ module.exports = {
   facultyOnly: false,
   privileged: false,
   usage: config.prefix + "",
-  execute: async (msg, isModerator, client) => {},
+  execute: async (msg, isModerator, isFaculty, client) => {},
 };

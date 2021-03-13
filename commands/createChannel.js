@@ -1,11 +1,11 @@
 const config = require("../config.json");
 module.exports = {
   name: "createchannel",
-  description: "Create a channel in your category",
+  description: "Create a channel in your category.",
   facultyOnly: true,
   privileged: false,
   usage: config.prefix + "createChannel <channel>",
-  execute: async (msg, isModerator, client) => {
+  execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length != 2) {
       msg.channel.send(
         `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``

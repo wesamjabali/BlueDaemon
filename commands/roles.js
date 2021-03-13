@@ -6,7 +6,7 @@ module.exports = {
   facultyOnly: false,
   privileged: false,
   usage: config.prefix + "roles",
-  execute(msg, isModerator, client) {
+  execute(msg, isModerator, isFaculty, client) {
     let selfRoles = [];
     const rolesList = msg.guild.roles.cache.filter((r) =>
       r.name.startsWith(config.selfRolePrefix + "-")

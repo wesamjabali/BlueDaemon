@@ -6,7 +6,7 @@ module.exports = {
   facultyOnly: false,
   privileged: false,
   usage: config.prefix + "role <join/leave> <role>",
-  execute(msg, isModerator, client) {
+  execute(msg, isModerator, isFaculty, client) {
     if (msg.args.length != 3) {
       msg.channel.send(
         `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``

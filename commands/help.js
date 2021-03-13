@@ -6,7 +6,7 @@ module.exports = {
   facultyOnly: false,
   privileged: false,
   usage: config.prefix + "help <command?>",
-  execute(msg, isModerator, client) {
+  execute(msg, isModerator, isFaculty, client) {
     allCommands = [];
     if (msg.args.length > 2) {
       msg.channel.send(
@@ -15,14 +15,14 @@ module.exports = {
       return;
     }
 
-    const isFaculty = !!msg.member.roles.cache.find(
-      (r) => r.name === config.facultyRoleName
-    );
-
     if (msg.args.length == 2) {
       const command = client.commands.get(msg.args[1]);
       if (command) {
-        if ((command.privileged && isModerator) || !command.privileged) {
+        if (
+          (((command.privileged && isModerator) || !command.privileged) &&
+            ((command.facultyOnly && isFaculty) || !command.facultyOnly)) ||
+          isModerator
+        ) {
           msg.channel
             .send(`${config.prefix}${command.name}: \`\`\`${command.description}\`\`\`
 Usage: \`\`\`${command.usage}\`\`\``);
@@ -33,7 +33,7 @@ Usage: \`\`\`${command.usage}\`\`\``);
       return;
     } else if (msg.args.length == 1) {
       client.commands.forEach((command) => {
-        if (!command.privileged) {
+        if (!command.privileged && !command.facultyOnly) {
           allCommands.push({
             name: `**${config.prefix}${command.name}:**`,
             value: `\`\`\`${command.description}\`\`\`\`\`\`${command.usage}\`\`\`\0`,

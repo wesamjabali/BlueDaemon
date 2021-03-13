@@ -6,7 +6,7 @@ module.exports = {
   facultyOnly: false,
   privileged: false,
   usage: config.prefix + "source",
-  execute(msg, isModerator, client) {
+  execute(msg, isModerator, isFaculty, client) {
     const sourceEmbed = new Discord.MessageEmbed()
       .setTitle("View my source on Github")
       .setDescription("Author: Wesam Jabali")

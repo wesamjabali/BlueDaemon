@@ -7,7 +7,7 @@ module.exports = {
   facultyOnly: false,
   privileged: true,
   usage: config.prefix + "create <coursename> <password>",
-  execute(msg, isModerator, client) {
+  execute(msg, isModerator, isFaculty, client) {
     // Check if category exists
     let category = client.channels.cache.find(
       (c) => c.name == config.currentQuarter && c.type == "category"

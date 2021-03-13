@@ -5,7 +5,7 @@ module.exports = {
   facultyOnly: false,
   privileged: false,
   usage: config.prefix + "invite",
-  execute(msg, isModerator, client) {
+  execute(msg, isModerator, isFaculty, client) {
     msg.channel
       .createInvite({
         maxAge: 0,

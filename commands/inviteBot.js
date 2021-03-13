@@ -7,7 +7,7 @@ module.exports = {
   facultyOnly: false,
   privileged: false,
   usage: config.prefix + "inviteBot",
-  execute(msg, isModerator, client) {
+  execute(msg, isModerator, isFaculty, client) {
     const inviteEmbed = new Discord.MessageEmbed()
       .setTitle("BlueDaemon")
       .setURL(

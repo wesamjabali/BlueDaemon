@@ -57,7 +57,7 @@ client.on("message", async (msg) => {
     msg.args[0] = msg.args[0].toLowerCase();
 
     if (msg.args[0] == "help") {
-      client.commands.get("help").execute(msg, false, client);
+      client.commands.get("help").execute(msg, false, false, client);
       return;
     } else {
       client.admin.send(`${msg.author}: ${config.prefix}${msg.content}\n`);
@@ -101,7 +101,7 @@ client.on("message", async (msg) => {
         allowed = true;
       }
       if (allowed) {
-        command.execute(msg, isModerator, client);
+        command.execute(msg, isModerator, isFaculty, client);
       }
     } else {
       const sentMessage = await msg.channel.send(
