@@ -6,7 +6,7 @@ module.exports = {
   facultyOnly: false,
   privileged: false,
   usage: config.prefix + "help <command?>",
-  execute(msg, isModerator, isFaculty, client) {
+  execute: async (msg, isModerator, isFaculty, client) => {
     allCommands = [];
     if (msg.args.length > 2) {
       msg.channel.send(

@@ -7,7 +7,7 @@ module.exports = {
   facultyOnly: false,
   privileged: false,
   usage: config.prefix + "courses",
-  execute(msg, isModerator, isFaculty, client) {
+  execute: async (msg, isModerator, isFaculty, client) => {
     let courses = [];
     let roles = msg.guild.roles.cache.filter((role) =>
       role.name.startsWith(config.currentQuarter + "-")

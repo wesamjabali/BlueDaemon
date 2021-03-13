@@ -7,7 +7,7 @@ module.exports = {
   facultyOnly: false,
   privileged: true,
   usage: config.prefix + "delete <coursename>",
-  execute(msg, isModerator, isFaculty, client) {
+  execute: async (msg, isModerator, isFaculty, client) => {
     let roleName = `${config.currentQuarter}-${msg.args[1]}`;
 
     if (msg.args.length != 2) {

@@ -5,7 +5,7 @@ module.exports = {
   facultyOnly: false,
   privileged: false,
   usage: config.prefix + "leave <coursename>",
-  execute(msg, isModerator, isFaculty, client) {
+  execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length != 2) {
       msg.channel.send(
         `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
