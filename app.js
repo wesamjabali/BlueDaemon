@@ -84,6 +84,7 @@ client.on("message", async (msg) => {
 
   /* Commands */
   if (msg.content.startsWith(config.prefix)) {
+
     /* Prepare arguments, attach to message. */
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
     msg.content = msg.content.substring(config.prefix.length); // Remove prefix

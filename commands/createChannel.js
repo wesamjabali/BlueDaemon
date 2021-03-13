@@ -12,6 +12,7 @@ module.exports = {
       );
       return;
     }
+
     const category = msg.channel.parent;
     const modRole = msg.guild.roles.cache.find(
       (r) => r.name === config.modRoleName

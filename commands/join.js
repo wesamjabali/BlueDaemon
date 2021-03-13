@@ -14,8 +14,6 @@ module.exports = {
       );
       return;
     }
-    const courseName = msg.args[1];
-    const password = msg.args[2];
 
     let roleName = `${config.currentQuarter}-${msg.args[1]}`;
     if (msg.member.roles.cache.find((r) => r.name === roleName)) {
@@ -42,15 +40,14 @@ module.exports = {
         } else if (role && protected) {
           verifyPassword(roleName, msg.args[2], msg.guild.id)
             .then((verified) => {
+              msg.delete();
               if (!verified) {
-                msg.delete();
                 msg.channel.send(`Wrong password, ${msg.author}`);
               } else {
                 let role = msg.guild.roles.cache.find(
                   (r) => r.name.toUpperCase() === roleName.toUpperCase()
                 );
                 msg.member.roles.add(role);
-                msg.delete();
                 msg.channel.send(`Course added, ${msg.author}`);
               }
             })

@@ -8,6 +8,15 @@ module.exports = {
   privileged: true,
   usage: config.prefix + "create <coursename> <password>",
   execute: async (msg, isModerator, isFaculty, client) => {
+    if (msg.args.length == 3) {
+      msg.delete();
+    }
+    if (msg.args.length < 2 || msg.args.length > 3) {
+      msg.channel.send(
+        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+      );
+      return;
+    }
     // Check if category exists
     let category = client.channels.cache.find(
       (c) => c.name == config.currentQuarter && c.type == "category"
@@ -26,15 +35,8 @@ module.exports = {
       return;
     }
 
-    if (msg.args.length < 2 || msg.args.length > 3) {
-      msg.channel.send(
-        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
-      );
-      return;
-    }
-
     const roleName = `${config.currentQuarter}-${msg.args[1]}`;
-    const modRole = msg.guild.roles.cache.find(
+    const modRole = await msg.guild.roles.cache.find(
       (r) => r.name === config.modRoleName
     );
     if (msg.guild.roles.cache.find((r) => r.name === roleName)) {
@@ -64,7 +66,6 @@ module.exports = {
           ],
         });
         if (msg.args.length == 3) {
-          msg.delete();
           /* Store passwords in author's DM in case of forgotten password.
                 TODO:
                 Consider whether this is necessary -- the passwords are hashed in the DB and
