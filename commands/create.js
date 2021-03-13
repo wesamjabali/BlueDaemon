@@ -1,6 +1,6 @@
 const config = require("../config.json");
 const protectRole = require("./helpers/protectRole");
-
+const Discord = require("discord.js");
 module.exports = {
   name: "create",
   description: "Create a course",
@@ -10,6 +10,23 @@ module.exports = {
     if (!isModerator) {
       return;
     }
+    // Check if category exists
+    let category = client.channels.cache.find(
+      (c) => c.name == config.currentQuarter && c.type == "category"
+    );
+
+    // Create category for the current quarter.
+    if (!category) {
+      msg.guild.channels
+        .create(config.currentQuarter, {
+          type: "category",
+        })
+        .then((newChannel) => {
+          category = newChannel;
+        });
+      msg.channel.send(`Created category for \`${config.currentQuarter}\`.`);
+      return;
+    }
 
     if (msg.args.length < 2 || msg.args.length > 3) {
       msg.channel.send(
@@ -17,9 +34,7 @@ module.exports = {
       );
       return;
     }
-    let category = client.channels.cache.find(
-      (c) => c.name == config.currentQuarter && c.type == "category"
-    );
+
     const roleName = `${config.currentQuarter}-${msg.args[1]}`;
     const modRole = msg.guild.roles.cache.find(
       (r) => r.name === config.modRoleName
@@ -74,8 +89,10 @@ module.exports = {
         }
       })
       .catch(() => {
-        msg.channel.send(`Error creating role, ${msg.author}`);
-        client.admin.send(`There was an error creating role for ${msg.author}`);
+        msg.channel.send(`Error creating course, ${msg.author}`);
+        client.admin.send(
+          `There was an error creating course for ${msg.author}`
+        );
       });
   },
 };

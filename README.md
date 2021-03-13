@@ -1,6 +1,8 @@
- ## BlueDaemon
+## BlueDaemon
 
- _For CDM Discussions_ > _Your class management solution_
+_Your class management solution_
+
+For CDM Discussions
 
 ---
 
