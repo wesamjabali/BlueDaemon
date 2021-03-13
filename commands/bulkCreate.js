@@ -1,11 +1,18 @@
 const config = require("../config.json");
 module.exports = {
   name: "bulkcreate",
-  description: "Bulk create courses",
+  description: "Bulk create unprotected courses, separated by a space.",
   privileged: true,
-  usage: config.prefix + "bulkCreate <course>+",
+  usage: config.prefix + "bulkcreate <courses>+",
   execute(msg, isModerator, client) {
     if (!isModerator) {
+      return;
+    }
+
+    if (msg.args.length < 2) {
+      msg.channel.send(
+        `${config.prefix}${this.name}:\`\`\`${this.description}\`\`\`\nUsage:\`\`\`${this.usage}\`\`\``
+      );
       return;
     }
 
