@@ -41,6 +41,7 @@ module.exports = {
         } else if (role && !protected) {
           msg.member.roles.add(role);
           msg.channel.send(`Course added, ${msg.author}`);
+          log(`${msg.author} added to ${roleName} with password.`);
         } else if (role && protected) {
           verifyPassword(roleName, msg.args[2], msg.guild.id)
             .then((verified) => {
@@ -53,7 +54,7 @@ module.exports = {
                 );
                 msg.member.roles.add(role);
                 msg.channel.send(`Course added, ${msg.author}`);
-                log(`${msg.author} added to ${roleName}`);
+                log(`${msg.author} added to ${roleName} with password.`);
               }
             })
             .catch(() => {
