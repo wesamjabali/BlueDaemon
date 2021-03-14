@@ -87,6 +87,10 @@ client.on("message", async (msg) => {
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
     if (msg.content.split(" ").length == 3) {
       msg.delete();
+      const sentMessage = await msg.channel.send(
+        `You may have forgotten the prefix, ${msg.author}\nTry \`${config.prefix}join\` instead.`
+      );
+      setTimeout(() => sentMessage.delete(), 6000);
     }
   }
 
