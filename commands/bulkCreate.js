@@ -39,8 +39,8 @@ module.exports = {
     );
 
     var createdCourses = [];
-    await courseNames.forEach(async (courseName) => {
-      const existingRole = await msg.guild.roles.cache.find(
+    courseNames.forEach((courseName) => {
+      const existingRole = msg.guild.roles.cache.find(
         (r) => r.name === `${config.currentQuarter}-${courseName}`
       );
       if (existingRole) {
@@ -51,7 +51,7 @@ module.exports = {
       }
     });
 
-    await createdCourses.forEach(async (courseName) => {
+    createdCourses.forEach(async (courseName) => {
       const newRole = await msg.guild.roles.create({
         data: {
           name: `${config.currentQuarter}-${courseName}`,
