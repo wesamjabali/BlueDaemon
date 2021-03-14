@@ -21,17 +21,19 @@ for (const file of commandFiles) {
   client.commands.set(command.name, command);
 }
 
-/* Attach admin user to client */
 
 /* Uncomment for debugging */
 // client.on("debug", console.log).on("warn", console.log);
 
 client.on("ready", async () => {
-  client.admin = await client.users.fetch(config.adminID);
-  client.admin.send("I was offline, but I'm back now!");
   knex.migrate.latest();
-  client.user.setActivity(config.currentQuarter + " | .help");
   console.log(`Logged in as ${client.user.tag}!`);
+  /* Attach admin user to client */
+  client.admin = await client.users.fetch(config.adminID);
+
+  /* Notify */
+  client.admin.send("I was offline, but I'm back now!");
+  client.user.setActivity(config.currentQuarter + " | .help");
 });
 
 /* New User Listener*/

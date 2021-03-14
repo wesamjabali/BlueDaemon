@@ -16,6 +16,10 @@ module.exports = {
     }
     const roleName = `${config.selfRolePrefix}-${msg.args[2]}`;
 
+    /* Normalize everything lowercase */
+    msg.args[1] = msg.args[1].toLowerCase();
+    msg.args[2] = msg.args[2].toLowerCase();
+
     /* role create */
     if (msg.args[1] === "create") {
       if (isModerator) {
@@ -55,10 +59,10 @@ module.exports = {
     if (msg.args[1] === "delete") {
       if (isModerator) {
         roleInGuild.delete();
-        msg.channel.send(`@${roleName} deleted, ${msg.author}`);
+        msg.channel.send(`\`@${roleName}\` deleted, ${msg.author}`);
         log(
           msg.guild,
-          `${msg.author} deleted role @${roleName}\nContext: ${msg.url}`
+          `${msg.author} deleted role \`@${roleName}\`\nContext: ${msg.url}`
         );
       }
       return;
@@ -71,7 +75,7 @@ module.exports = {
         return;
       }
       msg.member.roles.add(roleInGuild);
-      msg.channel.send(`Course added, ${msg.author}`);
+      msg.channel.send(`\`@${roleName}\` added, ${msg.author}`);
 
       /* role leave */
     } else if (msg.args[1] === "leave") {
