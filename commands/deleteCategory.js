@@ -1,4 +1,5 @@
 const config = require("../config.json");
+const deleteRole = require("./helpers/deleteRole");
 const protectRole = require("./helpers/protectRole");
 module.exports = {
   name: "deletecategory",
@@ -33,9 +34,13 @@ module.exports = {
       return;
     }
 
+    /* Send message first to avoid crashes */
     msg.channel.send(`Deleted ${msg.args[1]}, ${msg.author}`);
+
+    /* Delete all associated information with category */
     role.delete();
     await existingCategory.children.forEach((channel) => channel.delete());
     existingCategory.delete();
+    deleteRole(roleName, msg.guild.id);
   },
 };
