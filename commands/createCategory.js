@@ -1,4 +1,5 @@
 const config = require("../config.json");
+const log = require("./helpers/log");
 const protectRole = require("./helpers/protectRole");
 module.exports = {
   name: "createcategory",
@@ -87,9 +88,17 @@ module.exports = {
       msg.channel.send(
         `Created category \`${category.name}\` and channel ${firstChannel} with password.`
       );
+      log(
+        msg.guild,
+        `${msg.author} created category \`${category.name}\` and channel ${firstChannel} with password \`${msg.args[2]}\`\nContext: ${msg.url}`
+      );
     } else {
       msg.channel.send(
         `Created category \`${category.name}\` and channel ${firstChannel}`
+      );
+      log(
+        msg.guild,
+        `${msg.author} created category \`${category.name}\` and channel ${firstChannel}\nContext: ${msg.url}`
       );
     }
   },

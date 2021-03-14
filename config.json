@@ -2,7 +2,7 @@
     "prefix": ".",
     "modRoleName": "Moderator",
     "facultyRoleName": "Faculty",
-    "logChannelID": "820477574777405460",
+    "logChannelName": "daemon-log",
     "adminID": "539910274698969088",
     "currentQuarter": "spring21",
     "selfRolePrefix": "dpu",

@@ -1,5 +1,6 @@
 const config = require("../config.json");
 const Discord = require("discord.js");
+const log = require("./helpers/log");
 
 module.exports = {
   name: "invitebot",
@@ -23,5 +24,6 @@ module.exports = {
 
     msg.channel.send(`Response sent to your DM, ${msg.author}`);
     msg.author.send(inviteEmbed);
+    log(msg.guild, `${msg.author} requested OAuth2 invite in ${msg.channel}\nContext: ${msg.url}`);
   },
 };

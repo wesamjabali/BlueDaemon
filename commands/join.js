@@ -25,54 +25,48 @@ module.exports = {
       return;
     }
 
-    requiresPassword(roleName, msg.guild.id)
-      .then((protected) => {
-        if (protected && msg.args.length == 2) {
-          msg.channel.send(
-            `Ask your professor to join ${msg.args[1]}, ${msg.author}`
-          );
-          return;
-        }
+    const protected = await requiresPassword(roleName, msg.guild.id);
+
+    if (protected && msg.args.length == 2) {
+      msg.channel.send(
+        `Ask your professor to join ${msg.args[1]}, ${msg.author}`
+      );
+      return;
+    }
+    let role = msg.guild.roles.cache.find(
+      (r) => r.name.toUpperCase() === roleName.toUpperCase()
+    );
+
+    if (!role) {
+      msg.channel.send(`That role doesn't exist, ${msg.author}`);
+
+      /* Unprotected role */
+    } else if (role && !protected) {
+      msg.member.roles.add(role);
+      msg.channel.send(`Course added, ${msg.author}`);
+      log(msg.guild, `${msg.author} added to ${role}\nContext: ${msg.url}`);
+
+      /* Protected role */
+    } else if (role && protected) {
+      const verified = await verifyPassword(
+        roleName,
+        msg.args[2],
+        msg.guild.id
+      );
+      msg.delete();
+      if (!verified) {
+        msg.channel.send(`Wrong password, ${msg.author}`);
+      } else {
         let role = msg.guild.roles.cache.find(
           (r) => r.name.toUpperCase() === roleName.toUpperCase()
         );
-        if (!role) {
-          msg.channel.send(`That role doesn't exist, ${msg.author}`);
-        } else if (role && !protected) {
-          msg.member.roles.add(role);
-          msg.channel.send(`Course added, ${msg.author}`);
-          log(client, `${msg.author} added to ${roleName} with password.`);
-        } else if (role && protected) {
-          verifyPassword(roleName, msg.args[2], msg.guild.id)
-            .then((verified) => {
-              msg.delete();
-              if (!verified) {
-                msg.channel.send(`Wrong password, ${msg.author}`);
-              } else {
-                let role = msg.guild.roles.cache.find(
-                  (r) => r.name.toUpperCase() === roleName.toUpperCase()
-                );
-                msg.member.roles.add(role);
-                msg.channel.send(`Course added, ${msg.author}`);
-                log(
-                  client,
-                  `${msg.author} added to ${roleName} with password.`
-                );
-              }
-            })
-            .catch(() => {
-              msg.channel.send("Error verifying password.");
-              client.admin.send(
-                `There was an error verifying the password for ${msg.author}`
-              );
-            });
-        }
-      })
-      .catch(() => {
-        msg.channel.send("Error checking password lock.");
-        client.admin.send(
-          `There was an error checking password lock for ${msg.author}`
+        msg.member.roles.add(role);
+        msg.channel.send(`Course added, ${msg.author}`);
+        log(
+          msg.guild,
+          `${msg.author} added to ${role} with password.\nContext: ${msg.url}`
         );
-      });
+      }
+    }
   },
 };

@@ -1,4 +1,5 @@
 const config = require("../config.json");
+const log = require("./helpers/log");
 module.exports = {
   name: "bulkcreate",
   description: "Bulk create unprotected courses, separated by a space.",
@@ -72,5 +73,9 @@ module.exports = {
       });
     });
     msg.channel.send(`Courses created: \`\`\`${createdCourses} \`\`\``);
+    log(
+      msg.guild,
+      `${msg.author} bulk created: \`\`\`${createdCourses} \`\`\`\nContext: ${msg.url}`
+    );
   },
 };

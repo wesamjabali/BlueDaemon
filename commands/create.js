@@ -1,6 +1,7 @@
 const config = require("../config.json");
 const protectRole = require("./helpers/protectRole");
 const Discord = require("discord.js");
+const log = require("./helpers/log");
 module.exports = {
   name: "create",
   description: "Create a course",
@@ -28,13 +29,10 @@ module.exports = {
 
     // Create category for the current quarter.
     if (!category) {
-      msg.guild.channels
-        .create(config.currentQuarter, {
-          type: "category",
-        })
-        .then((newChannel) => {
-          category = newChannel;
-        });
+      category = await msg.guild.channels.create(config.currentQuarter, {
+        type: "category",
+      });
+
       msg.channel.send(`Created category for \`${config.currentQuarter}\`.`);
       return;
     }
@@ -51,62 +49,46 @@ module.exports = {
       msg.channel.send(`That course already exists, ${msg.author}`);
       return;
     }
-    msg.guild.roles
-      .create({
-        data: {
-          name: roleName,
+    const newRole = await msg.guild.roles.create({
+      data: {
+        name: roleName,
+      },
+    });
+    const newChannel = await msg.guild.channels.create(msg.args[1], {
+      type: "text",
+      parent: category,
+      permissionOverwrites: [
+        {
+          id: msg.guild.id,
+          deny: ["VIEW_CHANNEL"],
         },
-      })
-      .then((r) => {
-        msg.guild.channels.create(msg.args[1], {
-          type: "text",
-          parent: category,
-          permissionOverwrites: [
-            {
-              id: msg.guild.id,
-              deny: ["VIEW_CHANNEL"],
-            },
-            {
-              id: r.id, // Course role
-              allow: ["VIEW_CHANNEL"],
-            },
-            {
-              id: modRole.id,
-              allow: ["VIEW_CHANNEL"],
-            },
-            {
-              id: facultyRole.id,
-              allow: ["MANAGE_MESSAGES", "MENTION_EVERYONE"],
-            },
-          ],
-        });
-        if (msg.args.length == 3) {
-          /* Store passwords in author's DM in case of forgotten password.
-                TODO:
-                Consider whether this is necessary -- the passwords are hashed in the DB and
-                this may defeat the purpose and you can always delete/recreate if a password was forgotten. */
-          msg.author.send(
-            `Password created:\`\`\`${roleName}: ${msg.args[2]} \`\`\``
-          );
-          protectRole(msg.args[1], msg.guild.id, msg.args[2])
-            .then(() => {
-              msg.channel.send(
-                `${msg.args[1]} created with password, ${msg.author}`
-              );
-            })
-            .catch((err) => {
-              console.log(err);
-              msg.channel.send(`Error protecting course, ${msg.author}`);
-            });
-        } else {
-          msg.channel.send(`${msg.args[1]} created, ${msg.author}`);
-        }
-      })
-      .catch(() => {
-        msg.channel.send(`Error creating course, ${msg.author}`);
-        client.admin.send(
-          `There was an error creating course for ${msg.author}`
-        );
-      });
+        {
+          id: newRole.id, // Course role
+          allow: ["VIEW_CHANNEL"],
+        },
+        {
+          id: modRole.id,
+          allow: ["VIEW_CHANNEL"],
+        },
+        {
+          id: facultyRole.id,
+          allow: ["MANAGE_MESSAGES", "MENTION_EVERYONE"],
+        },
+      ],
+    });
+    if (msg.args.length == 3) {
+      log(
+        msg.guild,
+        `${msg.author} created course ${newChannel} with password \`${msg.args[2]}\`\nContext: ${msg.url}`
+      );
+      protectRole(msg.args[1], msg.guild.id, msg.args[2]);
+      msg.channel.send(`${newChannel} created with password, ${msg.author}`);
+    } else {
+      msg.channel.send(`${newChannel} created, ${msg.author}`);
+      log(
+        msg.guild,
+        `${msg.author} created course ${newChannel}\nContext: ${msg.url}`
+      );
+    }
   },
 };

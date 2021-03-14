@@ -1,4 +1,5 @@
 const config = require("../config.json");
+const log = require("./helpers/log");
 module.exports = {
   name: "createchannel",
   description: "Create a channel in your category.",
@@ -27,6 +28,10 @@ module.exports = {
     await newChannel.lockPermissions();
     msg.channel.send(
       `${newChannel} created in \`${category.name}\`, ${msg.author}`
+    );
+    log(
+      msg.guild,
+      `${msg.author} created ${newChannel} in category \`${category.name}\`\nContext: ${msg.url}`
     );
   },
 };

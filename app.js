@@ -9,6 +9,7 @@ client.commands = new Discord.Collection();
 
 /* Listeners */
 const guildMemberAdd = require("./listeners/guildMemberAdd");
+const log = require("./commands/helpers/log");
 
 /* Attach commands to client */
 const commandFiles = fs
@@ -27,6 +28,7 @@ for (const file of commandFiles) {
 
 client.on("ready", async () => {
   client.admin = await client.users.fetch(config.adminID);
+  client.admin.send("I was offline, but I'm back now!");
   knex.migrate.latest();
   client.user.setActivity(config.currentQuarter + " | .help");
   console.log(`Logged in as ${client.user.tag}!`);

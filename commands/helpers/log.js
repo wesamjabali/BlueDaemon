@@ -1,8 +1,13 @@
-const config = require("../../config.json")
+const config = require("../../config.json");
 
 module.exports =
-  // Remove a role and password from the DB.
-  async function log(client, message) {
-    const logChannel = await client.channels.fetch(config.logChannelID)
-    logChannel.send(message)
+/* Log to log channel */
+/* To use: 
+    log(msg.guild, `MESSAGE`);
+*/
+  async function log(guild, message) {
+    const logChannel = await guild.channels.cache.find(
+      (c) => c.name == config.logChannelName
+    );
+    logChannel.send(message);
   };

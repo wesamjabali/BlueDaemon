@@ -1,5 +1,6 @@
 const config = require("../config.json");
 const deleteRole = require("./helpers/deleteRole");
+const log = require("./helpers/log");
 
 module.exports = {
   name: "delete",
@@ -27,17 +28,14 @@ module.exports = {
       (c) => c.name.toUpperCase() === msg.args[1].toUpperCase()
     );
     if (foundRole && foundChannel) {
-      deleteRole(roleName, msg.guild.id)
-        .then(() => {
-          foundRole.delete();
-          foundChannel.delete();
-          msg.channel.send(
-            `${msg.args[1]} deleted successfully, ${msg.author}`
-          );
-        })
-        .catch(() => {
-          msg.channel.send("Error deleting from database");
-        });
+      await deleteRole(roleName, msg.guild.id);
+      foundRole.delete();
+      foundChannel.delete();
+      msg.channel.send(`${msg.args[1]} deleted successfully, ${msg.author}`);
+      log(
+        msg.guild,
+        `${msg.author} deleted course #${msg.args[1]}\nContext: ${msg.url}`
+      );
       return;
     }
 
