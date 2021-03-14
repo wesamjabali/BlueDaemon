@@ -6,7 +6,7 @@ module.exports = {
   description: "Delete a course category",
   facultyOnly: false,
   privileged: true,
-  usage: config.prefix + "createCategory <coursename>",
+  usage: `${config.prefix}deleteCategory <coursename>`,
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length != 2) {
       msg.channel.send(
