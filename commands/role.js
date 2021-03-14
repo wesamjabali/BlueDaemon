@@ -14,11 +14,12 @@ module.exports = {
       );
       return;
     }
-    const roleName = `${config.selfRolePrefix}-${msg.args[2]}`;
-
+    
     /* Normalize everything lowercase */
     msg.args[1] = msg.args[1].toLowerCase();
     msg.args[2] = msg.args[2].toLowerCase();
+    const roleName = `${config.selfRolePrefix}-${msg.args[2]}`;
+
 
     /* role create */
     if (msg.args[1] === "create") {
