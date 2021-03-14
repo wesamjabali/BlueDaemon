@@ -23,14 +23,15 @@ module.exports = {
     let existingCategory = await client.channels.cache.find(
       (c) => c.name == categoryName && c.type == "category"
     );
+
     if (!existingCategory || !role) {
       msg.channel.send(`That course doesn't exist, ${msg.author}`);
       return;
     }
-
-    role.delete();
-    existingCategory.children.forEach((channel) => channel.delete());
-    existingCategory.delete();
+    
     msg.channel.send(`Deleted ${msg.args[1]}, ${msg.author}`);
+    role.delete();
+    await existingCategory.children.forEach((channel) => channel.delete());
+    existingCategory.delete();
   },
 };
