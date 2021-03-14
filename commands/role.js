@@ -70,7 +70,7 @@ module.exports = {
         msg.channel.send(`You are already in that role, ${msg.author}`);
         return;
       }
-      msg.member.roles.add(role);
+      msg.member.roles.add(roleInGuild);
       msg.channel.send(`Role added, ${msg.author}`);
 
       /* role leave */
