@@ -1,5 +1,6 @@
 const config = require("../config.json");
 const Discord = require("discord.js");
+const _ = require("lodash");
 
 module.exports = {
   name: "courses",
@@ -23,14 +24,32 @@ module.exports = {
         inline: true,
       });
     });
-    courses.sort();
 
-    const coursesEmbed = new Discord.MessageEmbed()
+    /* Sort alphabetically by name */
+    courses.sort((a, b) => {
+      if (a.name > b.name) return 1;
+      else return -1;
+    });
+
+    const embedFieldLimit = 24; // Actually 25, but 24 is divisible by 3 rows.
+    var courseChunks = _.chunk(courses, embedFieldLimit); // Split into groups of 24
+
+    /* Page one */
+    const pageOneEmbed = new Discord.MessageEmbed()
       .setTitle("Courses")
-      .setFooter(`${config.prefix}join <coursename>`)
+      .setFooter(`${config.prefix}join <coursename>  |  1`)
       .setColor(config.primaryColor)
-      .addFields(courses);
+      .addFields(courseChunks[0]);
 
-    msg.channel.send(coursesEmbed);
+    await msg.channel.send(pageOneEmbed);
+
+    /* The rest of the pages */
+    for (var i = 1; i < courseChunks.length; i++) {
+      const newPageEmbed = new Discord.MessageEmbed()
+        .setFooter(`${config.prefix}join <coursename>  |  ${i + 1}`)
+        .setColor(config.primaryColor)
+        .addFields(courseChunks[i]);
+      await msg.channel.send(newPageEmbed);
+    }
   },
 };
