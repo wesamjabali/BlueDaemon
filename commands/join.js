@@ -24,7 +24,8 @@ module.exports = {
       msg.channel.send(`You are already in that course, ${msg.author}`);
       return;
     }
-
+    
+    /* True if password is required */
     const protected = await requiresPassword(roleName, msg.guild.id);
 
     if (protected && msg.args.length == 2) {
@@ -38,7 +39,7 @@ module.exports = {
     );
 
     if (!role) {
-      msg.channel.send(`That role doesn't exist, ${msg.author}`);
+      msg.channel.send(`That course doesn't exist, ${msg.author}`);
 
       /* Unprotected role */
     } else if (role && !protected) {

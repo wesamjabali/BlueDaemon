@@ -71,7 +71,7 @@ module.exports = {
         return;
       }
       msg.member.roles.add(roleInGuild);
-      msg.channel.send(`Role added, ${msg.author}`);
+      msg.channel.send(`Course added, ${msg.author}`);
 
       /* role leave */
     } else if (msg.args[1] === "leave") {
