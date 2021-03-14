@@ -37,23 +37,23 @@ module.exports = {
       }
       return;
     }
-    
-    const existingRole = await msg.member.roles.cache.find(
+
+    const roleInGuild = msg.guild.roles.cache.find(
       (r) => r.name.toLowerCase() === roleName.toLowerCase()
     );
-    
+    const roleInUser = await msg.member.roles.cache.find(
+      (r) => r.name.toLowerCase() === roleName.toLowerCase()
+    );
 
+    // Don't join or leave if role doesn't exist for user
+    if (!roleInGuild) {
+      msg.channel.send(`That role doesn't exist, ${msg.author}`);
+      return;
+    }
 
     /* role delete */
     if (msg.args[1] === "delete") {
       if (isModerator) {
-        const roleInGuild = msg.guild.roles.cache.find(
-          (r) => r.name.toLowerCase() === roleName.toLowerCase()
-        );
-        if (!roleInGuild) {
-          msg.channel.send(`That role doesn't exist, ${msg.author}`);
-          return;
-        }
         roleInGuild.delete();
         msg.channel.send(`@${roleName} deleted, ${msg.author}`);
         log(
@@ -64,15 +64,9 @@ module.exports = {
       return;
     }
 
-    // Don't join or delete if role doesn't exist
-    if (!existingRole) {
-      msg.channel.send(`That role doesn't exist, ${msg.author}`);
-      return;
-    }
-
     /* role join */
     if (msg.args[1] === "join") {
-      if (existingRole) {
+      if (roleInUser) {
         msg.channel.send(`You are already in that role, ${msg.author}`);
         return;
       }
@@ -81,8 +75,8 @@ module.exports = {
 
       /* role leave */
     } else if (msg.args[1] === "leave") {
-      if (existingRole) {
-        msg.member.roles.remove(existingRole);
+      if (roleInUser) {
+        msg.member.roles.remove(roleInUser);
         msg.channel.send(`Removed from \`@${roleName}\`, ${msg.author}`);
       } else {
         msg.channel.send(`You're not part of \`@${roleName}\`, ${msg.author}`);
