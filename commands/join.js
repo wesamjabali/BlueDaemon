@@ -1,4 +1,5 @@
 const config = require("../config.json");
+const log = require("./helpers/log");
 const requiresPassword = require("./helpers/requiresPassword");
 const verifyPassword = require("./helpers/verifyPassword");
 module.exports = {
@@ -52,6 +53,7 @@ module.exports = {
                 );
                 msg.member.roles.add(role);
                 msg.channel.send(`Course added, ${msg.author}`);
+                log(`${msg.author} added to ${roleName}`);
               }
             })
             .catch(() => {
