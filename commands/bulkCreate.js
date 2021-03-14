@@ -29,6 +29,7 @@ module.exports = {
 
     let courseNames = [];
     msg.args.shift();
+    msg.args.sort();
     msg.args.forEach((arg) => {
       courseNames.push(arg.toLowerCase());
     });
