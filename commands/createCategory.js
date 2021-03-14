@@ -81,9 +81,6 @@ module.exports = {
                 TODO:
                 Consider whether this is necessary -- the passwords are hashed in the DB and
                 this may defeat the purpose and you can always delete/recreate if a password was forgotten. */
-      msg.author.send(
-        `Password created:\`\`\`${roleName}: ${msg.args[2]} \`\`\``
-      );
       await protectRole(msg.args[1], msg.guild.id, msg.args[2]);
       msg.channel.send(
         `Created category \`${category.name}\` and channel ${firstChannel} with password.`
