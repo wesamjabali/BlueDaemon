@@ -2,8 +2,8 @@ const config = require("../config.json");
 module.exports = {
   name: "createchannel",
   description: "Create a channel in your category.",
-  facultyOnly: true,
-  privileged: false,
+  facultyOnly: false,
+  privileged: true,
   usage: config.prefix + "createChannel <channel>",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length != 2) {
