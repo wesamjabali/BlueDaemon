@@ -50,7 +50,6 @@ client.on("message", async (msg) => {
       client.admin.send(`${msg.author}: ${msg.content}\n`);
       return;
     }
-    
 
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
     msg.content = msg.content.substring(config.prefix.length); // Remove prefix
@@ -83,9 +82,16 @@ client.on("message", async (msg) => {
     (r) => r.name === config.facultyRoleName
   );
 
+  /* Catch missing prefix joins */
+  if (msg.content.startsWith("join")) {
+    msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
+    if (msg.content.split(" ").length == 3) {
+      msg.delete();
+    }
+  }
+
   /* Commands */
   if (msg.content.startsWith(config.prefix)) {
-
     /* Prepare arguments, attach to message. */
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
     msg.content = msg.content.substring(config.prefix.length); // Remove prefix
