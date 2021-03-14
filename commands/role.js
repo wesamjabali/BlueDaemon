@@ -14,17 +14,23 @@ module.exports = {
       );
       return;
     }
-    
+
     /* Normalize everything lowercase */
     msg.args[1] = msg.args[1].toLowerCase();
     msg.args[2] = msg.args[2].toLowerCase();
     const roleName = `${config.selfRolePrefix}-${msg.args[2]}`;
 
+    const roleInGuild = await msg.guild.roles.cache.find(
+      (r) => r.name.toLowerCase() === roleName.toLowerCase()
+    );
+    const roleInUser = await msg.member.roles.cache.find(
+      (r) => r.name.toLowerCase() === roleName.toLowerCase()
+    );
 
     /* role create */
     if (msg.args[1] === "create") {
       if (isModerator) {
-        if (msg.guild.roles.cache.find((r) => r.name === roleName)) {
+        if (roleInGuild) {
           msg.channel.send(`That role already exists, ${msg.author}`);
           return;
         }
@@ -42,13 +48,6 @@ module.exports = {
       }
       return;
     }
-
-    const roleInGuild = await msg.guild.roles.cache.find(
-      (r) => r.name.toLowerCase() === roleName.toLowerCase()
-    );
-    const roleInUser = await msg.member.roles.cache.find(
-      (r) => r.name.toLowerCase() === roleName.toLowerCase()
-    );
 
     // Don't join or leave if role doesn't exist for user
     if (!roleInGuild) {
