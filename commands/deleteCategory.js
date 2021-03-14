@@ -38,9 +38,9 @@ module.exports = {
     msg.channel.send(`Deleted ${msg.args[1]}, ${msg.author}`);
 
     /* Delete all associated information with category */
-    role.delete();
+    await role.delete();
     await existingCategory.children.forEach((channel) => channel.delete());
-    existingCategory.delete();
-    deleteRole(roleName, msg.guild.id);
+    await existingCategory.delete();
+    await deleteRole(roleName, msg.guild.id);
   },
 };
