@@ -16,6 +16,9 @@ module.exports = {
       );
       return;
     }
+    /* Normalize course names to be lowercase */
+    msg.args[1] = msg.args[1].toLowerCase();
+
     const categoryName = `${config.currentQuarter}-${msg.args[1]}`;
     const roleName = categoryName; // For clarification
 

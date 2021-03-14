@@ -13,6 +13,10 @@ module.exports = {
       );
       return;
     }
+
+    /* Normalize course names to be lowercase */
+    msg.args[1] = msg.args[1].toLowerCase();
+
     const categoryName = `${config.currentQuarter}-${msg.args[1]}`;
     const roleName = categoryName; // For clarification
     const role = await msg.guild.roles.cache.find(
@@ -28,7 +32,7 @@ module.exports = {
       msg.channel.send(`That course doesn't exist, ${msg.author}`);
       return;
     }
-    
+
     msg.channel.send(`Deleted ${msg.args[1]}, ${msg.author}`);
     role.delete();
     await existingCategory.children.forEach((channel) => channel.delete());

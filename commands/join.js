@@ -15,6 +15,9 @@ module.exports = {
       return;
     }
 
+    /* Normalize course names to be lowercase */
+    msg.args[1] = msg.args[1].toLowerCase();
+
     let roleName = `${config.currentQuarter}-${msg.args[1]}`;
     if (msg.member.roles.cache.find((r) => r.name === roleName)) {
       msg.channel.send(`You are already in that course, ${msg.author}`);

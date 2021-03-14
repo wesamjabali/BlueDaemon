@@ -17,6 +17,10 @@ module.exports = {
       );
       return;
     }
+
+    /* Normalize course names to be lowercase */
+    msg.args[1] = msg.args[1].toLowerCase();
+
     // Check if category exists
     let category = client.channels.cache.find(
       (c) => c.name == config.currentQuarter && c.type == "category"

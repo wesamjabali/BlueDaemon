@@ -17,6 +17,9 @@ module.exports = {
       return;
     }
 
+    /* Normalize course names to be lowercase */
+    msg.args[1] = msg.args[1].toLowerCase();
+
     const foundRole = msg.guild.roles.cache.find(
       (r) => r.name.toUpperCase() === roleName.toUpperCase()
     );
