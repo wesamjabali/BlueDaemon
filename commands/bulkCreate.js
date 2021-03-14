@@ -29,7 +29,7 @@ module.exports = {
     let courseNames = [];
     msg.args.shift();
     msg.args.forEach((arg) => {
-      courseNames.push(arg);
+      courseNames.push(arg.toLowerCase());
     });
 
     const modRole = msg.guild.roles.cache.find(
