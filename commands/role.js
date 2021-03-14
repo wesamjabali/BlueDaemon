@@ -38,7 +38,7 @@ module.exports = {
       return;
     }
 
-    const roleInGuild = msg.guild.roles.cache.find(
+    const roleInGuild = await msg.guild.roles.cache.find(
       (r) => r.name.toLowerCase() === roleName.toLowerCase()
     );
     const roleInUser = await msg.member.roles.cache.find(
