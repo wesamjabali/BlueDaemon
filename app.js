@@ -85,7 +85,6 @@ client.on("message", async (msg) => {
         "server_description"
       )
       .where({ guild_id: msg.guild.id });
-    console.log("Used DB");
     allGuildConfigs[msg.guild.id] = msg.guild.config;
     if (msg.guild.config && msg.content == ".setup") {
       return;
@@ -107,7 +106,6 @@ client.on("message", async (msg) => {
   } else {
     msg.guild.config = allGuildConfigs[msg.guild.id];
   }
-  // console.log(allGuildConfigs);
 
   /* React to mentions */
   if (msg.mentions.members && msg.mentions.members.size > 0) {
