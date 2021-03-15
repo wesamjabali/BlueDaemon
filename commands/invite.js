@@ -12,7 +12,10 @@ module.exports = {
     });
 
     msg.channel.send(`Request sent to your DM, ${msg.author}`);
-    msg.author.send(`Here's your invite: ${inv}`);
+    msg.author.send(`Here's your invite: ${inv}`).catch(() => {
+      msg.channel.send("Couldn't sent you a message. Are your DMs locked?");
+      return;
+    });
     log(msg.guild, `${msg.author} created invite ${inv}\nContext: ${msg.url}`);
   },
 };

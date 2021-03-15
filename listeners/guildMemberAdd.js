@@ -25,6 +25,6 @@ module.exports = {
       .setColor(member.guild.config.primary_color)
       .setTimestamp()
       .setFooter("Use me in #bot-usage!");
-    member.send(welcomeEmbed);
+    member.send(welcomeEmbed).catch(() => {});
   },
 };

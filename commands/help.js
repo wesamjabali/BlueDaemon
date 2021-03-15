@@ -89,7 +89,10 @@ Usage: \`\`\`${command.usage}\`\`\``);
       if (msg.channel.type !== "dm") {
         msg.channel.send(`Response sent to your DM, ${msg.author}`);
       }
-      msg.author.send(helpEmbed);
+      msg.author.send(helpEmbed).catch(() => {
+        msg.channel.send("Couldn't sent you a message. Are your DMs locked?");
+        return;
+      });
     }
   },
 };

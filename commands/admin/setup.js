@@ -18,9 +18,14 @@ module.exports = {
       msg.channel.send(`Setup process started in your DM, ${msg.author}`);
 
       /* Get user's name, send it back. */
-      await msg.author.send(
-        `Welcome to BlueDaemon, your new course manager. To get started, what's your name?`
-      );
+      await msg.author
+        .send(
+          `Welcome to BlueDaemon, your new course manager. To get started, what's your name?`
+        )
+        .catch(() => {
+          msg.channel.send("Couldn't sent you a message. Are your DMs locked?");
+          return;
+        });
       response = await msg.author.dmChannel.awaitMessages(
         function () {
           return true;
