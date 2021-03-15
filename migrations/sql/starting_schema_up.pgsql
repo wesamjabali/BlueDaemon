@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS public.cdm_role_password(
 CREATE TABLE IF NOT EXISTS public.cdm_guild_config(
     created_at timestamptz NOT NULL default NOW(),
     id BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY,
-    guild_id text NOT NULL,
+    guild_id text UNIQUE NOT NULL,
     server_description text NOT NULL,
     prefix text NOT NULL,
     mod_role text NOT NULL,
