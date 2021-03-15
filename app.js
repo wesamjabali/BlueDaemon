@@ -63,28 +63,30 @@ client.on("message", async (msg) => {
   }
 
   /* Catch DMs */
+  /* This is nuked for now, as DMs are reserved for setup */
   if (msg.channel.type === "dm") {
-    // if (!msg.content.startsWith(".")) {
-    // client.admin.send(`${msg.author}: ${msg.content}\n`);
-    // msg.channel.send("I can't help here. Use `.help` in the server.");
     return;
-    // }
-    // msg.guild = { config: { primary_color: "#658fe8", prefix: "." } };
-    // console.log(msg.guild);
-    // msg.content = msg.content.toLowerCase();
+    /* if (!msg.content.startsWith(".")) {
+    client.admin.send(`${msg.author}: ${msg.content}\n`);
+    msg.channel.send("I can't help here. Use `.help` in the server.");
+    }
+    msg.guild = { config: { primary_color: "#658fe8", prefix: "." } };
+    console.log(msg.guild);
+    msg.content = msg.content.toLowerCase();
 
-    // if (msg.content == ".help") {
-    //   client.commands.get("help").execute(msg, false, false, client);
-    //   return;
-    // } else if (msg.content.length > 1) {
-    //   client.admin.send(`${msg.author}: .${msg.content}\n`);
-    //   msg.channel.send(
-    //     `Only \`.help\` can be used here. Other commands need to be done in the server.`
-    //   );
-    // }
-    // return;
+    if (msg.content == ".help") {
+      client.commands.get("help").execute(msg, false, false, client);
+      return;
+    } else if (msg.content.length > 1) {
+      client.admin.send(`${msg.author}: .${msg.content}\n`);
+      msg.channel.send(
+        `Only \`.help\` can be used here. Other commands need to be done in the server.`
+      );
+    }
+    return; */
   }
 
+  /* Get guild's config */
   [msg.guild.config] = await knex("cdm_guild_config")
     .select(
       "guild_id",
@@ -94,7 +96,8 @@ client.on("message", async (msg) => {
       "log_channel",
       "current_quarter",
       "self_role_prefix",
-      "primary_color"
+      "primary_color",
+      "server_description"
     )
     .where({ guild_id: msg.guild.id });
   if (msg.guild.config && msg.content == ".setup") {
@@ -104,7 +107,7 @@ client.on("message", async (msg) => {
     msg.content.startsWith(".") &&
     msg.content != ".setup"
   ) {
-    msg.channel.send("Use .setup to set your server up.");
+    msg.channel.send("I'm not configured! Use `.setup` to set your server up.");
     return;
   } else if (msg.content == ".setup") {
     require("./commands/admin/setup").execute(msg, false, false, client);
@@ -125,7 +128,7 @@ client.on("message", async (msg) => {
     (r) => r.id === msg.guild.config.faculty_role
   );
 
-  /* Catch missing prefix joins */
+  /* Catch missing prefix joins so passwords don't get out */
   if (msg.content.startsWith("join")) {
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
     if (msg.content.split(" ").length == 3) {
@@ -149,10 +152,12 @@ client.on("message", async (msg) => {
     const command = client.commands.get(msg.args[0]);
     if (command) {
       let allowed = false;
+      /* If command is locked */
       if (command.privileged || command.facultyOnly) {
         if (isModerator) allowed = true;
         if (isFaculty && command.facultyOnly) allowed = true;
       } else {
+        /* If not locked */
         allowed = true;
       }
       if (allowed) {
