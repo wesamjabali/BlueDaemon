@@ -35,6 +35,21 @@ client.on("ready", async () => {
   client.user.setActivity(".help");
 });
 
+/* Clean up database once it leaves a server. */
+client.on("guildDelete", async (guild) => {
+  await knex("cdm_role_password")
+    .where({
+      guild_id: guild.id,
+    })
+    .delete();
+
+  await knex("cdm_guild_config")
+    .where({
+      guild_id: guild.id,
+    })
+    .delete();
+});
+
 /* New User Listener*/
 client.on("guildMemberAdd", (member) => {
   guildMemberAdd.execute(member, client);
