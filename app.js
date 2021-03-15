@@ -112,9 +112,7 @@ client.on("message", async (msg) => {
   } else if (msg.content == ".setup") {
     require("./commands/admin/setup").execute(msg, false, false, client);
     return;
-  } else {
-    return;
-  }
+  } 
 
   /* React to mentions */
   if (msg.mentions.members && msg.mentions.members.size > 0) {

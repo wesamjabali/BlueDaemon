@@ -21,3 +21,4 @@ CREATE TABLE IF NOT EXISTS public.cdm_guild_config(
     self_role_prefix text NOT NULL,
     primary_color text NOT NULL
 )
+
