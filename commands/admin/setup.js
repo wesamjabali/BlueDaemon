@@ -245,8 +245,7 @@ module.exports = {
       msg.author.send(
         "Done! You may now create courses. Use `.help` for details. Make sure you have moderator role!"
       );
-    } catch (err) {
-      console.log(err);
+    } catch {
       msg.author.send("Timed out! Say .setup in your server to try again.");
     }
   },

@@ -12,12 +12,12 @@ CREATE TABLE IF NOT EXISTS public.cdm_guild_config(
     created_at timestamptz NOT NULL default NOW(),
     id BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY,
     guild_id text NOT NULL,
+    server_description text NOT NULL,
     prefix text NOT NULL,
     mod_role text NOT NULL,
     faculty_role text NOT NULL,
     log_channel text NOT NULL,
     current_quarter text NOT NULL,
     self_role_prefix text NOT NULL,
-    primary_color text NOT NULL,
-    server_description text NOT NULL
+    primary_color text NOT NULL
 )

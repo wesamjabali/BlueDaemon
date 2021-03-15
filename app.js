@@ -23,7 +23,7 @@ for (const file of commandFiles) {
 
 /* Uncomment for debugging */
 // client.on("debug", console.log).on("warn", console.log);
-// knex.migrate.rollback();
+
 client.on("ready", async () => {
   knex.migrate.latest();
   console.log(`Logged in as ${client.user.tag}!`);
