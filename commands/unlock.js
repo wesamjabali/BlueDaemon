@@ -1,4 +1,3 @@
-const config = require("../config.json");
 const deleteRole = require("./helpers/deleteRole");
 
 module.exports = {
@@ -6,15 +5,18 @@ module.exports = {
   description: "Unlock a course",
   facultyOnly: false,
   privileged: true,
-  usage: config.prefix + "unlock <coursename>",
+  usage: ".unlock <coursename>",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length != 2) {
       msg.channel.send(
-        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }
-    await deleteRole(`${config.currentQuarter}-${msg.args[1]}`, msg.guild.id);
+    await deleteRole(
+      `${msg.guild.config.current_quarter}-${msg.args[1]}`,
+      msg.guild.id
+    );
     msg.channel.send(`${msg.args[1]} unlocked, ${msg.author}`);
   },
 };

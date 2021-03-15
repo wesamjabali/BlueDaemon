@@ -1,4 +1,3 @@
-const config = require("../config.json");
 const log = require("./helpers/log");
 
 module.exports = {
@@ -6,11 +5,11 @@ module.exports = {
   description: `Manage your roles`,
   facultyOnly: false,
   privileged: false,
-  usage: config.prefix + "role <join/leave> <role>",
+  usage: ".role <join/leave> <role>",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length != 3) {
       msg.channel.send(
-        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }
@@ -18,7 +17,7 @@ module.exports = {
     /* Normalize everything lowercase */
     msg.args[1] = msg.args[1].toLowerCase();
     msg.args[2] = msg.args[2].toLowerCase();
-    const roleName = `${config.selfRolePrefix}-${msg.args[2]}`;
+    const roleName = `${msg.guild.config.self_role_prefix}-${msg.args[2]}`;
 
     const roleInGuild = await msg.guild.roles.cache.find(
       (r) => r.name.toLowerCase() === roleName.toLowerCase()

@@ -1,11 +1,5 @@
 {
-    "prefix": ".",
-    "modRoleName": "Moderator",
-    "facultyRoleName": "Faculty",
-    "logChannelName": "daemon-log",
     "adminID": "539910274698969088",
-    "currentQuarter": "spring21",
-    "selfRolePrefix": "dpu",
-    "primaryColor": "#658fe8",
     "banner": "https://i.imgur.com/8Yret4v.png"
 }
+

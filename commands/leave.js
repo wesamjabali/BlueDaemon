@@ -1,19 +1,18 @@
-const config = require("../config.json");
 const log = require("./helpers/log");
 module.exports = {
   name: "leave",
   description: "Leave a course",
   facultyOnly: false,
   privileged: false,
-  usage: config.prefix + "leave <coursename>",
+  usage: ".leave <coursename>",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length != 2) {
       msg.channel.send(
-        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }
-    let roleName = `${config.currentQuarter}-${msg.args[1]}`;
+    let roleName = `${msg.guild.config.current_quarter}-${msg.args[1]}`;
     let role = await msg.member.roles.cache.find(
       (r) => r.name.toUpperCase() === roleName.toUpperCase()
     );

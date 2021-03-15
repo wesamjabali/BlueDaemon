@@ -1,4 +1,3 @@
-const config = require("../config.json");
 const log = require("./helpers/log");
 const protectRole = require("./helpers/protectRole");
 module.exports = {
@@ -6,21 +5,21 @@ module.exports = {
   description: "Create a course category",
   facultyOnly: false,
   privileged: true,
-  usage: config.prefix + "createCategory <coursename> <password>",
+  usage: ".createCategory <coursename> <password>",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length == 3) {
       msg.delete();
     }
     if (msg.args.length < 2 || msg.args.length > 3) {
       msg.channel.send(
-        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }
     /* Normalize course names to be lowercase */
     msg.args[1] = msg.args[1].toLowerCase();
 
-    const categoryName = `${config.currentQuarter}-${msg.args[1]}`;
+    const categoryName = `${msg.guild.config.current_quarter}-${msg.args[1]}`;
     const roleName = categoryName; // For clarification
 
     // Check if category exists
@@ -39,10 +38,10 @@ module.exports = {
     });
 
     const modRole = await msg.guild.roles.cache.find(
-      (r) => r.name === config.modRoleName
+      (r) => r.id === msg.guild.config.mod_role
     );
     const facultyRole = await msg.guild.roles.cache.find(
-      (r) => r.name === config.facultyRoleName
+      (r) => r.id === msg.guild.config.faculty_role
     );
 
     /* Create category for the course */
@@ -81,7 +80,11 @@ module.exports = {
                 TODO:
                 Consider whether this is necessary -- the passwords are hashed in the DB and
                 this may defeat the purpose and you can always delete/recreate if a password was forgotten. */
-      await protectRole(msg.args[1], msg.guild.id, msg.args[2]);
+      await protectRole(
+        `${msg.guild.config.current_quarter}-${msg.args[1]}`,
+        msg.guild.id,
+        msg.args[2]
+      );
       msg.channel.send(
         `Created category \`${category.name}\` and channel ${firstChannel} with password.`
       );

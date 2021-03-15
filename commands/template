@@ -4,6 +4,6 @@ module.exports = {
   description: "",
   facultyOnly: false,
   privileged: false,
-  usage: config.prefix + "",
+  usage: ".",
   execute: async (msg, isModerator, isFaculty, client) => {},
 };

@@ -1,27 +1,28 @@
-const config = require("../config.json");
 const log = require("./helpers/log");
 module.exports = {
   name: "bulkdelete",
   description: "Bulk delete courses, separated by a space.",
   facultyOnly: false,
   privileged: true,
-  usage: config.prefix + "bulkdelete <courses>+",
+  usage: ".bulkdelete <courses>+",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length < 2) {
       msg.channel.send(
-        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }
 
     // Find quarter category
     let category = client.channels.cache.find(
-      (c) => c.name == config.currentQuarter && c.type == "category"
+      (c) => c.name == msg.guild.config.current_quarter && c.type == "category"
     );
 
     // Disable bulk create without quarter category.
     if (!category) {
-      msg.channel.send(`No category found for ${config.currentQuarter}.`);
+      msg.channel.send(
+        `No category found for ${msg.guild.config.current_quarter}.`
+      );
       return;
     }
 
@@ -35,21 +36,24 @@ module.exports = {
     var deletedCourses = [];
     courseNames.forEach((courseName) => {
       const existingRole = msg.guild.roles.cache.find(
-        (r) => r.name === `${config.currentQuarter}-${courseName}`
+        (r) => r.name === `${msg.guild.config.current_quarter}-${courseName}`
       );
       const existingChannel = msg.guild.channels.cache.find(
         (c) => c.name === courseName && c.parent == category
       );
-      if (!existingRole || !existingChannel) {
-        msg.channel.send(
-          `Non-existant course: \`${config.currentQuarter}-${courseName}\``
-        );
-        return;
-      } else {
-        deletedCourses.push(courseName);
-        existingChannel.delete();
+      if (existingRole) {
         existingRole.delete();
       }
+      if (existingChannel) {
+        existingChannel.delete();
+      }
+      if (!existingRole && !existingChannel) {
+        msg.channel.send(
+          `Non-existant course: \`${msg.guild.config.current_quarter}-${courseName}\``
+        );
+        return;
+      }
+      deletedCourses.push(courseName);
     });
 
     msg.channel.send(`Courses deleted: \`\`\`${deletedCourses} \`\`\``);

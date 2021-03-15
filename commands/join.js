@@ -1,4 +1,3 @@
-const config = require("../config.json");
 const log = require("./helpers/log");
 const requiresPassword = require("./helpers/requiresPassword");
 const verifyPassword = require("./helpers/verifyPassword");
@@ -7,11 +6,11 @@ module.exports = {
   description: `Join a course`,
   facultyOnly: false,
   privileged: false,
-  usage: config.prefix + "join <coursename> <password?>",
+  usage: ".join <coursename> <password?>",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length < 2 || msg.args.length > 3) {
       msg.channel.send(
-        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }
@@ -19,12 +18,12 @@ module.exports = {
     /* Normalize course names to be lowercase */
     msg.args[1] = msg.args[1].toLowerCase();
 
-    let roleName = `${config.currentQuarter}-${msg.args[1]}`;
+    let roleName = `${msg.guild.config.current_quarter}-${msg.args[1]}`;
     if (msg.member.roles.cache.find((r) => r.name === roleName)) {
       msg.channel.send(`You are already in that course, ${msg.author}`);
       return;
     }
-    
+
     /* True if password is required */
     const protected = await requiresPassword(roleName, msg.guild.id);
 

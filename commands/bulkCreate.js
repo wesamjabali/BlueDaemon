@@ -1,28 +1,27 @@
-const config = require("../config.json");
 const log = require("./helpers/log");
 module.exports = {
   name: "bulkcreate",
   description: "Bulk create unprotected courses, separated by a space.",
   facultyOnly: false,
   privileged: true,
-  usage: config.prefix + "bulkcreate <courses>+",
+  usage: ".bulkcreate <courses>+",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length < 2) {
       msg.channel.send(
-        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }
 
     // Find quarter category
     let category = client.channels.cache.find(
-      (c) => c.name == config.currentQuarter && c.type == "category"
+      (c) => c.name == msg.guild.config.current_quarter && c.type == "category"
     );
 
     // Disable bulk create without quarter category.
     if (!category) {
       msg.channel.send(
-        `No category found for ${config.currentQuarter}. Use \`${config.prefix}create\` then try again.`
+        `No category found for ${msg.guild.config.current_quarter}. Use \`${msg.guild.config.prefix}create\` then try again.`
       );
       return;
     }
@@ -35,13 +34,13 @@ module.exports = {
     });
 
     const modRole = msg.guild.roles.cache.find(
-      (r) => r.name === config.modRoleName
+      (r) => r.id === msg.guild.config.mod_role
     );
 
     var createdCourses = [];
     courseNames.forEach((courseName) => {
       const existingRole = msg.guild.roles.cache.find(
-        (r) => r.name === `${config.currentQuarter}-${courseName}`
+        (r) => r.name === `${msg.guild.config.current_quarter}-${courseName}`
       );
       if (existingRole) {
         msg.channel.send(`Duplicate role: \`${existingRole.name}\``);
@@ -54,7 +53,7 @@ module.exports = {
     createdCourses.forEach(async (courseName) => {
       const newRole = await msg.guild.roles.create({
         data: {
-          name: `${config.currentQuarter}-${courseName}`,
+          name: `${msg.guild.config.current_quarter}-${courseName}`,
         },
       });
       msg.guild.channels.create(courseName, {

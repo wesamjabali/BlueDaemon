@@ -1,4 +1,3 @@
-const config = require("../config.json");
 const protectRole = require("./helpers/protectRole");
 const Discord = require("discord.js");
 const log = require("./helpers/log");
@@ -7,14 +6,14 @@ module.exports = {
   description: "Create a course",
   facultyOnly: false,
   privileged: true,
-  usage: config.prefix + "create <coursename> <password>",
+  usage: ".create <coursename> <password>",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length == 3) {
       msg.delete();
     }
     if (msg.args.length < 2 || msg.args.length > 3) {
       msg.channel.send(
-        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }
@@ -24,25 +23,30 @@ module.exports = {
 
     // Check if category exists
     let category = client.channels.cache.find(
-      (c) => c.name == config.currentQuarter && c.type == "category"
+      (c) => c.name == msg.guild.config.current_quarter && c.type == "category"
     );
 
     // Create category for the current quarter.
     if (!category) {
-      category = await msg.guild.channels.create(config.currentQuarter, {
-        type: "category",
-      });
+      category = await msg.guild.channels.create(
+        msg.guild.config.current_quarter,
+        {
+          type: "category",
+        }
+      );
 
-      msg.channel.send(`Created category for \`${config.currentQuarter}\`.`);
+      msg.channel.send(
+        `Created category for \`${msg.guild.config.current_quarter}\`.`
+      );
       return;
     }
 
-    const roleName = `${config.currentQuarter}-${msg.args[1]}`;
+    const roleName = `${msg.guild.config.current_quarter}-${msg.args[1]}`;
     const modRole = await msg.guild.roles.cache.find(
-      (r) => r.name === config.modRoleName
+      (r) => r.id === msg.guild.config.mod_role
     );
     const facultyRole = await msg.guild.roles.cache.find(
-      (r) => r.name === config.facultyRoleName
+      (r) => r.id === msg.guild.config.faculty_role
     );
 
     if (msg.guild.roles.cache.find((r) => r.name === roleName)) {
@@ -81,7 +85,7 @@ module.exports = {
         msg.guild,
         `${msg.author} created course ${newChannel} with password \`${msg.args[2]}\`\nContext: ${msg.url}`
       );
-      protectRole(msg.args[1], msg.guild.id, msg.args[2]);
+      protectRole(`${msg.guild.config.current_quarter}-${msg.args[1]}`, msg.guild.id, msg.args[2]);
       msg.channel.send(`${newChannel} created with password, ${msg.author}`);
     } else {
       msg.channel.send(`${newChannel} created, ${msg.author}`);

@@ -5,12 +5,19 @@ module.exports = {
   description: "Display help message",
   facultyOnly: false,
   privileged: false,
-  usage: config.prefix + "help <command?>",
+  usage: ".help <command?>",
   execute: async (msg, isModerator, isFaculty, client) => {
+    /* Prepare arguments, attach to message. */
+    msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
+    msg.content = msg.content.substring(msg.guild.config.prefix.length); // Remove prefix
+    msg.args = msg.content.split(" "); // Split into an arg array
+    msg.args[0] = msg.args[0].toLowerCase();
+
     allCommands = [];
+
     if (msg.args.length > 2) {
       msg.channel.send(
-        `${config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
       );
       return;
     }
@@ -24,7 +31,7 @@ module.exports = {
           isModerator
         ) {
           msg.channel
-            .send(`${config.prefix}${command.name}: \`\`\`${command.description}\`\`\`
+            .send(`${msg.guild.config.prefix}${command.name}: \`\`\`${command.description}\`\`\`
 Usage: \`\`\`${command.usage}\`\`\``);
         }
       } else {
@@ -35,7 +42,7 @@ Usage: \`\`\`${command.usage}\`\`\``);
       client.commands.forEach((command) => {
         if (!command.privileged && !command.facultyOnly) {
           allCommands.push({
-            name: `**${config.prefix}${command.name}:**`,
+            name: `**${msg.guild.config.prefix}${command.name}:**`,
             value: `\`\`\`${command.description}\`\`\`\`\`\`${command.usage}\`\`\`\0`,
           });
         }
@@ -43,13 +50,13 @@ Usage: \`\`\`${command.usage}\`\`\``);
       if (isModerator) {
         allCommands.push({ name: "\u200B", value: "**__Mod commands:__**" });
         allCommands.push({
-          name: `**${config.prefix}role:**`,
-          value: `\`\`\`Create or delete a role\`\`\`\`\`\`${config.prefix}role <create/delete> <role>\`\`\`\0`,
+          name: `**${msg.guild.config.prefix}role:**`,
+          value: `\`\`\`Create or delete a role\`\`\`\`\`\`${msg.guild.config.prefix}role <create/delete> <role>\`\`\`\0`,
         });
         client.commands.forEach((command) => {
           if (command.privileged) {
             allCommands.push({
-              name: `**${config.prefix}${command.name}:**`,
+              name: `**${msg.guild.config.prefix}${command.name}:**`,
               value: `\`\`\`${command.description}\`\`\`\`\`\`${command.usage}\`\`\`\0`,
             });
           }
@@ -63,7 +70,7 @@ Usage: \`\`\`${command.usage}\`\`\``);
         client.commands.forEach((command) => {
           if (command.facultyOnly) {
             allCommands.push({
-              name: `**${config.prefix}${command.name}:**`,
+              name: `**${msg.guild.config.prefix}${command.name}:**`,
               value: `\`\`\`${command.description}\`\`\`\`\`\`${command.usage}\`\`\`\0`,
             });
           }
@@ -75,7 +82,7 @@ Usage: \`\`\`${command.usage}\`\`\``);
         .setDescription(`~~But only in the server~~`)
         .setAuthor("Course management")
         .addFields(allCommands)
-        .setColor(config.primaryColor)
+        .setColor(msg.guild.config.primary_color)
         .setImage(config.banner)
         .setTimestamp()
         .setFooter("Need something else? Ask wesam");

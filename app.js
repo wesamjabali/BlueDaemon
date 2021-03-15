@@ -21,10 +21,9 @@ for (const file of commandFiles) {
   client.commands.set(command.name, command);
 }
 
-
 /* Uncomment for debugging */
 // client.on("debug", console.log).on("warn", console.log);
-
+// knex.migrate.rollback();
 client.on("ready", async () => {
   knex.migrate.latest();
   console.log(`Logged in as ${client.user.tag}!`);
@@ -32,8 +31,8 @@ client.on("ready", async () => {
   client.admin = await client.users.fetch(config.adminID);
 
   /* Notify */
-  client.admin.send("I was offline, but I'm back now!");
-  client.user.setActivity(config.currentQuarter + " | .help");
+  // client.admin.send("I was offline, but I'm back now!");
+  client.user.setActivity(".help");
 });
 
 /* New User Listener*/
@@ -50,26 +49,51 @@ client.on("message", async (msg) => {
 
   /* Catch DMs */
   if (msg.channel.type === "dm") {
-    if (!msg.content.startsWith(config.prefix)) {
-      client.admin.send(`${msg.author}: ${msg.content}\n`);
-      return;
-    }
+    // if (!msg.content.startsWith(".")) {
+    // client.admin.send(`${msg.author}: ${msg.content}\n`);
+    // msg.channel.send("I can't help here. Use `.help` in the server.");
+    return;
+    // }
+    // msg.guild = { config: { primary_color: "#658fe8", prefix: "." } };
+    // console.log(msg.guild);
+    // msg.content = msg.content.toLowerCase();
 
-    msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
-    msg.content = msg.content.substring(config.prefix.length); // Remove prefix
-    msg.args = msg.content.split(" "); // Split into an arg array
-    msg.args[0] = msg.args[0].toLowerCase();
+    // if (msg.content == ".help") {
+    //   client.commands.get("help").execute(msg, false, false, client);
+    //   return;
+    // } else if (msg.content.length > 1) {
+    //   client.admin.send(`${msg.author}: .${msg.content}\n`);
+    //   msg.channel.send(
+    //     `Only \`.help\` can be used here. Other commands need to be done in the server.`
+    //   );
+    // }
+    // return;
+  }
 
-    if (msg.args[0] == "help") {
-      client.commands.get("help").execute(msg, false, false, client);
-      return;
-    } else {
-      client.admin.send(`${msg.author}: ${config.prefix}${msg.content}\n`);
-      msg.channel.send(
-        `Only ${config.prefix}\`help\` can be used here. Other commands need to be done in the server.`
-      );
-      return;
-    }
+  [msg.guild.config] = await knex("cdm_guild_config")
+    .select(
+      "guild_id",
+      "prefix",
+      "mod_role",
+      "faculty_role",
+      "log_channel",
+      "current_quarter",
+      "self_role_prefix",
+      "primary_color"
+    )
+    .where({ guild_id: msg.guild.id });
+  if (msg.guild.config && msg.content == ".setup") {
+    return;
+  } else if (
+    !msg.guild.config &&
+    msg.content.startsWith(".") &&
+    msg.content != ".setup"
+  ) {
+    msg.channel.send("Use .setup to set your server up.");
+    return;
+  } else if (msg.content == ".setup") {
+    require("./commands/admin/setup").execute(msg, false, false, client);
+    return;
   }
 
   /* React to mentions */
@@ -80,10 +104,10 @@ client.on("message", async (msg) => {
   }
 
   let isModerator = !!msg.member.roles.cache.find(
-    (r) => r.name === config.modRoleName
+    (r) => r.id === msg.guild.config.mod_role
   );
   let isFaculty = !!msg.member.roles.cache.find(
-    (r) => r.name === config.facultyRoleName
+    (r) => r.id === msg.guild.config.faculty_role
   );
 
   /* Catch missing prefix joins */
@@ -92,17 +116,17 @@ client.on("message", async (msg) => {
     if (msg.content.split(" ").length == 3) {
       msg.delete();
       const sentMessage = await msg.channel.send(
-        `You may have forgotten the prefix, ${msg.author}\nTry \`${config.prefix}join\` instead.`
+        `You may have forgotten the prefix, ${msg.author}\nTry \`${msg.guild.config.prefix}join\` instead.`
       );
       setTimeout(() => sentMessage.delete(), 6000);
     }
   }
 
   /* Commands */
-  if (msg.content.startsWith(config.prefix)) {
+  if (msg.content.startsWith(msg.guild.config.prefix)) {
     /* Prepare arguments, attach to message. */
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
-    msg.content = msg.content.substring(config.prefix.length); // Remove prefix
+    msg.content = msg.content.substring(msg.guild.config.prefix.length); // Remove prefix
     msg.args = msg.content.split(" "); // Split into an arg array
     msg.args[0] = msg.args[0].toLowerCase();
 
