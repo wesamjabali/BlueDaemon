@@ -293,7 +293,6 @@ module.exports = {
       }
 
       /* Insert configuration into DB */
-
       await knex("cdm_guild_config")
         .insert(config)
         .catch(() => {

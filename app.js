@@ -7,6 +7,8 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
+var allGuildConfigs = {};
+
 /* Listeners */
 const guildMemberAdd = require("./listeners/guildMemberAdd");
 const log = require("./commands/helpers/log");
@@ -63,58 +65,49 @@ client.on("message", async (msg) => {
   }
 
   /* Catch DMs */
-  /* This is nuked for now, as DMs are reserved for setup */
+  /* DMs are reserved for setup */
   if (msg.channel.type === "dm") {
     return;
-    /* if (!msg.content.startsWith(".")) {
-    client.admin.send(`${msg.author}: ${msg.content}\n`);
-    msg.channel.send("I can't help here. Use `.help` in the server.");
-    }
-    msg.guild = { config: { primary_color: "#658fe8", prefix: "." } };
-    console.log(msg.guild);
-    msg.content = msg.content.toLowerCase();
-
-    if (msg.content == ".help") {
-      client.commands.get("help").execute(msg, false, false, client);
+  }
+  
+  /* Cut down _hard_ on database requests. Save configs in RAM. */
+  if (!allGuildConfigs[msg.guild.id]) {
+    /* Get guild's config */
+    [msg.guild.config] = await knex("cdm_guild_config")
+      .select(
+        "prefix",
+        "mod_role",
+        "faculty_role",
+        "log_channel",
+        "current_quarter",
+        "self_role_prefix",
+        "primary_color",
+        "server_description"
+      )
+      .where({ guild_id: msg.guild.id });
+    console.log("Used DB");
+    allGuildConfigs[msg.guild.id] = msg.guild.config;
+    if (msg.guild.config && msg.content == ".setup") {
       return;
-    } else if (msg.content.length > 1) {
-      client.admin.send(`${msg.author}: .${msg.content}\n`);
+    } else if (
+      !msg.guild.config &&
+      msg.content.startsWith(".") &&
+      msg.content != ".setup"
+    ) {
       msg.channel.send(
-        `Only \`.help\` can be used here. Other commands need to be done in the server.`
+        "I'm not configured! Use `.setup` to set your server up."
       );
+      return;
+    } else if (msg.content == ".setup") {
+      require("./commands/admin/setup").execute(msg, false, false, client);
+      return;
+    } else if (!msg.guild.config) {
+      return;
     }
-    return; */
+  } else {
+    msg.guild.config = allGuildConfigs[msg.guild.id];
   }
-
-  /* Get guild's config */
-  [msg.guild.config] = await knex("cdm_guild_config")
-    .select(
-      "guild_id",
-      "prefix",
-      "mod_role",
-      "faculty_role",
-      "log_channel",
-      "current_quarter",
-      "self_role_prefix",
-      "primary_color",
-      "server_description"
-    )
-    .where({ guild_id: msg.guild.id });
-  if (msg.guild.config && msg.content == ".setup") {
-    return;
-  } else if (
-    !msg.guild.config &&
-    msg.content.startsWith(".") &&
-    msg.content != ".setup"
-  ) {
-    msg.channel.send("I'm not configured! Use `.setup` to set your server up.");
-    return;
-  } else if (msg.content == ".setup") {
-    require("./commands/admin/setup").execute(msg, false, false, client);
-    return;
-  } else if (!msg.guild.config) {
-    return;
-  }
+  // console.log(allGuildConfigs);
 
   /* React to mentions */
   if (msg.mentions.members && msg.mentions.members.size > 0) {
