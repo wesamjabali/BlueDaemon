@@ -11,6 +11,10 @@ module.exports = {
       .setTitle("View my source on Github")
       .setDescription("Author: Wesam Jabali")
       .setURL("https://github.com/wesamjabali/BlueDaemon")
+      .addField(
+        "\u200B",
+        "Like this bot? Consider [buying me a coffee!](https://www.buymeacoffee.com/wesamjabali)"
+      )
       .setColor(msg.guild.config.primary_color)
       .setImage(config.banner);
 
