@@ -27,6 +27,13 @@ module.exports = {
     let role = msg.guild.roles.cache.find(
       (r) => r.name.toUpperCase() === roleName.toUpperCase()
     );
+    if (!role) {
+      await msg.channel.send(`That course doesn't exist, ${msg.author}`);
+      if (msg.args.length == 3) {
+        msg.delete();
+      }
+      return;
+    }
     /* True if password is required */
     const protected = await requiresPassword(role.id);
 
@@ -35,13 +42,8 @@ module.exports = {
         `Ask your professor to join ${msg.args[1]}, ${msg.author}`
       );
       return;
-    }
-
-    if (!role) {
-      msg.channel.send(`That course doesn't exist, ${msg.author}`);
-
-      /* Unprotected role */
     } else if (role && !protected) {
+      /* Unprotected role */
       msg.member.roles.add(role);
       msg.channel.send(`Course added, ${msg.author}`);
       log(msg.channel, `${msg.author} added to ${role}\nContext: ${msg.url}`);
