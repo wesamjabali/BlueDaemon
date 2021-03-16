@@ -6,7 +6,7 @@ module.exports = {
   usage: "say <message>",
   execute: async (msg, isModerator, isFaculty, client) => {
     await msg.channel.send(
-      msg.content.substring(module.exports.name.length + 1)
+      msg.content.substring(4)
     );
     msg.delete();
   },
