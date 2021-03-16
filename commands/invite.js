@@ -8,7 +8,7 @@ module.exports = {
   execute: async (msg, isModerator, isFaculty, client) => {
     const inv = await msg.channel.createInvite({
       maxAge: 0,
-      unique: true,
+      unique: false,
     });
 
     msg.channel.send(`Here's your invite: ${inv}`);
