@@ -5,8 +5,9 @@ module.exports = {
   privileged: true,
   usage: "say <message>",
   execute: async (msg, isModerator, isFaculty, client) => {
-    const say = msg.content.substring(module.exports.name.length + 1);
-    await msg.channel.send(say);
+    await msg.channel.send(
+      msg.content.substring(module.exports.name.length + 1)
+    );
     msg.delete();
   },
 };
