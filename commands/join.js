@@ -24,8 +24,11 @@ module.exports = {
       return;
     }
 
+    let role = msg.guild.roles.cache.find(
+      (r) => r.name.toUpperCase() === roleName.toUpperCase()
+    );
     /* True if password is required */
-    const protected = await requiresPassword(roleName, msg.guild.id);
+    const protected = await requiresPassword(role.id);
 
     if (protected && msg.args.length == 2) {
       msg.channel.send(
@@ -33,9 +36,6 @@ module.exports = {
       );
       return;
     }
-    let role = msg.guild.roles.cache.find(
-      (r) => r.name.toUpperCase() === roleName.toUpperCase()
-    );
 
     if (!role) {
       msg.channel.send(`That course doesn't exist, ${msg.author}`);
@@ -48,11 +48,7 @@ module.exports = {
 
       /* Protected role */
     } else if (role && protected) {
-      const verified = await verifyPassword(
-        roleName,
-        msg.args[2],
-        msg.guild.id
-      );
+      const verified = await verifyPassword(roleName, msg.args[2]);
       msg.delete();
       if (!verified) {
         msg.channel.send(`Wrong password, ${msg.author}`);

@@ -39,6 +39,6 @@ module.exports = {
     await role.delete();
     await existingCategory.children.forEach((channel) => channel.delete());
     await existingCategory.delete();
-    await deleteRole(roleName, msg.guild.id);
+    await deleteRole(role.id);
   },
 };

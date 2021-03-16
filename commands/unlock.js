@@ -13,10 +13,16 @@ module.exports = {
       );
       return;
     }
-    await deleteRole(
-      `${msg.channel.config.current_quarter}-${msg.args[1]}`,
-      msg.guild.id
+    const roleName = `${msg.channel.config.current_quarter}-${msg.args[1]}`;
+
+    const role = msg.guild.roles.cache.find(
+      (r) => r.name.toUpperCase() === roleName.toUpperCase()
     );
-    msg.channel.send(`${msg.args[1]} unlocked, ${msg.author}`);
+    if (role) {
+      await deleteRole(role.id);
+      msg.channel.send(`${msg.args[1]} unlocked, ${msg.author}`);
+    } else {
+      msg.channel.send(`${msg.args[1]} not found, ${msg.author}`);
+    }
   },
 };

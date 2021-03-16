@@ -27,7 +27,7 @@ module.exports = {
       (c) => c.name.toUpperCase() === msg.args[1].toUpperCase()
     );
     if (foundRole && foundChannel) {
-      await deleteRole(roleName, msg.guild.id);
+      await deleteRole(foundRole.id);
       foundRole.delete();
       foundChannel.delete();
       msg.channel.send(`${msg.args[1]} deleted successfully, ${msg.author}`);

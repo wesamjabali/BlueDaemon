@@ -13,13 +13,16 @@ module.exports = {
       );
       return;
     }
-
-    protectRole(
-      `${msg.channel.config.current_quarter}-${msg.args[1]}`,
-      msg.guild.id,
-      msg.args[2]
+    const roleName = `${msg.channel.config.current_quarter}-${msg.args[1]}`
+    const role = msg.guild.roles.cache.find(
+      (r) => r.name.toUpperCase() === roleName.toUpperCase()
     );
-    msg.channel.send(`Locked ${msg.args[1]}, ${msg.author}`);
+    if (role) {
+      protectRole(msg.guild.id, role.id, msg.args[2]);
+      msg.channel.send(`${msg.args[1]} locked, ${msg.author}`);
+    } else {
+      msg.channel.send(`${msg.args[1]} not found, ${msg.author}`);
+    }
     msg.delete();
   },
 };

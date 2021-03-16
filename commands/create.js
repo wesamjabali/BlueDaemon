@@ -86,11 +86,7 @@ module.exports = {
         msg.channel,
         `${msg.author} created course ${newChannel} with password \`${msg.args[2]}\`\nContext: ${msg.url}`
       );
-      protectRole(
-        `${msg.channel.config.current_quarter}-${msg.args[1]}`,
-        msg.guild.id,
-        msg.args[2]
-      );
+      protectRole(msg.guild.id, newRole.id, msg.args[2]);
       msg.channel.send(`${newChannel} created with password, ${msg.author}`);
     } else {
       msg.channel.send(`${newChannel} created, ${msg.author}`);
