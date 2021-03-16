@@ -6,14 +6,14 @@ module.exports = {
   description: "Create a course",
   facultyOnly: false,
   privileged: true,
-  usage: ".create <coursename> <password>",
+  usage: "create <coursename> <password>",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length == 3) {
       msg.delete();
     }
     if (msg.args.length < 2 || msg.args.length > 3) {
       msg.channel.send(
-        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.channel.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${msg.channel.config.prefix}${module.exports.usage}\`\`\``
       );
       return;
     }
@@ -23,30 +23,31 @@ module.exports = {
 
     // Check if category exists
     let category = client.channels.cache.find(
-      (c) => c.name == msg.guild.config.current_quarter && c.type == "category"
+      (c) =>
+        c.name == msg.channel.config.current_quarter && c.type == "category"
     );
 
     // Create category for the current quarter.
     if (!category) {
       category = await msg.guild.channels.create(
-        msg.guild.config.current_quarter,
+        msg.channel.config.current_quarter,
         {
           type: "category",
         }
       );
 
       msg.channel.send(
-        `Created category for \`${msg.guild.config.current_quarter}\`.`
+        `Created category for \`${msg.channel.config.current_quarter}\`.`
       );
       return;
     }
 
-    const roleName = `${msg.guild.config.current_quarter}-${msg.args[1]}`;
+    const roleName = `${msg.channel.config.current_quarter}-${msg.args[1]}`;
     const modRole = await msg.guild.roles.cache.find(
-      (r) => r.id === msg.guild.config.mod_role
+      (r) => r.id === msg.channel.config.mod_role
     );
     const facultyRole = await msg.guild.roles.cache.find(
-      (r) => r.id === msg.guild.config.faculty_role
+      (r) => r.id === msg.channel.config.faculty_role
     );
 
     if (msg.guild.roles.cache.find((r) => r.name === roleName)) {
@@ -82,15 +83,19 @@ module.exports = {
     });
     if (msg.args.length == 3) {
       log(
-        msg.guild,
+        msg.channel,
         `${msg.author} created course ${newChannel} with password \`${msg.args[2]}\`\nContext: ${msg.url}`
       );
-      protectRole(`${msg.guild.config.current_quarter}-${msg.args[1]}`, msg.guild.id, msg.args[2]);
+      protectRole(
+        `${msg.channel.config.current_quarter}-${msg.args[1]}`,
+        msg.guild.id,
+        msg.args[2]
+      );
       msg.channel.send(`${newChannel} created with password, ${msg.author}`);
     } else {
       msg.channel.send(`${newChannel} created, ${msg.author}`);
       log(
-        msg.guild,
+        msg.channel,
         `${msg.author} created course ${newChannel}\nContext: ${msg.url}`
       );
     }

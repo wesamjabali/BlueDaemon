@@ -7,6 +7,10 @@ module.exports = {
     [member.guild.config] = await knex("cdm_guild_config")
       .select("prefix", "primary_color", "server_description")
       .where({ guild_id: member.guild.id });
+    if (!member.guild.config) {
+      // If not set up, return.
+      return;
+    }
     let allCommands = [];
     client.commands.forEach((command) => {
       if (!command.privileged) {

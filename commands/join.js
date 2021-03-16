@@ -6,11 +6,11 @@ module.exports = {
   description: `Join a course`,
   facultyOnly: false,
   privileged: false,
-  usage: ".join <coursename> <password?>",
+  usage: "join <coursename> <password?>",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length < 2 || msg.args.length > 3) {
       msg.channel.send(
-        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.channel.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${msg.channel.config.prefix}${module.exports.usage}\`\`\``
       );
       return;
     }
@@ -18,7 +18,7 @@ module.exports = {
     /* Normalize course names to be lowercase */
     msg.args[1] = msg.args[1].toLowerCase();
 
-    let roleName = `${msg.guild.config.current_quarter}-${msg.args[1]}`;
+    let roleName = `${msg.channel.config.current_quarter}-${msg.args[1]}`;
     if (msg.member.roles.cache.find((r) => r.name === roleName)) {
       msg.channel.send(`You are already in that course, ${msg.author}`);
       return;
@@ -44,7 +44,7 @@ module.exports = {
     } else if (role && !protected) {
       msg.member.roles.add(role);
       msg.channel.send(`Course added, ${msg.author}`);
-      log(msg.guild, `${msg.author} added to ${role}\nContext: ${msg.url}`);
+      log(msg.channel, `${msg.author} added to ${role}\nContext: ${msg.url}`);
 
       /* Protected role */
     } else if (role && protected) {
@@ -63,7 +63,7 @@ module.exports = {
         msg.member.roles.add(role);
         msg.channel.send(`Course added, ${msg.author}`);
         log(
-          msg.guild,
+          msg.channel,
           `${msg.author} added to ${role} with password.\nContext: ${msg.url}`
         );
       }

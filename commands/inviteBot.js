@@ -7,7 +7,7 @@ module.exports = {
   description: "Invite me to your server",
   facultyOnly: false,
   privileged: false,
-  usage: ".inviteBot",
+  usage: "inviteBot",
   execute: async (msg, isModerator, isFaculty, client) => {
     const inviteEmbed = new Discord.MessageEmbed()
       .setTitle("BlueDaemon")
@@ -18,7 +18,7 @@ module.exports = {
         "Thanks for checking me out!",
         "Follow the link above to add me to your server"
       )
-      .setColor(msg.guild.config.primary_color)
+      .setColor(msg.channel.config.primary_color)
       .setTimestamp()
       .setImage(config.banner);
 
@@ -27,7 +27,7 @@ module.exports = {
       msg.channel.send("Couldn't sent you a message. Are your DMs locked?");
     });
     log(
-      msg.guild,
+      msg.channel,
       `${msg.author} requested OAuth2 invite in ${msg.channel}\nContext: ${msg.url}`
     );
   },

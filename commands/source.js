@@ -5,7 +5,7 @@ module.exports = {
   description: "Display source",
   facultyOnly: false,
   privileged: false,
-  usage: ".source",
+  usage: "source",
   execute: async (msg, isModerator, isFaculty, client) => {
     const sourceEmbed = new Discord.MessageEmbed()
       .setTitle("View my source on Github")
@@ -15,7 +15,7 @@ module.exports = {
         "\u200B",
         "Like this bot? Consider [buying me a coffee!](https://www.buymeacoffee.com/wesamjabali)"
       )
-      .setColor(msg.guild.config.primary_color)
+      .setColor(msg.channel.config.primary_color)
       .setImage(config.banner);
 
     msg.channel.send(sourceEmbed);

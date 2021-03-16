@@ -6,17 +6,17 @@ module.exports = {
   description: "Display available courses",
   facultyOnly: false,
   privileged: false,
-  usage: ".courses",
+  usage: "courses",
   execute: async (msg, isModerator, isFaculty, client) => {
     let courses = [];
     let roles = msg.guild.roles.cache.filter((role) =>
-      role.name.startsWith(msg.guild.config.current_quarter + "-")
+      role.name.startsWith(msg.channel.config.current_quarter + "-")
     );
     roles.forEach((s) => {
       courses.push({
         name: `\`\`\`${s.name
           .split("-")
-          .splice(msg.guild.config.prefix.length)
+          .splice(msg.channel.config.prefix.length)
           .join("-")
           .toUpperCase()}\`\`\``,
         value: "\u200B",
@@ -30,14 +30,14 @@ module.exports = {
       else return -1;
     });
 
-    const embedFieldLimit = 24; // Actually 25, but 24 is divisible by 3 rows.
+    const embedFieldLimit = 24;
     var courseChunks = _.chunk(courses, embedFieldLimit); // Split into groups of 24
 
     /* Page one */
     const pageOneEmbed = new Discord.MessageEmbed()
       .setTitle("Courses")
-      .setFooter(`${msg.guild.config.prefix}join <coursename>  |  1`)
-      .setColor(msg.guild.config.primary_color)
+      .setFooter(`${msg.channel.config.prefix}join <coursename>  |  1`)
+      .setColor(msg.channel.config.primary_color)
       .addFields(courseChunks[0]);
 
     await msg.channel.send(pageOneEmbed);
@@ -45,8 +45,8 @@ module.exports = {
     /* The rest of the pages */
     for (var i = 1; i < courseChunks.length; i++) {
       const newPageEmbed = new Discord.MessageEmbed()
-        .setFooter(`${msg.guild.config.prefix}join <coursename>  |  ${i + 1}`)
-        .setColor(msg.guild.config.primary_color)
+        .setFooter(`${msg.channel.config.prefix}join <coursename>  |  ${i + 1}`)
+        .setColor(msg.channel.config.primary_color)
         .addFields(courseChunks[i]);
       await msg.channel.send(newPageEmbed);
     }

@@ -4,17 +4,17 @@ module.exports = {
   description: "Display available roles",
   facultyOnly: false,
   privileged: false,
-  usage: ".roles",
+  usage: "roles",
   execute: async (msg, isModerator, isFaculty, client) => {
     let selfRoles = [];
     const rolesList = msg.guild.roles.cache.filter((r) =>
-      r.name.startsWith(msg.guild.config.self_role_prefix + "-")
+      r.name.startsWith(msg.channel.config.self_role_prefix + "-")
     );
     rolesList.forEach((s) => {
       selfRoles.push({
         name: `\`\`\`${s.name
           .split("-")
-          .splice(msg.guild.config.prefix.length)
+          .splice(msg.channel.config.prefix.length)
           .join("-")}\`\`\``,
         value: "\u200B",
       });
@@ -22,8 +22,8 @@ module.exports = {
     selfRoles.sort();
     const rolesEmbed = new Discord.MessageEmbed()
       .setTitle("Roles:")
-      .setFooter(`${msg.guild.config.prefix}role join <rolename>`)
-      .setColor(msg.guild.config.primary_color)
+      .setFooter(`${msg.channel.config.prefix}role join <rolename>`)
+      .setColor(msg.channel.config.primary_color)
       .addFields(selfRoles);
 
     msg.channel.send(rolesEmbed);

@@ -6,13 +6,13 @@ module.exports = {
   description: "Delete a course",
   facultyOnly: false,
   privileged: true,
-  usage: ".delete <coursename>",
+  usage: "delete <coursename>",
   execute: async (msg, isModerator, isFaculty, client) => {
-    let roleName = `${msg.guild.config.current_quarter}-${msg.args[1]}`;
+    let roleName = `${msg.channel.config.current_quarter}-${msg.args[1]}`;
 
     if (msg.args.length != 2) {
       msg.channel.send(
-        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.channel.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${msg.channel.config.prefix}${module.exports.usage}\`\`\``
       );
       return;
     }
@@ -32,7 +32,7 @@ module.exports = {
       foundChannel.delete();
       msg.channel.send(`${msg.args[1]} deleted successfully, ${msg.author}`);
       log(
-        msg.guild,
+        msg.channel,
         `${msg.author} deleted course #${msg.args[1]}\nContext: ${msg.url}`
       );
       return;

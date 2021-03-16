@@ -4,6 +4,8 @@ module.exports = {
   description: "",
   facultyOnly: false,
   privileged: false,
-  usage: ".",
-  execute: async (msg, isModerator, isFaculty, client) => {},
+  usage: "",
+  execute: async (msg, isModerator, isFaculty, client) => {
+
+  },
 };

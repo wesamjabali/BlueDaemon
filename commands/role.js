@@ -5,11 +5,11 @@ module.exports = {
   description: `Manage your roles`,
   facultyOnly: false,
   privileged: false,
-  usage: ".role <join/leave> <role>",
+  usage: "role <join/leave> <role>",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length != 3) {
       msg.channel.send(
-        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.channel.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${msg.channel.config.prefix}${module.exports.usage}\`\`\``
       );
       return;
     }
@@ -17,7 +17,7 @@ module.exports = {
     /* Normalize everything lowercase */
     msg.args[1] = msg.args[1].toLowerCase();
     msg.args[2] = msg.args[2].toLowerCase();
-    const roleName = `${msg.guild.config.self_role_prefix}-${msg.args[2]}`;
+    const roleName = `${msg.channel.config.self_role_prefix}-${msg.args[2]}`;
 
     const roleInGuild = await msg.guild.roles.cache.find(
       (r) => r.name.toLowerCase() === roleName.toLowerCase()
@@ -41,7 +41,7 @@ module.exports = {
 
         msg.channel.send(`${newRole} created, ${msg.author}`);
         log(
-          msg.guild,
+          msg.channel,
           `${msg.author} created role \`@${roleName}\`\nContext: ${msg.url}`
         );
       }
@@ -60,7 +60,7 @@ module.exports = {
         roleInGuild.delete();
         msg.channel.send(`\`@${roleName}\` deleted, ${msg.author}`);
         log(
-          msg.guild,
+          msg.channel,
           `${msg.author} deleted role \`@${roleName}\`\nContext: ${msg.url}`
         );
       }

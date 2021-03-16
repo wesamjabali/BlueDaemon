@@ -5,21 +5,21 @@ module.exports = {
   description: "Create a course category",
   facultyOnly: false,
   privileged: true,
-  usage: ".createCategory <coursename> <password>",
+  usage: "createCategory <coursename> <password>",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length == 3) {
       msg.delete();
     }
     if (msg.args.length < 2 || msg.args.length > 3) {
       msg.channel.send(
-        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.channel.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${msg.channel.config.prefix}${module.exports.usage}\`\`\``
       );
       return;
     }
     /* Normalize course names to be lowercase */
     msg.args[1] = msg.args[1].toLowerCase();
 
-    const categoryName = `${msg.guild.config.current_quarter}-${msg.args[1]}`;
+    const categoryName = `${msg.channel.config.current_quarter}-${msg.args[1]}`;
     const roleName = categoryName; // For clarification
 
     // Check if category exists
@@ -38,10 +38,10 @@ module.exports = {
     });
 
     const modRole = await msg.guild.roles.cache.find(
-      (r) => r.id === msg.guild.config.mod_role
+      (r) => r.id === msg.channel.config.mod_role
     );
     const facultyRole = await msg.guild.roles.cache.find(
-      (r) => r.id === msg.guild.config.faculty_role
+      (r) => r.id === msg.channel.config.faculty_role
     );
 
     /* Create category for the course */
@@ -81,7 +81,7 @@ module.exports = {
                 Consider whether this is necessary -- the passwords are hashed in the DB and
                 this may defeat the purpose and you can always delete/recreate if a password was forgotten. */
       await protectRole(
-        `${msg.guild.config.current_quarter}-${msg.args[1]}`,
+        `${msg.channel.config.current_quarter}-${msg.args[1]}`,
         msg.guild.id,
         msg.args[2]
       );
@@ -89,7 +89,7 @@ module.exports = {
         `Created category \`${category.name}\` and channel ${firstChannel} with password.`
       );
       log(
-        msg.guild,
+        msg.channel,
         `${msg.author} created category \`${category.name}\` and channel ${firstChannel} with password \`${msg.args[2]}\`\nContext: ${msg.url}`
       );
     } else {
@@ -97,7 +97,7 @@ module.exports = {
         `Created category \`${category.name}\` and channel ${firstChannel}`
       );
       log(
-        msg.guild,
+        msg.channel,
         `${msg.author} created category \`${category.name}\` and channel ${firstChannel}\nContext: ${msg.url}`
       );
     }

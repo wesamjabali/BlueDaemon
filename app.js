@@ -67,13 +67,17 @@ client.on("message", async (msg) => {
   /* Catch DMs */
   /* DMs are reserved for setup */
   if (msg.channel.type === "dm") {
+    console.log(`${msg.author.username}: ${msg.content}`); // For feedback on how people _would_ use the DMs if they existed.
+    if (msg.content.toLowerCase().startsWith(".help")) {
+      client.commands.get("help").execute(msg, false, false, client);
+    }
     return;
   }
-  
+
   /* Cut down _hard_ on database requests. Save configs in RAM. */
-  if (!allGuildConfigs[msg.guild.id]) {
+  if (!allGuildConfigs[msg.channel.id]) {
     /* Get guild's config */
-    [msg.guild.config] = await knex("cdm_guild_config")
+    [msg.channel.config] = await knex("cdm_guild_config")
       .select(
         "prefix",
         "mod_role",
@@ -85,11 +89,11 @@ client.on("message", async (msg) => {
         "server_description"
       )
       .where({ guild_id: msg.guild.id });
-    allGuildConfigs[msg.guild.id] = msg.guild.config;
-    if (msg.guild.config && msg.content == ".setup") {
+    allGuildConfigs[msg.channel.id] = msg.channel.config;
+    if (msg.channel.config && msg.content == ".setup") {
       return;
     } else if (
-      !msg.guild.config &&
+      !msg.channel.config &&
       msg.content.startsWith(".") &&
       msg.content != ".setup"
     ) {
@@ -100,11 +104,11 @@ client.on("message", async (msg) => {
     } else if (msg.content == ".setup") {
       require("./commands/admin/setup").execute(msg, false, false, client);
       return;
-    } else if (!msg.guild.config) {
+    } else if (!msg.channel.config) {
       return;
     }
   } else {
-    msg.guild.config = allGuildConfigs[msg.guild.id];
+    msg.channel.config = allGuildConfigs[msg.channel.id];
   }
 
   /* React to mentions */
@@ -115,10 +119,10 @@ client.on("message", async (msg) => {
   }
 
   let isModerator = !!msg.member.roles.cache.find(
-    (r) => r.id === msg.guild.config.mod_role
+    (r) => r.id === msg.channel.config.mod_role
   );
   let isFaculty = !!msg.member.roles.cache.find(
-    (r) => r.id === msg.guild.config.faculty_role
+    (r) => r.id === msg.channel.config.faculty_role
   );
 
   /* Catch missing prefix joins so passwords don't get out */
@@ -127,17 +131,17 @@ client.on("message", async (msg) => {
     if (msg.content.split(" ").length == 3) {
       msg.delete();
       const sentMessage = await msg.channel.send(
-        `You may have forgotten the prefix, ${msg.author}\nTry \`${msg.guild.config.prefix}join\` instead.`
+        `You may have forgotten the prefix, ${msg.author}\nTry \`${msg.channel.config.prefix}join\` instead.`
       );
       setTimeout(() => sentMessage.delete(), 6000);
     }
   }
 
   /* Commands */
-  if (msg.content.startsWith(msg.guild.config.prefix)) {
+  if (msg.content.startsWith(msg.channel.config.prefix)) {
     /* Prepare arguments, attach to message. */
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
-    msg.content = msg.content.substring(msg.guild.config.prefix.length); // Remove prefix
+    msg.content = msg.content.substring(msg.channel.config.prefix.length); // Remove prefix
     msg.args = msg.content.split(" "); // Split into an arg array
     msg.args[0] = msg.args[0].toLowerCase();
 

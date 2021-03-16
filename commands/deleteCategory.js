@@ -8,7 +8,7 @@ module.exports = {
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length != 2) {
       msg.channel.send(
-        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.channel.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${msg.channel.config.prefix}${module.exports.usage}\`\`\``
       );
       return;
     }
@@ -16,7 +16,7 @@ module.exports = {
     /* Normalize course names to be lowercase */
     msg.args[1] = msg.args[1].toLowerCase();
 
-    const categoryName = `${msg.guild.config.current_quarter}-${msg.args[1]}`;
+    const categoryName = `${msg.channel.config.current_quarter}-${msg.args[1]}`;
     const roleName = categoryName; // For clarification
     const role = await msg.guild.roles.cache.find(
       (role) => role.name == roleName

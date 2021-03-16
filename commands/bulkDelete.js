@@ -4,24 +4,25 @@ module.exports = {
   description: "Bulk delete courses, separated by a space.",
   facultyOnly: false,
   privileged: true,
-  usage: ".bulkdelete <courses>+",
+  usage: "bulkdelete <courses>+",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length < 2) {
       msg.channel.send(
-        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.channel.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${msg.channel.config.prefix}${module.exports.usage}\`\`\``
       );
       return;
     }
 
     // Find quarter category
     let category = client.channels.cache.find(
-      (c) => c.name == msg.guild.config.current_quarter && c.type == "category"
+      (c) =>
+        c.name == msg.channel.config.current_quarter && c.type == "category"
     );
 
     // Disable bulk create without quarter category.
     if (!category) {
       msg.channel.send(
-        `No category found for ${msg.guild.config.current_quarter}.`
+        `No category found for ${msg.channel.config.current_quarter}.`
       );
       return;
     }
@@ -36,7 +37,7 @@ module.exports = {
     var deletedCourses = [];
     courseNames.forEach((courseName) => {
       const existingRole = msg.guild.roles.cache.find(
-        (r) => r.name === `${msg.guild.config.current_quarter}-${courseName}`
+        (r) => r.name === `${msg.channel.config.current_quarter}-${courseName}`
       );
       const existingChannel = msg.guild.channels.cache.find(
         (c) => c.name === courseName && c.parent == category
@@ -49,7 +50,7 @@ module.exports = {
       }
       if (!existingRole && !existingChannel) {
         msg.channel.send(
-          `Non-existant course: \`${msg.guild.config.current_quarter}-${courseName}\``
+          `Non-existant course: \`${msg.channel.config.current_quarter}-${courseName}\``
         );
         return;
       }
@@ -58,7 +59,7 @@ module.exports = {
 
     msg.channel.send(`Courses deleted: \`\`\`${deletedCourses} \`\`\``);
     log(
-      msg.guild,
+      msg.channel,
       `${msg.author} bulk deleted: \`\`\`${deletedCourses} \`\`\`\nContext: ${msg.url}`
     );
   },

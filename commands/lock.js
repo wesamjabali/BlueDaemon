@@ -5,17 +5,17 @@ module.exports = {
   description: "Lock a course",
   facultyOnly: false,
   privileged: true,
-  usage: ".lock <coursename> <password>",
+  usage: "lock <coursename> <password>",
   execute: async (msg, isModerator, isFaculty, client) => {
     if (msg.args.length != 3) {
       msg.channel.send(
-        `${msg.guild.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${module.exports.usage}\`\`\``
+        `${msg.channel.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${msg.channel.config.prefix}${module.exports.usage}\`\`\``
       );
       return;
     }
 
     protectRole(
-      `${msg.guild.config.current_quarter}-${msg.args[1]}`,
+      `${msg.channel.config.current_quarter}-${msg.args[1]}`,
       msg.guild.id,
       msg.args[2]
     );
