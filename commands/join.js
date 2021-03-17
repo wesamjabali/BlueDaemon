@@ -45,11 +45,11 @@ module.exports = {
 
     if (protected) {
       /* Protected role */
+      await msg.channel.send(
+        `That course is protected. I DM'd you for the password, ${msg.author}`
+      );
       var tries = 3;
       while (tries) {
-        await msg.channel.send(
-          `That course is protected. I DM'd you for the password, ${msg.author}`
-        );
         await msg.author.send(`What is the password for ${msg.args[1]}?`);
         try {
           response = await msg.author.dmChannel.awaitMessages(filter, {
@@ -72,7 +72,7 @@ module.exports = {
         );
         if (!verified) {
           msg.author.send(
-            `Wrong password, ${msg.author}. You have ${tries - 1} tries left.`
+            `Wrong password, ${msg.author}. You have __**${tries - 1}**__ tries left.`
           );
           --tries;
         } else {
