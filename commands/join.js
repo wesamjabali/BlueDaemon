@@ -50,7 +50,7 @@ module.exports = {
 
       /* Protected role */
     } else if (role && protected) {
-      const verified = await verifyPassword(roleName, msg.args[2]);
+      const verified = await verifyPassword(role.id, msg.args[2]);
       msg.delete();
       if (!verified) {
         msg.channel.send(`Wrong password, ${msg.author}`);
