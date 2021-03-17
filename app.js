@@ -134,13 +134,11 @@ client.on("message", async (msg) => {
   /* Catch missing prefix joins so passwords don't get out */
   if (msg.content.startsWith("join")) {
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
-    if (msg.content.split(" ").length == 3) {
-      msg.delete();
-      const sentMessage = await msg.channel.send(
-        `You may have forgotten the prefix, ${msg.author}\nTry \`${msg.channel.config.prefix}join\` instead.`
-      );
-      setTimeout(() => sentMessage.delete(), 6000);
-    }
+    const sentMessage = await msg.channel.send(
+      `You may have forgotten the prefix, ${msg.author}\nTry \`${msg.channel.config.prefix}join\` instead.`
+    );
+    setTimeout(() => sentMessage.delete(), 6000);
+    msg.delete();
     return;
   }
 

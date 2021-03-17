@@ -6,14 +6,22 @@ module.exports = {
   description: `Join a course`,
   facultyOnly: false,
   privileged: false,
-  usage: "join <coursename> <password?>",
+  usage: "join <coursename>",
   execute: async (msg, isModerator, isFaculty, client) => {
-    if (msg.args.length < 2 || msg.args.length > 3) {
+    if (msg.args.length == 3) {
+      await msg.author.send(
+        `Please dont send passwords in the chat. Use ${msg.channel.config.prefix}join <classname> instead.`
+      );
+      msg.delete();
+      return;
+    }
+    if (msg.args.length != 2) {
       msg.channel.send(
         `${msg.channel.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${msg.channel.config.prefix}${module.exports.usage}\`\`\``
       );
       return;
     }
+    const filter = () => true;
 
     /* Normalize course names to be lowercase */
     msg.args[1] = msg.args[1].toLowerCase();
@@ -29,42 +37,62 @@ module.exports = {
     );
     if (!role) {
       await msg.channel.send(`That course doesn't exist, ${msg.author}`);
-      if (msg.args.length == 3) {
-        msg.delete();
-      }
+
       return;
     }
     /* True if password is required */
     const protected = await requiresPassword(role.id);
 
-    if (protected && msg.args.length == 2) {
-      msg.channel.send(
-        `Ask your professor to join ${msg.args[1]}, ${msg.author}`
-      );
-      return;
-    } else if (role && !protected) {
+    if (protected) {
+      /* Protected role */
+      var tries = 3;
+      while (tries) {
+        await msg.channel.send(
+          `That course is protected. I DM'd you for the password, ${msg.author}`
+        );
+        await msg.author.send(`What is the password for ${msg.args[1]}?`);
+        try {
+          response = await msg.author.dmChannel.awaitMessages(filter, {
+            max: 1,
+            time: 45000,
+            errors: ["time"],
+          });
+          /* To get rid of double setups: */
+          if (response.first().author.bot) {
+            throw Error("Bot responded.");
+          }
+        } catch (err) {
+          console.log(err);
+          msg.author.send(`Timed out. Try joining again.`);
+          return;
+        }
+        const verified = await verifyPassword(
+          role.id,
+          response.first().content
+        );
+        if (!verified) {
+          msg.author.send(
+            `Wrong password, ${msg.author}. You have ${tries - 1} tries left.`
+          );
+          --tries;
+        } else {
+          let role = msg.guild.roles.cache.find(
+            (r) => r.name.toUpperCase() === roleName.toUpperCase()
+          );
+          msg.member.roles.add(role);
+          msg.author.send(`${msg.args[1]} added, ${msg.author}`);
+          log(
+            msg.channel,
+            `${msg.author} added to ${role} with password.\nContext: ${msg.url}`
+          );
+          tries = 0;
+        }
+      }
+    } else {
       /* Unprotected role */
       msg.member.roles.add(role);
       msg.channel.send(`${msg.args[1]} added, ${msg.author}`);
       log(msg.channel, `${msg.author} added to ${role}\nContext: ${msg.url}`);
-
-      /* Protected role */
-    } else if (role && protected) {
-      const verified = await verifyPassword(role.id, msg.args[2]);
-      msg.delete();
-      if (!verified) {
-        msg.channel.send(`Wrong password, ${msg.author}`);
-      } else {
-        let role = msg.guild.roles.cache.find(
-          (r) => r.name.toUpperCase() === roleName.toUpperCase()
-        );
-        msg.member.roles.add(role);
-        msg.channel.send(`${msg.args[1]} added, ${msg.author}`);
-        log(
-          msg.channel,
-          `${msg.author} added to ${role} with password.\nContext: ${msg.url}`
-        );
-      }
     }
   },
 };
