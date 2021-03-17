@@ -21,7 +21,7 @@ module.exports = {
       );
       return;
     }
-    const filter = () => true;
+    const filter = (message) => true;
 
     /* Normalize course names to be lowercase */
     msg.args[1] = msg.args[1].toLowerCase();
@@ -57,13 +57,16 @@ module.exports = {
             time: 45000,
             errors: ["time"],
           });
-          /* To get rid of double setups: */
+          /* To get rid of double messages: */
           if (response.first().author.bot) {
-            throw Error("Bot responded.");
+            throw Error("Detected double command. Exiting.");
           }
         } catch (err) {
-          console.log(err);
-          msg.author.send(`Timed out. Try joining again.`);
+          if (err.message) {
+            msg.author.send(err.message);
+          } else {
+            msg.author.send(`Timed out. Try joining again.`);
+          }
           return;
         }
         const verified = await verifyPassword(
@@ -72,7 +75,9 @@ module.exports = {
         );
         if (!verified) {
           msg.author.send(
-            `Wrong password, ${msg.author}. You have __**${tries - 1}**__ tries left.`
+            `Wrong password, ${msg.author}. You have __**${
+              tries - 1
+            }**__ tries left.`
           );
           --tries;
         } else {
