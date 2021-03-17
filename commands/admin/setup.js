@@ -298,8 +298,9 @@ module.exports = {
         .catch(() => {
           msg.author.send(`Looks like this configuration's already created! `);
         });
+      msg.member.roles.add(modRole); // Give the admin mod role
       msg.author.send(
-        `Done! You may now create courses. Use \`${config.prefix}help\` **inside ${msg.guild.name}** for details. Make sure you have \`@${modRole.name}\` role!`
+        `Done! You may now create courses. Use \`${config.prefix}help\` **inside ${msg.guild.name}** for details.`
       );
     } catch (err) {
       msg.author.send("Timed out! Say .setup in your server to try again.");

@@ -150,20 +150,18 @@ client.on("message", async (msg) => {
 
   /* Commands */
   if (msg.content.startsWith(msg.channel.config.prefix)) {
-    if (
-      msg.content.startsWith(
-        `${msg.channel.config.prefix}${msg.channel.config.prefix}`
-      )
-    ) {
-      return;
-    }
     if (!cooldownUsers.includes(msg.author.id)) {
-      addCooldown(msg.author.id);
       /* Prepare arguments, attach to message. */
       msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
       msg.content = msg.content.substring(msg.channel.config.prefix.length); // Remove prefix
       msg.args = msg.content.split(" "); // Split into an arg array
       msg.args[0] = msg.args[0].toLowerCase();
+      if (
+        msg.args[0] == "" ||
+        msg.args[0].startsWith(msg.channel.config.prefix)
+      )
+        return;
+      addCooldown(msg.author.id);
 
       /* If command exists, do it. */
       const command = client.commands.get(msg.args[0]);
@@ -190,7 +188,8 @@ client.on("message", async (msg) => {
       const newMessage = await msg.channel.send(
         `You're doing commands too fast, ${msg.author}! I need to take a breather.`
       );
-      setTimeout(() => newMessage.delete(), 3000);
+      msg.delete();
+      setTimeout(() => newMessage.delete(), 2000);
     }
   }
 });
