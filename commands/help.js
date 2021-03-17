@@ -10,11 +10,6 @@ module.exports = {
     if (msg.channel.type == "dm") {
       msg.channel["config"] = { prefix: ".", primary_color: "#658fe8" };
     }
-    /* Prepare arguments, attach to message. */
-    msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
-    msg.content = msg.content.substring(msg.channel.config.prefix.length); // Remove prefix
-    msg.args = msg.content.split(" "); // Split into an arg array
-    msg.args[0] = msg.args[0].toLowerCase();
 
     allCommands = [];
 

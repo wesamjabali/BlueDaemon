@@ -11,7 +11,7 @@ client.commands = new Discord.Collection();
 
 var allGuildConfigs = {};
 var cooldownUsers = [];
-const cooldownTime = 1500;
+const cooldownTime = 5000;
 
 /* Listeners */
 const guildMemberAdd = require("./listeners/guildMemberAdd");
@@ -70,16 +70,18 @@ client.on("message", async (msg) => {
   /* Catch DMs */
   /* DMs are reserved for setup */
   if (msg.channel.type === "dm") {
-    console.log(cooldownUsers);
-
     console.log(`${msg.author.username}: ${msg.content}`); // For feedback on how people _would_ use the DMs if they existed.
     if (msg.content.toLowerCase().startsWith(".help")) {
       if (!cooldownUsers.includes(msg.author.id)) {
+        /* Prepare arguments, attach to message. */
+        msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
+        msg.content = msg.content.substring(msg.channel.config.prefix.length); // Remove prefix
+        msg.args = msg.content.split(" "); // Split into an arg array
+        msg.args[0] = msg.args[0].toLowerCase();
         addCooldown(msg.author.id);
         client.commands.get("help").execute(msg, false, false, client);
       } else {
         addCooldown(msg.author.id);
-        msg.reply("You're doing that too fast.");
       }
     }
     return;
@@ -129,13 +131,6 @@ client.on("message", async (msg) => {
     }
   }
 
-  let isModerator = !!msg.member.roles.cache.find(
-    (r) => r.id === msg.channel.config.mod_role
-  );
-  let isFaculty = !!msg.member.roles.cache.find(
-    (r) => r.id === msg.channel.config.faculty_role
-  );
-
   /* Catch missing prefix joins so passwords don't get out */
   if (msg.content.startsWith("join")) {
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
@@ -146,50 +141,45 @@ client.on("message", async (msg) => {
       );
       setTimeout(() => sentMessage.delete(), 6000);
     }
+    return;
   }
 
+  let isModerator = !!msg.member.roles.cache.find(
+    (r) => r.id === msg.channel.config.mod_role
+  );
+  let isFaculty = !!msg.member.roles.cache.find(
+    (r) => r.id === msg.channel.config.faculty_role
+  );
   /* Commands */
   if (msg.content.startsWith(msg.channel.config.prefix)) {
-    if (!cooldownUsers.includes(msg.author.id)) {
-      /* Prepare arguments, attach to message. */
-      msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
-      msg.content = msg.content.substring(msg.channel.config.prefix.length); // Remove prefix
-      msg.args = msg.content.split(" "); // Split into an arg array
-      msg.args[0] = msg.args[0].toLowerCase();
-      if (
-        msg.args[0] == "" ||
-        msg.args[0].startsWith(msg.channel.config.prefix)
-      )
-        return;
-      addCooldown(msg.author.id);
+    /* Prepare arguments, attach to message. */
+    msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
+    msg.content = msg.content.substring(msg.channel.config.prefix.length); // Remove prefix
+    msg.args = msg.content.split(" "); // Split into an arg array
+    msg.args[0] = msg.args[0].toLowerCase();
+    if (msg.args[0] == "" || msg.args[0].startsWith(msg.channel.config.prefix))
+      return;
 
-      /* If command exists, do it. */
-      const command = client.commands.get(msg.args[0]);
-      if (command) {
-        let allowed = false;
-        /* If command is locked */
-        if (command.privileged || command.facultyOnly) {
-          if (isModerator) allowed = true;
-          if (isFaculty && command.facultyOnly) allowed = true;
-        } else {
-          /* If not locked */
-          allowed = true;
-        }
-        if (allowed) {
-          command.execute(msg, isModerator, isFaculty, client);
-        }
+    /* If command exists, do it. */
+    const command = client.commands.get(msg.args[0]);
+    if (command) {
+      let allowed = false;
+      /* If command is locked */
+      if (command.privileged || command.facultyOnly) {
+        if (isModerator) allowed = true;
+        if (isFaculty && command.facultyOnly) allowed = true;
       } else {
-        let sentMessage = await msg.channel.send(
-          `Bad command! Do \`.help\` for commands, ${msg.author}`
-        );
-        setTimeout(() => sentMessage.delete(), 3000);
+        /* If not locked */
+        allowed = true;
+      }
+      if (allowed) {
+        command.execute(msg, isModerator, isFaculty, client);
       }
     } else {
-      const newMessage = await msg.channel.send(
-        `You're doing commands too fast, ${msg.author}! I need to take a breather.`
+      let sentMessage = await msg.channel.send(
+        `Bad command! Do \`${msg.channel.config.prefix}help\` for commands, ${msg.author}`
       );
-      msg.delete();
-      setTimeout(() => newMessage.delete(), 2000);
+      setTimeout(() => sentMessage.delete(), 3000);
     }
   }
 });
