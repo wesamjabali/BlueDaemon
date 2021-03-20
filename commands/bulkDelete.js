@@ -50,9 +50,17 @@ module.exports = {
       }
       if (!existingRole && !existingChannel) {
         msg.channel.send(
-          `Non-existant course: \`${msg.channel.config.current_quarter}-${courseName}\``
+          `Channel and role not found: \`${msg.channel.config.current_quarter}-${courseName}\``
         );
         return;
+      } else if(!existingChannel) {
+        msg.channel.send(
+          `Channel not found: \`${courseName}\``
+        );
+      } else if(!existingRole) {
+        msg.channel.send(
+          `Role not found: \`${msg.channel.config.current_quarter}-${courseName}\``
+        );
       }
       deletedCourses.push(courseName);
     });

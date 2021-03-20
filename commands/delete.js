@@ -41,6 +41,26 @@ module.exports = {
         `${msg.author} deleted course #${msg.args[1]}\nContext: ${msg.url}`
       );
       return;
+    } else if (foundChannel) {
+      foundChannel.delete();
+      msg.channel.send(
+        `Channel for ${msg.args[1]} deleted successfully -- Role not found. Was the name changed? ${msg.author}`
+      );
+      log(
+        msg.channel,
+        `${msg.author} deleted channel trying to delete course #${msg.args[1]}\nContext: ${msg.url}`
+      );
+      return;
+    } else if (foundRole) {
+      foundRole.delete();
+      msg.channel.send(
+        `Role for ${msg.args[1]} deleted successfully -- Channel not found. Was the name changed? ${msg.author}`
+      );
+      log(
+        msg.channel,
+        `${msg.author} deleted role trying to delete course #${msg.args[1]}\nContext: ${msg.url}`
+      );
+      return;
     }
 
     msg.channel.send(`${msg.args[1]} not found, ${msg.author}`);
