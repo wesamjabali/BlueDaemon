@@ -14,9 +14,10 @@ module.exports = {
       selfRoles.push({
         name: `\`\`\`${s.name
           .split("-")
-          .splice(msg.channel.config.prefix.length)
+          .splice(1)
           .join("-")}\`\`\``,
         value: "\u200B",
+        inline: true,
       });
     });
     selfRoles.sort();
