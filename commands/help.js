@@ -39,24 +39,14 @@ Usage: \`\`\`${msg.channel.config.prefix}${command.usage}\`\`\``);
     } else if (msg.args.length == 1) {
       client.commands.forEach((command) => {
         if (!command.privileged && !command.facultyOnly) {
-          allCommands.push({
-            name: `**${msg.channel.config.prefix}${command.name}:** \`${command.description}\``,
-            value: `\u200B`,
-          });
+          addCommand(command);
         }
       });
       if (isModerator) {
         allCommands.push({ name: "\u200B", value: "**__Mod commands:__**" });
-        allCommands.push({
-          name: `**${msg.channel.config.prefix}role:**`,
-          value: `\`\`\`Create or delete a role\`\`\`\`\`\`${msg.channel.config.prefix}role <create/delete> <role>\`\`\`\0`,
-        });
         client.commands.forEach((command) => {
           if (command.privileged) {
-            allCommands.push({
-              name: `**${msg.channel.config.prefix}${command.name}:**`,
-              value: `\`\`\`${command.description}\`\`\`\`\`\`${msg.channel.config.prefix}${command.usage}\`\`\`\0`,
-            });
+            addCommand(command);
           }
         });
       }
@@ -67,10 +57,7 @@ Usage: \`\`\`${msg.channel.config.prefix}${command.usage}\`\`\``);
         });
         client.commands.forEach((command) => {
           if (command.facultyOnly) {
-            allCommands.push({
-              name: `**${msg.channel.config.prefix}${command.name}:**`,
-              value: `\`\`\`${command.description}\`\`\`\`\`\`${command.usage}\`\`\`\0`,
-            });
+            addCommand(command);
           }
         });
       }
@@ -83,6 +70,14 @@ Usage: \`\`\`${msg.channel.config.prefix}${command.usage}\`\`\``);
         .setTimestamp()
         .setFooter("#bot-usage");
       msg.channel.send(helpEmbed);
+    }
+
+    /* Add a command to the help embed */
+    function addCommand(command) {
+      allCommands.push({
+        name: `**${msg.channel.config.prefix}${command.name}:** \`${command.description}\``,
+        value: `\u200B`,
+      });
     }
   },
 };
