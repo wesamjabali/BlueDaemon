@@ -37,11 +37,13 @@ Usage: \`\`\`${msg.channel.config.prefix}${command.usage}\`\`\``);
       }
       return;
     } else if (msg.args.length == 1) {
+      var column = 0;
+      var inline = false;
       client.commands.forEach((command) => {
         if (!command.privileged && !command.facultyOnly) {
           allCommands.push({
-            name: `**${msg.channel.config.prefix}${command.name}:**`,
-            value: `\`\`\`${command.description}\`\`\`\`\`\`${msg.channel.config.prefix}${command.usage}\`\`\`\0`,
+            name: `**${msg.channel.config.prefix}${command.name}:** \`${command.description}\``,
+            value: `\u200B`,
           });
         }
       });
@@ -55,7 +57,7 @@ Usage: \`\`\`${msg.channel.config.prefix}${command.usage}\`\`\``);
           if (command.privileged) {
             allCommands.push({
               name: `**${msg.channel.config.prefix}${command.name}:**`,
-              value: `\`\`\`${command.description}\`\`\`\`\`\`${msg.channel.config.prefix}${command.usage}\`\`\`\0`,
+              value: `\`\`\`${command.description}\`\`\`\`\`\`${msg.channel.config.prefix}${command.usage}\`\`\`\0`
             });
           }
         });
@@ -77,13 +79,11 @@ Usage: \`\`\`${msg.channel.config.prefix}${command.usage}\`\`\``);
 
       const helpEmbed = new Discord.MessageEmbed()
         .setTitle("Here to help!")
-        .setDescription(`~~But only in the server~~`)
         .setAuthor("Course management")
         .addFields(allCommands)
         .setColor(msg.channel.config.primary_color)
-        .setImage(config.banner)
         .setTimestamp()
-        .setFooter("Need something else? Ask wesam");
+        .setFooter("#bot-usage");
       msg.channel.send(helpEmbed);
     }
   },
