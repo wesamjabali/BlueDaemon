@@ -85,7 +85,7 @@ module.exports = {
             (r) => r.name.toUpperCase() === roleName.toUpperCase()
           );
           msg.member.roles.add(role);
-          msg.author.send(`${msg.args[1]} added, ${msg.author}`);
+          msg.author.send(`${msg.args[1].toUpperCase()} added, ${msg.author}`);
           log(
             msg.channel,
             `${msg.author} added to ${role} with password.\nContext: ${msg.url}`
@@ -96,7 +96,7 @@ module.exports = {
     } else {
       /* Unprotected role */
       msg.member.roles.add(role);
-      msg.channel.send(`${msg.args[1]} added, ${msg.author}`);
+      msg.channel.send(`${msg.args[1].toUpperCase()} added, ${msg.author}`);
       log(msg.channel, `${msg.author} added to ${role}\nContext: ${msg.url}`);
     }
   },
