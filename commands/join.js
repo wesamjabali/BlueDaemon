@@ -88,7 +88,7 @@ module.exports = {
           msg.author.send(`${msg.args[1].toUpperCase()} added, ${msg.author}`);
           log(
             msg.channel,
-            `${msg.author} added to ${role} with password.\nContext: ${msg.url}`
+            `${msg.author} added to \`@${role.name}\` with password.\nContext: ${msg.url}`
           );
           tries = 0;
         }
@@ -97,7 +97,10 @@ module.exports = {
       /* Unprotected role */
       msg.member.roles.add(role);
       msg.channel.send(`${msg.args[1].toUpperCase()} added, ${msg.author}`);
-      log(msg.channel, `${msg.author} added to ${role}\nContext: ${msg.url}`);
+      log(
+        msg.channel,
+        `${msg.author} added to \`@${role.name}\`\nContext: ${msg.url}`
+      );
     }
   },
 };
