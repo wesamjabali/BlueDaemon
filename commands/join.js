@@ -51,7 +51,7 @@ module.exports = {
       var tries = 3;
       while (tries) {
         await msg.author.send(
-          `What is the password for ${msg.args[1]}?\n__The password may be located in your professor's syllabus.__`
+          `What is the password for ${msg.args[1]}?\n*The password may be located in your professor's syllabus.*`
         );
         try {
           response = await msg.author.dmChannel.awaitMessages(filter, {
