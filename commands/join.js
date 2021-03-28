@@ -50,7 +50,9 @@ module.exports = {
       );
       var tries = 3;
       while (tries) {
-        await msg.author.send(`What is the password for ${msg.args[1]}?`);
+        await msg.author.send(
+          `What is the password for ${msg.args[1]}?\n__The password may be located in your professor's syllabus.__`
+        );
         try {
           response = await msg.author.dmChannel.awaitMessages(filter, {
             max: 1,
