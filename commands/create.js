@@ -86,8 +86,11 @@ module.exports = {
       .catch(async () => {
         newRole.delete();
         msg.channel.send(`Category reached limit (50), ${msg.author}`);
-        return;
       });
+
+    if (!newChannel) {
+      return;
+    }
 
     if (msg.args.length == 3) {
       log(
