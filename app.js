@@ -131,17 +131,6 @@ client.on("message", async (msg) => {
     }
   }
 
-  /* Catch missing prefix joins so passwords don't get out */
-  if (msg.content.startsWith("join")) {
-    msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
-    const sentMessage = await msg.channel.send(
-      `You may have forgotten the prefix, ${msg.author}\nTry \`${msg.channel.config.prefix}join\` instead.`
-    );
-    setTimeout(() => sentMessage.delete(), 6000);
-    msg.delete();
-    return;
-  }
-
   let isModerator = !!msg.member.roles.cache.find(
     (r) => r.id === msg.channel.config.mod_role
   );
@@ -150,6 +139,19 @@ client.on("message", async (msg) => {
   );
   /* Commands */
   if (msg.content.startsWith(msg.channel.config.prefix)) {
+    // Don't use #request-a-class. Will be refactored with TS upgrade.
+    if (msg.channel.id === "798378783479955476") {
+      const botUsage = msg.guild.channels.cache.find(
+        (ch) => ch.id === "780919399158644756"
+      );
+      if (botUsage) {
+        const sentMessage = await msg.channel.send(
+          `Use ${botUsage}, ${msg.member}.`
+        );
+        setTimeout(() => sentMessage.delete(), 5000);
+      }
+      msg.delete();
+    }
     /* Prepare arguments, attach to message. */
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
     msg.content = msg.content.substring(msg.channel.config.prefix.length); // Remove prefix
