@@ -1,6 +1,7 @@
 const protectRole = require("./helpers/protectRole");
 const Discord = require("discord.js");
 const log = require("./helpers/log");
+const updateQuarter = require("./helpers/updateQuarter");
 module.exports = {
   name: "create",
   description: "Create a course",
@@ -81,6 +82,15 @@ module.exports = {
         },
       ],
     });
+
+    if (!newChannel) {
+      updateQuarter(msg.guild.id, msg.channel.config.current_quarter + "-");
+      newRole.delete();
+      msg.channel.send(
+        "Category reached limit (50), new category created. Try creating the course again."
+      );
+    }
+
     if (msg.args.length == 3) {
       log(
         msg.channel,
