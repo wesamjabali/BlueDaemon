@@ -11,9 +11,8 @@ module.exports = {
     );
     let inv;
     if (introductions) {
-      inv = await msg.channel.createInvite({
+      inv = await introductions.createInvite({
         maxAge: 0,
-        channel: introductions,
         unique: true,
       });
     } else {
