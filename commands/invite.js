@@ -6,10 +6,21 @@ module.exports = {
   privileged: false,
   usage: "invite",
   execute: async (msg, isModerator, isFaculty, client) => {
-    const inv = await msg.channel.createInvite({
-      maxAge: 0,
-      unique: false,
-    });
+    const introductions = msg.guild.channels.cache.find(
+      (ch) => ch.name === "introductions"
+    );
+    if (introductions) {
+      const inv = await msg.channel.createInvite({
+        maxAge: 0,
+        channel: introductions,
+        unique: true,
+      });
+    } else {
+      const inv = await msg.channel.createInvite({
+        maxAge: 0,
+        unique: true,
+      });
+    }
 
     msg.channel.send(`Here's your invite: ${inv}`);
 
