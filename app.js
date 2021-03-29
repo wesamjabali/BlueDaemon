@@ -4,12 +4,12 @@ const knex = require("./knex");
 const config = require("./config.json");
 const _ = require("lodash");
 const log = require("./commands/helpers/log");
+const { allGuildConfigs } = require("./configs/guild");
 
 const Discord = require("discord.js");
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
-var allGuildConfigs = {};
 var cooldownUsers = [];
 const cooldownTime = 5000;
 
@@ -88,7 +88,7 @@ client.on("message", async (msg) => {
   }
 
   /* Cut down _hard_ on database requests. Save configs in RAM. */
-  if (!allGuildConfigs[msg.channel.id]) {
+  if (!allGuildConfigs[msg.guild.id]) {
     /* Get guild's config */
     [msg.channel.config] = await knex("cdm_guild_config")
       .select(
@@ -102,7 +102,7 @@ client.on("message", async (msg) => {
         "server_description"
       )
       .where({ guild_id: msg.guild.id });
-    allGuildConfigs[msg.channel.id] = msg.channel.config;
+    allGuildConfigs[msg.guild.id] = msg.channel.config;
     if (msg.channel.config && msg.content == ".setup") {
       return;
     } else if (
@@ -121,7 +121,7 @@ client.on("message", async (msg) => {
       return;
     }
   } else {
-    msg.channel.config = allGuildConfigs[msg.channel.id];
+    msg.channel.config = allGuildConfigs[msg.guild.id];
   }
 
   /* React to mentions */
