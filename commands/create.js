@@ -60,36 +60,36 @@ module.exports = {
         name: roleName,
       },
     });
-    const newChannel = await msg.guild.channels.create(msg.args[1], {
-      type: "text",
-      parent: category,
-      permissionOverwrites: [
-        {
-          id: msg.guild.id,
-          deny: ["VIEW_CHANNEL"],
-        },
-        {
-          id: newRole.id, // Course role
-          allow: ["VIEW_CHANNEL"],
-        },
-        {
-          id: modRole.id,
-          allow: ["VIEW_CHANNEL"],
-        },
-        {
-          id: facultyRole.id,
-          allow: ["MANAGE_MESSAGES", "MENTION_EVERYONE"],
-        },
-      ],
-    });
-
-    if (!newChannel) {
-      updateQuarter(msg.guild.id, msg.channel.config.current_quarter + "-");
-      newRole.delete();
-      msg.channel.send(
-        "Category reached limit (50), new category created. Try creating the course again."
-      );
-    }
+    const newChannel = await msg.guild.channels
+      .create(msg.args[1], {
+        type: "text",
+        parent: category,
+        permissionOverwrites: [
+          {
+            id: msg.guild.id,
+            deny: ["VIEW_CHANNEL"],
+          },
+          {
+            id: newRole.id, // Course role
+            allow: ["VIEW_CHANNEL"],
+          },
+          {
+            id: modRole.id,
+            allow: ["VIEW_CHANNEL"],
+          },
+          {
+            id: facultyRole.id,
+            allow: ["MANAGE_MESSAGES", "MENTION_EVERYONE"],
+          },
+        ],
+      })
+      .catch(() => {
+        updateQuarter(msg.guild.id, msg.channel.config.current_quarter + "-");
+        newRole.delete();
+        msg.channel.send(
+          "Category reached limit (50), new category created. Try creating the course again."
+        );
+      });
 
     if (msg.args.length == 3) {
       log(
