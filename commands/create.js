@@ -83,7 +83,7 @@ module.exports = {
           },
         ],
       })
-      .catch(() => {
+      .catch(async () => {
         msg.channel.config.current_quarter =
           msg.channel.config.current_quarter + "-";
         updateQuarter(msg.guild.id, msg.channel.config.current_quarter);
