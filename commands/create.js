@@ -84,7 +84,15 @@ module.exports = {
         ],
       })
       .catch(() => {
-        updateQuarter(msg.guild.id, msg.channel.config.current_quarter + "-");
+        msg.channel.config.current_quarter =
+          msg.channel.config.current_quarter + "-";
+        updateQuarter(msg.guild.id, msg.channel.config.current_quarter);
+        category = await msg.guild.channels.create(
+          msg.channel.config.current_quarter,
+          {
+            type: "category",
+          }
+        );
         newRole.delete();
         msg.channel.send(
           "Category reached limit (50), new category created. Try creating the course again."
