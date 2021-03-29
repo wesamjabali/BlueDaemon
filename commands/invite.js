@@ -9,14 +9,15 @@ module.exports = {
     const introductions = msg.guild.channels.cache.find(
       (ch) => ch.name === "introductions"
     );
+    let inv;
     if (introductions) {
-      const inv = await msg.channel.createInvite({
+      inv = await msg.channel.createInvite({
         maxAge: 0,
         channel: introductions,
         unique: true,
       });
     } else {
-      const inv = await msg.channel.createInvite({
+      inv = await msg.channel.createInvite({
         maxAge: 0,
         unique: true,
       });
