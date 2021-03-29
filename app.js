@@ -151,6 +151,7 @@ client.on("message", async (msg) => {
         setTimeout(() => sentMessage.delete(), 5000);
       }
       msg.delete();
+      return;
     }
     /* Prepare arguments, attach to message. */
     msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
