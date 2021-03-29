@@ -146,9 +146,9 @@ client.on("message", async (msg) => {
       );
       if (botUsage) {
         const sentMessage = await msg.channel.send(
-          `Use ${botUsage}, ${msg.member}.`
+          `I don't work here! Use ${botUsage} instead, ${msg.member}.`
         );
-        setTimeout(() => sentMessage.delete(), 5000);
+        setTimeout(() => sentMessage.delete(), 6000);
       }
       msg.delete();
       return;
