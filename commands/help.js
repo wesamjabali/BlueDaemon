@@ -7,7 +7,7 @@ module.exports = {
   privileged: false,
   usage: "help <command?>",
   execute: async (msg, isModerator, isFaculty, client) => {
-    if (msg.channel.type == "dm") {
+    if (msg.channel.type === "dm") {
       msg.channel["config"] = { prefix: ".", primary_color: "#658fe8" };
     }
 

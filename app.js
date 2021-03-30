@@ -75,7 +75,7 @@ client.on("message", async (msg) => {
       if (!cooldownUsers.includes(msg.author.id)) {
         /* Prepare arguments, attach to message. */
         msg.content = msg.content.replace(/ +(?= )/g, ""); // Remove duplicate spaces
-        msg.content = msg.content.substring(msg.channel.config.prefix.length); // Remove prefix
+        msg.content = msg.content.substring(1); // Remove prefix
         msg.args = msg.content.split(" "); // Split into an arg array
         msg.args[0] = msg.args[0].toLowerCase();
         addCooldown(msg.author.id);
