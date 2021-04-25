@@ -10,7 +10,7 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
-var cooldownUsers = [];
+let cooldownUsers = [];
 const cooldownTime = 5000;
 
 /* Listeners */
@@ -71,6 +71,7 @@ client.on("message", async (msg) => {
   /* DMs are reserved for setup */
   if (msg.channel.type === "dm") {
     console.log(`${msg.author.username}: ${msg.content}`); // For feedback on how people _would_ use the DMs if they existed.
+
     if (msg.content.toLowerCase().startsWith(".help")) {
       if (!cooldownUsers.includes(msg.author.id)) {
         /* Prepare arguments, attach to message. */
@@ -79,6 +80,7 @@ client.on("message", async (msg) => {
         msg.args = msg.content.split(" "); // Split into an arg array
         msg.args[0] = msg.args[0].toLowerCase();
         addCooldown(msg.author.id);
+        
         client.commands.get("help").execute(msg, false, false, client);
       } else {
         addCooldown(msg.author.id);
