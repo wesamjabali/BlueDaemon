@@ -27,8 +27,24 @@ module.exports = {
       (c) => c.name == categoryName && c.type == "category"
     );
 
-    if (!existingCategory || !role) {
+    if (!existingCategory && !role) {
       msg.channel.send(`That course doesn't exist, ${msg.author}`);
+      return;
+    }
+    if(role) {
+      msg.channel.send(`Deleted channels for ${msg.args[1]}, but category not found, ${msg.author}`);
+
+      await role.delete();
+      await deleteRole(role.id);
+
+      return;
+    }
+    if(existingCategory) {
+      msg.channel.send(`Deleted channels for ${msg.args[1]}, but role not found, ${msg.author}`);
+
+      await existingCategory.children.forEach((channel) => channel.delete());
+      await existingCategory.delete();
+      
       return;
     }
 
