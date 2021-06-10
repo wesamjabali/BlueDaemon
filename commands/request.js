@@ -22,7 +22,7 @@ module.exports = {
     );
 
     requestsChannel.send(
-      `@<796214872479498241> New request from ${msg.author}: ${request}`
+      `<@796214872479498241> New request from ${msg.author}: ${request}`
     );
     msg.channel.send("Request sent!");
   },
