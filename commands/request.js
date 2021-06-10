@@ -20,7 +20,8 @@ module.exports = {
     const requestsChannel = msg.guild.channels.cache.find(
       (channel) => channel.id == config.courseRequestsChannel
     );
-
+    
+    msg.delete();
     requestsChannel.send(
       `<@796214872479498241> New request from ${msg.author}: ${request}`
     );
