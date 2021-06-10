@@ -8,6 +8,7 @@ module.exports = {
   privileged: false,
   usage: "join <coursename>",
   execute: async (msg, isModerator, isFaculty, client) => {
+    console.log(msg.guild.channels);
     if (msg.args.length != 2) {
       msg.channel.send(
         `${msg.channel.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${msg.channel.config.prefix}${module.exports.usage}\`\`\``
@@ -101,13 +102,15 @@ module.exports = {
 
     // Find joined channel
     // Find quarter category -- if in quarter category
-    let category = await client.channels.cache.find(
+    
+    let category = await msg.guild.channels.cache.find(
       (c) =>
         c.name.toUpperCase() ==
           msg.channel.config.current_quarter.toUpperCase() &&
         c.type == "category"
     );
-    let channel = await client.channels.cache.find(
+    
+    let channel = await msg.guild.channels.cache.find(
       (c) =>
         c.name.toUpperCase() == msg.args[1].toUpperCase() &&
         c.parent == category
@@ -115,7 +118,7 @@ module.exports = {
 
     // if course has its own category
     if (!channel) {
-      category = await client.channels.cache.find(
+      category = await msg.guild.channels.cache.find(
         (c) =>
           c.name.toUpperCase() === roleName.toUpperCase() &&
           c.type === "category"
