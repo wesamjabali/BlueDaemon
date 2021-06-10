@@ -8,13 +8,6 @@ module.exports = {
   privileged: false,
   usage: "join <coursename>",
   execute: async (msg, isModerator, isFaculty, client) => {
-    if (msg.args.length == 3) {
-      await msg.author.send(
-        `Please dont send passwords in the chat. Use ${msg.channel.config.prefix}join <classname> instead.`
-      );
-      msg.delete();
-      return;
-    }
     if (msg.args.length != 2) {
       msg.channel.send(
         `${msg.channel.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${msg.channel.config.prefix}${module.exports.usage}\`\`\``
@@ -86,6 +79,7 @@ module.exports = {
           let role = msg.guild.roles.cache.find(
             (r) => r.name.toUpperCase() === roleName.toUpperCase()
           );
+
           msg.member.roles.add(role);
           msg.author.send(`${msg.args[1].toUpperCase()} added, ${msg.author}`);
           log(
@@ -104,5 +98,30 @@ module.exports = {
         `${msg.author} added to \`@${role.name}\`\nContext: ${msg.url}`
       );
     }
+
+    // Find joined channel
+    // Find quarter category -- if in quarter category
+    let category = await client.channels.cache.find(
+      (c) =>
+        c.name.toUpperCase() ==
+          msg.channel.config.current_quarter.toUpperCase() &&
+        c.type == "category"
+    );
+    let channel = await client.channels.cache.find(
+      (c) =>
+        c.name.toUpperCase() == msg.args[1].toUpperCase() &&
+        c.parent == category
+    );
+
+    // if course has its own category
+    if (!channel) {
+      category = await client.channels.cache.find(
+        (c) =>
+          c.name.toUpperCase() === roleName.toUpperCase() &&
+          c.type === "category"
+      );
+      channel = category.children.first();
+    }
+    if (channel) channel.send(`Welcome, ${msg.author}!`);
   },
 };
