@@ -8,7 +8,6 @@ module.exports = {
   privileged: false,
   usage: "join <coursename>",
   execute: async (msg, isModerator, isFaculty, client) => {
-    console.log(msg.guild.channels);
     if (msg.args.length != 2) {
       msg.channel.send(
         `${msg.channel.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${msg.channel.config.prefix}${module.exports.usage}\`\`\``
@@ -102,14 +101,14 @@ module.exports = {
 
     // Find joined channel
     // Find quarter category -- if in quarter category
-    
+
     let category = await msg.guild.channels.cache.find(
       (c) =>
         c.name.toUpperCase() ==
           msg.channel.config.current_quarter.toUpperCase() &&
         c.type == "category"
     );
-    
+
     let channel = await msg.guild.channels.cache.find(
       (c) =>
         c.name.toUpperCase() == msg.args[1].toUpperCase() &&
@@ -123,7 +122,7 @@ module.exports = {
           c.name.toUpperCase() === roleName.toUpperCase() &&
           c.type === "category"
       );
-      channel = category.children.first();
+      channel = category.children.last();
     }
     if (channel) channel.send(`Welcome, ${msg.author}!`);
   },
