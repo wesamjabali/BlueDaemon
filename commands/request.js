@@ -8,19 +8,22 @@ module.exports = {
   privileged: false,
   usage: "request <coursename> <description>",
   execute: async (msg, isModerator, isFaculty, client) => {
-    if (msg.args.length < 1) {
+    if (msg.args.length < 2) {
       msg.channel.send(
         `${msg.channel.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${msg.channel.config.prefix}${module.exports.usage}\`\`\``
       );
       return;
     }
+    msg.args.shift();
     const request = msg.args.join(" ");
 
     const requestsChannel = msg.guild.channels.cache.find(
       (channel) => channel.id == config.courseRequestsChannel
     );
 
-    requestsChannel.send(`@everyone New request from ${msg.author}: ${request}`);
-    msg.channel.send("Request sent!")
+    requestsChannel.send(
+      `@everyone New request from ${msg.author}: ${request}`
+    );
+    msg.channel.send("Request sent!");
   },
 };
