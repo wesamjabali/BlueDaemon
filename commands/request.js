@@ -21,7 +21,7 @@ module.exports = {
       (channel) => channel.id == config.courseRequestsChannel
     );
 
-    const newMessage = requestsChannel.send(
+    const newMessage = await requestsChannel.send(
       `<@796214872479498241> New request from ${msg.author}: ${request}`
     );
     newMessage.react("✅");
