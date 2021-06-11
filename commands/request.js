@@ -22,7 +22,7 @@ module.exports = {
     );
 
     const newMessage = await requestsChannel.send(
-      `<@796214872479498241> New request from ${msg.author}: ${request}`
+      `<@&796214872479498241> New request from ${msg.author}: ${request}`
     );
     newMessage.react("✅");
     await msg.channel.send("Request sent!");
