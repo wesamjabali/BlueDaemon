@@ -8,6 +8,7 @@ module.exports = {
   privileged: false,
   usage: "join <coursename>",
   execute: async (msg, isModerator, isFaculty, client) => {
+    msg.guild.members.fetch();
     if (msg.args.length != 2) {
       msg.channel.send(
         `${msg.channel.config.prefix}${module.exports.name}:\`\`\`${module.exports.description}\`\`\`\nUsage:\`\`\`${msg.channel.config.prefix}${module.exports.usage}\`\`\``
@@ -124,6 +125,13 @@ module.exports = {
       );
       channel = category.children.last();
     }
-    if (channel) channel.send(`Welcome, ${msg.author}!`);
+    if (channel)
+      channel.send(
+        `Welcome, ${msg.author}! There are now **${
+          role.members.size + 1
+        }** people here.`
+      );
+    if (channel && role.members.size + 1 < 10)
+      channel.send(`*Invite your classmates using <#795715257024249867>!*`);
   },
 };
