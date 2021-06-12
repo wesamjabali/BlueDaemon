@@ -40,7 +40,7 @@ module.exports = {
     if (protected) {
       /* Protected role */
       await msg.channel.send(
-        `That course is protected. I DM'd you for the password, ${msg.author}`
+        `That course is protected. I DM'd you for the password, ${msg.author}. **Do not send the password here! Check your DMs!**`
       );
       var tries = 3;
       while (tries) {
