@@ -21,6 +21,6 @@ module.exports = {
         msg.channel.send(`Adding: ${m}`);
       }
     });
-    await msg.channel.send("Done");
+    msg.channel.send("Done");
   },
 };

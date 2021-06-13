@@ -123,7 +123,9 @@ module.exports = {
           c.name.toUpperCase() === roleName.toUpperCase() &&
           c.type === "category"
       );
-      channel = category.children.last();
+      channel = await msg.guild.channels.cache.find(
+        (c) => c.position == 0 && c.parent == category
+      );
     }
     if (channel)
       channel.send(
