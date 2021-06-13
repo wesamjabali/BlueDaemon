@@ -7,14 +7,18 @@ module.exports = {
   execute: async (msg, isModerator, isFaculty, client) => {
     await msg.guild.members.fetch();
     await msg.channel.send("Fetched");
-    let role = await msg.guild.roles.cache.find(
-      (r) => r.id === "853310342128861225"
+    let role = await msg.guild.roles.cache.find((r) =>
+      r.name.includes("-communityping")
     );
+    if (!role) {
+      msg.channel.send("**Error:** Could not find a self-role named communityping.");
+      return;
+    }
     await msg.channel.send(`Role found ${role}`);
     msg.guild.members.cache.each((m) => {
       if (!m.roles.cache.some((r) => r.id === role.id) && m.user.bot == false) {
         m.roles.add(role);
-        msg.channel.send(m.toString());
+        msg.channel.send(`Adding: ${m}`);
       }
     });
     await msg.channel.send("Done");
