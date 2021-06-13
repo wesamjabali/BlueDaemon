@@ -1,0 +1,22 @@
+module.exports = {
+  name: "forcecommunityping",
+  description: "Add everyone to community ping. DANGEROUS.",
+  facultyOnly: false,
+  privileged: true,
+  usage: "forcecommunityping",
+  execute: async (msg, isModerator, isFaculty, client) => {
+    await msg.guild.members.fetch();
+    await msg.channel.send("Fetched");
+    let role = await msg.guild.roles.cache.find(
+      (r) => r.id === "853310342128861225"
+    );
+    await msg.channel.send(`Role found ${role}`);
+    msg.guild.members.cache.each((m) => {
+      if (!m.roles.cache.some((r) => r.id === role.id) && m.user.bot == false) {
+        m.roles.add(role);
+        msg.channel.send(m.toString());
+      }
+    });
+    await msg.channel.send("Done");
+  },
+};

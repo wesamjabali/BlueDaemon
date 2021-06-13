@@ -33,5 +33,12 @@ This server hosts a bunch of courses that you can be a part of by using the \`${
       .setTimestamp()
       .setFooter("Use me in #bot-usage!");
     member.send(welcomeEmbed).catch(() => {});
+    
+    // Add community ping role
+    await member.guild.roles.fetch();
+    let role = await member.guild.roles.cache.find(
+      (r) => r.id === "853310342128861225"
+    );
+    member.roles.add(role);
   },
 };
