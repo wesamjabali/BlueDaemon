@@ -1,4 +1,5 @@
 const deleteRole = require("./helpers/deleteRole");
+const log = require("./helpers/log");
 
 module.exports = {
   name: "unlock",
@@ -20,6 +21,10 @@ module.exports = {
     );
     if (role) {
       await deleteRole(role.id);
+      log(
+        msg.channel,
+        `${msg.author} unlocked \`@${role.name}\`\nContext: ${msg.url}`
+      );
       msg.channel.send(`${msg.args[1]} unlocked, ${msg.author}`);
     } else {
       msg.channel.send(`${msg.args[1]} not found, ${msg.author}`);

@@ -19,6 +19,10 @@ module.exports = {
     );
     if (role) {
       protectRole(msg.guild.id, role.id, msg.args[2]);
+      log(
+        msg.channel,
+        `${msg.author} locked \`@${role.name}\`\nContext: ${msg.url}`
+      );
       msg.channel.send(`${msg.args[1]} locked, ${msg.author}`);
     } else {
       msg.channel.send(`${msg.args[1]} not found, ${msg.author}`);
