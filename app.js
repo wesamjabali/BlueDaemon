@@ -30,7 +30,7 @@ for (const file of commandFiles) {
 // client.on("debug", console.log).on("warn", console.log);
 
 client.on("ready", async () => {
-  knex.migrate.latest();
+  //knex.migrate.latest();
   console.log(`Logged in as ${client.user.tag}!`);
   /* Attach admin user to client */
   client.admin = await client.users.fetch(config.adminID);
