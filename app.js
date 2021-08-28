@@ -67,6 +67,16 @@ client.on("message", async (msg) => {
     return;
   }
 
+  if (msg.channel.id === "828036544995524648") {
+    let lastMessage = await msg.channel.messages.fetch({ limit: 2 });
+    lastMessage = parseInt(lastMessage.array()[1].content.split(" ")[0]);
+    let currentMessage = parseInt(msg.content.split(" ")[0]);
+
+    if (currentMessage !== lastMessage + 1) {
+      msg.delete();
+    }
+  }
+
   /* Catch DMs */
   /* DMs are reserved for setup */
   if (msg.channel.type === "dm") {
@@ -80,7 +90,7 @@ client.on("message", async (msg) => {
         msg.args = msg.content.split(" "); // Split into an arg array
         msg.args[0] = msg.args[0].toLowerCase();
         addCooldown(msg.author.id);
-        
+
         client.commands.get("help").execute(msg, false, false, client);
       } else {
         addCooldown(msg.author.id);
