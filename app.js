@@ -67,7 +67,7 @@ client.on("message", async (msg) => {
     return;
   }
 
-  if (msg.channel.id === "828036544995524648") {
+  if (msg.channel.id === "820751415184982056") {
     let lastMessage = await msg.channel.messages.fetch({ limit: 2 });
     lastMessage = parseInt(lastMessage.array()[1].content.split(" ")[0]);
     let currentMessage = parseInt(msg.content.split(" ")[0]);
