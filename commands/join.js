@@ -101,32 +101,43 @@ module.exports = {
     }
 
     // Find joined channel
-    // Find quarter category -- if in quarter category
-
-    let category = await msg.guild.channels.cache.find(
-      (c) =>
-        c.name.toUpperCase() ==
-          msg.channel.config.current_quarter.toUpperCase() &&
-        c.type == "category"
-    );
-
-    let channel = await msg.guild.channels.cache.find(
-      (c) =>
-        c.name.toUpperCase() == msg.args[1].toUpperCase() &&
-        c.parent == category
-    );
 
     // if course has its own category
-    if (!channel) {
-      category = await msg.guild.channels.cache.find(
-        (c) =>
-          c.name.toUpperCase() === roleName.toUpperCase() &&
-          c.type === "category"
-      );
+    let category = null;
+    let channel = null;
+
+    category = await msg.guild.channels.cache.find(
+      (c) =>
+        c.name.toUpperCase() === roleName.toUpperCase() && c.type === "category"
+    );
+
+    if (category) {
       channel = await msg.guild.channels.cache.find(
         (c) => c.position == 0 && c.parent == category
       );
     }
+
+    let categoryNumber = 1;
+    // Find quarter category -- if in quarter category
+    while (!channel) {
+      let categoryName =
+        categoryNumber === 1
+          ? `${msg.channel.config.current_quarter}`.toUpperCase()
+          : `${msg.channel.config.current_quarter}-${categoryNumber}`.toUpperCase();
+      categoryNumber++;
+
+      console.log(categoryName);
+      category = await msg.guild.channels.cache.find(
+        (c) => c.name.toUpperCase() === categoryName && c.type == "category"
+      );
+
+      channel = await msg.guild.channels.cache.find(
+        (c) =>
+          c.name.toUpperCase() == msg.args[1].toUpperCase() &&
+          c.parent == category
+      );
+    }
+
     if (channel)
       channel.send(
         `Welcome, ${msg.author}! There are now **${

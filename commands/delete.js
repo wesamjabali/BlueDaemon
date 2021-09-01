@@ -19,18 +19,37 @@ module.exports = {
 
     /* Normalize course names to be lowercase */
     msg.args[1] = msg.args[1].toLowerCase();
-    const category = client.channels.cache.find(
-      (c) =>
-        c.name == msg.channel.config.current_quarter && c.type == "category"
-    );
+
+    let category = null;
+    let foundChannel = null;
+    let categoryNumber = 1;
+
+    while (!category) {
+      // Find quarter category -- if in quarter category
+      while (!foundChannel) {
+        let categoryName =
+          categoryNumber === 1
+            ? `${msg.channel.config.current_quarter}`.toUpperCase()
+            : `${msg.channel.config.current_quarter}-${categoryNumber}`.toUpperCase();
+        categoryNumber++;
+
+        console.log(categoryName);
+        category = await msg.guild.channels.cache.find(
+          (c) => c.name.toUpperCase() === categoryName && c.type == "category"
+        );
+
+        foundChannel = await msg.guild.channels.cache.find(
+          (c) =>
+            c.name.toUpperCase() == msg.args[1].toUpperCase() &&
+            c.parent == category
+        );
+      }
+    }
+
     const foundRole = msg.guild.roles.cache.find(
       (r) => r.name.toUpperCase() === roleName.toUpperCase()
     );
-    const foundChannel = msg.guild.channels.cache.find(
-      (c) =>
-        c.name.toUpperCase() === msg.args[1].toUpperCase() &&
-        c.parent == category
-    );
+
     if (foundRole && foundChannel) {
       await deleteRole(foundRole.id);
       foundRole.delete();

@@ -28,21 +28,6 @@ module.exports = {
         c.name == msg.channel.config.current_quarter && c.type == "category"
     );
 
-    // Create category for the current quarter.
-    if (!category) {
-      category = await msg.guild.channels.create(
-        msg.channel.config.current_quarter,
-        {
-          type: "category",
-        }
-      );
-
-      msg.channel.send(
-        `Created category for \`${msg.channel.config.current_quarter}\`.`
-      );
-      return;
-    }
-
     const roleName = `${msg.channel.config.current_quarter}-${msg.args[1]}`;
     const modRole = await msg.guild.roles.cache.find(
       (r) => r.id === msg.channel.config.mod_role
@@ -60,33 +45,57 @@ module.exports = {
         name: roleName,
       },
     });
-    const newChannel = await msg.guild.channels
-      .create(msg.args[1], {
-        type: "text",
-        parent: category,
-        permissionOverwrites: [
-          {
-            id: msg.guild.id,
-            deny: ["VIEW_CHANNEL"],
-          },
-          {
-            id: newRole.id, // Course role
-            allow: ["VIEW_CHANNEL"],
-          },
-          {
-            id: modRole.id,
-            allow: ["VIEW_CHANNEL"],
-          },
-          {
-            id: facultyRole.id,
-            allow: ["MANAGE_MESSAGES", "MENTION_EVERYONE"],
-          },
-        ],
-      })
-      .catch(async () => {
+
+    // Role created!
+
+    let tries = 1;
+    let newChannel = null;
+    while (!newChannel) {
+      if (!category) {
         newRole.delete();
-        msg.channel.send(`Category reached limit (50), ${msg.author}`);
-      });
+        let categoryName =
+          tries === 1
+            ? `${msg.channel.config.current_quarter}`
+            : `${msg.channel.config.current_quarter}-${tries}`;
+        createCategory(msg, categoryName);
+
+        return;
+      }
+      tries++;
+
+      newChannel = await msg.guild.channels
+        .create(msg.args[1], {
+          type: "text",
+          parent: category,
+          permissionOverwrites: [
+            {
+              id: msg.guild.id,
+              deny: ["VIEW_CHANNEL"],
+            },
+            {
+              id: newRole.id, // Course role
+              allow: ["VIEW_CHANNEL"],
+            },
+            {
+              id: modRole.id,
+              allow: ["VIEW_CHANNEL"],
+            },
+            {
+              id: facultyRole.id,
+              allow: ["MANAGE_MESSAGES", "MENTION_EVERYONE"],
+            },
+          ],
+        })
+        .catch(async () => {
+          console.log("Getting next category");
+        });
+
+      category = await client.channels.cache.find(
+        (c) =>
+          c.name == `${msg.channel.config.current_quarter}-${tries}` &&
+          c.type == "category"
+      );
+    }
 
     if (!newChannel) {
       return;
@@ -108,3 +117,13 @@ module.exports = {
     }
   },
 };
+
+async function createCategory(msg, name) {
+  // Create category for the current quarter.
+  category = await msg.guild.channels.create(name, {
+    type: "category",
+  });
+
+  msg.channel.send(`Category ${name} created!`);
+  return category;
+}
