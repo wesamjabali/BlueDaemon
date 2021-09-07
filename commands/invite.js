@@ -12,12 +12,12 @@ module.exports = {
     let inv;
     if (introductions) {
       inv = await introductions.createInvite({
-        maxAge: 0,
+        maxAge: 1000000,
         unique: false,
       });
     } else {
       inv = await msg.channel.createInvite({
-        maxAge: 0,
+        maxAge: 1000000,
         unique: false,
       });
     }
