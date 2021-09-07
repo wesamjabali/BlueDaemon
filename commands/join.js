@@ -117,8 +117,8 @@ module.exports = {
       );
     }
 
-    let categoryNumber = 1;
     // Find quarter category -- if in quarter category
+    let categoryNumber = 1;
     while (!channel) {
       let categoryName =
         categoryNumber === 1
