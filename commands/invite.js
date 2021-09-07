@@ -7,18 +7,18 @@ module.exports = {
   usage: "invite",
   execute: async (msg, isModerator, isFaculty, client) => {
     const introductions = msg.guild.channels.cache.find(
-      (ch) => ch.id === "826130360462475274"
+      (ch) => ch.rawPosition === 0
     );
     let inv;
     if (introductions) {
       inv = await introductions.createInvite({
         maxAge: 604800,
-        unique: false,
+        unique: true,
       });
     } else {
       inv = await msg.channel.createInvite({
         maxAge: 604800,
-        unique: false,
+        unique: true,
       });
     }
 
