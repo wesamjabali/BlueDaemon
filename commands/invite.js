@@ -13,12 +13,12 @@ module.exports = {
     if (introductions) {
       inv = await introductions.createInvite({
         maxAge: 0,
-        unique: true,
+        unique: false,
       });
     } else {
       inv = await msg.channel.createInvite({
         maxAge: 0,
-        unique: true,
+        unique: false,
       });
     }
 

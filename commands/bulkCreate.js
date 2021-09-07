@@ -13,20 +13,6 @@ module.exports = {
       return;
     }
 
-    // Find quarter category
-    let category = client.channels.cache.find(
-      (c) =>
-        c.name == msg.channel.config.current_quarter && c.type == "category"
-    );
-
-    // Disable bulk create without quarter category.
-    if (!category) {
-      msg.channel.send(
-        `No category found for ${msg.channel.config.current_quarter}. Use \`${msg.channel.config.prefix}create\` then try again.`
-      );
-      return;
-    }
-
     let courseNames = [];
     msg.args.shift();
     msg.args.sort();
@@ -45,33 +31,54 @@ module.exports = {
       );
       if (existingRole) {
         msg.channel.send(`Duplicate role: \`${existingRole.name}\``);
-        return;
       } else {
         createdCourses.push(courseName);
       }
     });
 
     createdCourses.forEach(async (courseName) => {
-      const newRole = await msg.guild.roles.create({
-        data: {
-          name: `${msg.channel.config.current_quarter}-${courseName}`,
-        },
-      });
-      msg.guild.channels.create(courseName, {
-        type: "text",
-        parent: category,
-        permissionOverwrites: [
-          {
-            id: msg.guild.id,
-            deny: ["VIEW_CHANNEL"],
+      let categoryNumber = 1;
+      let newChannel = null;
+      while (!newChannel) {
+        if (!category) {
+          newRole.delete();
+          let categoryName =
+            tries === 1
+              ? `${msg.channel.config.current_quarter}`
+              : `${msg.channel.config.current_quarter}-${tries}`;
+          createCategory(msg, categoryName);
+
+          return;
+        }
+        categoryNumber++;
+
+        let categoryName =
+          categoryNumber === 1
+            ? `${msg.channel.config.current_quarter}`.toUpperCase()
+            : `${msg.channel.config.current_quarter}-${categoryNumber}`.toUpperCase();
+        categoryNumber++;
+
+        const newRole = await msg.guild.roles.create({
+          data: {
+            name: `${msg.channel.config.current_quarter}-${courseName}`,
           },
-          {
-            id: newRole.id,
-            allow: ["VIEW_CHANNEL"],
-          },
-          { id: modRole.id, allow: ["VIEW_CHANNEL"] },
-        ],
-      });
+        });
+        newChannel = msg.guild.channels.create(courseName, {
+          type: "text",
+          parent: category,
+          permissionOverwrites: [
+            {
+              id: msg.guild.id,
+              deny: ["VIEW_CHANNEL"],
+            },
+            {
+              id: newRole.id,
+              allow: ["VIEW_CHANNEL"],
+            },
+            { id: modRole.id, allow: ["VIEW_CHANNEL"] },
+          ],
+        });
+      }
     });
     msg.channel.send(`Courses created: \`\`\`${createdCourses} \`\`\``);
     log(
