@@ -1,4 +1,5 @@
 const protectRole = require("./helpers/protectRole");
+const log = require("./helpers/log");
 
 module.exports = {
   name: "lock",
@@ -13,7 +14,7 @@ module.exports = {
       );
       return;
     }
-    const roleName = `${msg.channel.config.current_quarter}-${msg.args[1]}`
+    const roleName = `${msg.channel.config.current_quarter}-${msg.args[1]}`;
     const role = msg.guild.roles.cache.find(
       (r) => r.name.toUpperCase() === roleName.toUpperCase()
     );

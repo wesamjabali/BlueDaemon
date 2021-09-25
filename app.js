@@ -55,7 +55,6 @@ client.on("guildDelete", async (guild) => {
     .delete();
 });
 
-
 /* Message listener */
 client.on("message", async (msg) => {
   /* Don't listen to bots */
