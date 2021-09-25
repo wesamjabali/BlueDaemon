@@ -55,10 +55,6 @@ client.on("guildDelete", async (guild) => {
     .delete();
 });
 
-/* New User Listener*/
-client.on("guildMemberAdd", (member) => {
-  guildMemberAdd.execute(member, client);
-});
 
 /* Message listener */
 client.on("message", async (msg) => {
