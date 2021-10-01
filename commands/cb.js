@@ -5,7 +5,7 @@ module.exports = {
   privileged: false,
   usage: "cb",
   execute: async (msg, isModerator, isFaculty, client) => {
-    const newMessage = "How to format code:\n\`\`\`java\npublic static void main(String[] args)\`\`\`Is done like this:\n\\`\\`\\`java\npublic static void main(String[] args)\\`\\`\\`";
+    const newMessage = "To format your code for better readability, like this:\n```java\npublic static void main(String[] args)```\nYou should use the following format:\n\`\`\`java\npublic static void main(String[] args)\`\`\`";
 
     msg.channel.send(newMessage);
   },

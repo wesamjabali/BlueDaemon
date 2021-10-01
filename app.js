@@ -171,6 +171,9 @@ client.on("message", async (msg) => {
         allowed = true;
       }
       if (allowed) {
+        msg.channel.send(
+          `\`Warning: Period commands are soon to be removed from this server. Use slash commands instead. For example, type /join-course to join a course.\`\n<@${msg.user}>`
+        );
         command.execute(msg, isModerator, isFaculty, client);
       }
     } else {

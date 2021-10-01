@@ -7,7 +7,7 @@ module.exports = {
   usage: "invite",
   execute: async (msg, isModerator, isFaculty, client) => {
     const introductions = msg.guild.channels.cache.find(
-      (ch) => ch.position === 0
+      (ch) => ch.id === "826130360462475274"
     );
     let inv;
     if (introductions) {
