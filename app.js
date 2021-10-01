@@ -178,7 +178,7 @@ client.on("message", async (msg) => {
       }
     } else {
       let sentMessage = await msg.channel.send(
-        `Bad command! Do \`${msg.channel.config.prefix}help\` for commands, ${msg.author}`
+        `Bad command! Do \`${msg.channel.config.prefix}help\` for commands, ${msg.user}`
       );
       setTimeout(() => sentMessage.delete(), 3000);
     }
