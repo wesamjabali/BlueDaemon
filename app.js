@@ -173,7 +173,7 @@ client.on("message", async (msg) => {
       if (allowed) {
         await command.execute(msg, isModerator, isFaculty, client);
         msg.channel.send(
-          `\`Warning: Period commands are soon to be removed from this server. Use slash commands instead. For example, type /join-course to join a course.\`\n<@${msg.author}>`
+          `\`Warning: Period commands are soon to be removed from this server. Use slash commands instead. For example, type /join-course to join a course.\`\n${msg.author}`
         );
       }
     } else {
